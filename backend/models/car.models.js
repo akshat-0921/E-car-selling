@@ -67,6 +67,7 @@ const CarSchema = new Schema({
       type: String, required: true,
       enum: ["Petrol", "Diesel", "CNG", "Electric", "Hybrid", "Hydrogen", "LPG", "Plug-in Hybrid", "Ethanol", "Biodiesel"]
    },
+   showrooms: [{ type: Schema.Types.ObjectId, ref: "Showroom" }],
    engine: engineSchema,
    performance: performanceSchema,
    transmission: transmissionSchema,

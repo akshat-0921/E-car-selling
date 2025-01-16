@@ -1,20 +1,5 @@
 import mongoose, { Schema } from "mongoose";
 
-//Location Schema
-const locationSchema = new Schema({
-   name: { type: String, required: true },
-   location: {
-      type: { type: String, enum: ["Point"], required: true },
-      coordinates: {
-         type: [Number], // [longitude, latitude]
-         required: true
-      }
-   }
-}, { timestamps: true });
-
-// Ensure the GeoJSON format for indexing
-locationSchema.index({ location: "2dsphere" });
-
 
 const ShowroomSchema = Schema({
    brandId: { type: mongoose.Schema.Types.ObjectId, ref: "Brand", required: true },
@@ -24,7 +9,14 @@ const ShowroomSchema = Schema({
    state: { type: String, required: true },
    zipCode: { type: Number, required: true },
    contactNumber: { type: String, required: true },
-   location: locationSchema
+   lat: { type: Number, required: true },
+   lon: { type: Number, required: true },
+   coordinates: { type: [Number], index: '2dsphere' }
 }, { timestamps: true })
+
+ShowroomSchema.pre('save', function (next) {
+   this.coordinates = [this.lon, this.lat]
+   next()
+})
 
 export const Showroom = mongoose.model("Showroom", ShowroomSchema)
