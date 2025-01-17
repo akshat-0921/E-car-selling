@@ -13,6 +13,12 @@ app.use(cors())
 app.use(cookieParser())
 connectDB()
 
+import brandRouter from "./routes/brand.routes.js"
+import showroomRouter from "./routes/showroom.routes.js"
+
+app.use("/api/brand", brandRouter)
+app.use("/api/showroom", showroomRouter)
+
 app.get('/', (req, res) => {
    console.log("API Working")
 })
