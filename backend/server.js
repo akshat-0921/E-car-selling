@@ -15,9 +15,11 @@ connectDB()
 
 import brandRouter from "./routes/brand.routes.js"
 import showroomRouter from "./routes/showroom.routes.js"
+import vehicleRouter from "./routes/vehicle.routes.js"
 
 app.use("/api/brand", brandRouter)
 app.use("/api/showroom", showroomRouter)
+app.use("/api/vehicle", vehicleRouter)
 
 app.get('/', (req, res) => {
    console.log("API Working")
