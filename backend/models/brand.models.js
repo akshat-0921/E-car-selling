@@ -1,11 +1,38 @@
-import mongoose, { Schema } from "mongoose"
-import { Showroom } from "./showroom.models"
-
-const BrandSchema = Schema({
-   name: { type: String, required: True },
+const BrandSchema = new mongoose.Schema({
+   name: { type: String, required: true },
    logo: { type: String },
-   description: { type: String, required: true },
-   showrooms: [{ type: Schema.Types.ObjectId, ref: "Showroom" }]
-}, { timestamps: true })
+   description: { type: String },
+   showrooms: [{ type: mongoose.Schema.Types.ObjectId, ref: "Showroom" }], // Explicit reference to showrooms
+   cars: [{ type: mongoose.Schema.Types.ObjectId, ref: "Car" }] // Explicit reference to cars
+}, { timestamps: true });
 
-export const Brand = mongoose.model("Brand", BrandSchema)
+
+// import mongoose, { Schema } from "mongoose"
+
+// const BrandSchema = Schema({
+//    name: { type: String, required: True },
+//    logo: { type: String },
+//    description: { type: String, required: true },
+// }, { timestamps: true })
+
+// //Virtual for showrooms
+// BrandSchema.virtual('showrooms', {
+//    ref: 'Showroom',
+//    localField: '_id',
+//    foreignField: 'brandId',
+//    justOne: false
+// })
+
+// //Virtual for cars
+// BrandSchema.virtual('cars', {
+//    ref: "Car",
+//    localField: '_id',
+//    foreignField: 'brandId',
+//    justOne: false
+// })
+
+// //Enable virtuals in JSON and object outputs
+// BrandSchema.set('toObject', { virtuals: true })
+// BrandSchema.set('toJSON', { virtuals: true })
+
+// export const Brand = mongoose.model("Brand", BrandSchema)
