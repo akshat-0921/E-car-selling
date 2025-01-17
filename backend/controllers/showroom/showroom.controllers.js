@@ -21,7 +21,7 @@ const addShowroom = async (req, res) => {
 
 const getShowroom = async (req, res) => {
    try {
-      const showroomId = req.params._id;
+      const showroomId = req.params?._id;
       const showroom = await Showroom.findById(showroomId);
       if (!showroom) { return res.status(404).json({ success: false, msg: "Showroom not found" }) }
 

@@ -31,4 +31,4 @@ const ShowroomValidation = [
 ];
 
 
-export { ShowroomValidation, getShowroomValidation };
+export { ShowroomValidation };
