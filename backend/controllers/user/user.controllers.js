@@ -4,11 +4,11 @@ import bcrypt from "bcrypt";
 import otpGenerator from "otp-generator";
 import jwt from "jsonwebtoken";
 import Joi from "joi";
-import { otpTemplate } from "../utils/emailTemplate.js";
-import { User } from "../models/user.models.js";
-import { OTP } from "../models/otp.models.js";
-import { mailSender } from "../utils/mailSender.utils.js";
-import { errorHandler } from "../utils/errorHandler.utils.js";
+import { otpTemplate } from "../../utils/emailTemplate.js";
+import { User } from "../../models/user.models.js";
+import { OTP } from "../../models/otp.models.js";
+import { mailSender } from "../../utils/mailSender.utils.js";
+import { errorHandler } from "../../utils/errorHandler.utils.js";
 
 const generateTokens = async (user) => {
     const accessToken = user.createAccessToken();
@@ -29,6 +29,7 @@ const registerSchema = Joi.object({
 });
 
 const sendOtp = async (req, res) => {
+    console.log("sendOtp route hit");
     try {
         const { email } = req.body;
         const existingUser = await User.findOne({ email });
