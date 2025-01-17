@@ -1,13 +1,14 @@
 import { Router } from "express"
-import { addRandomShowroom, deleteShowroom, findNearbyShowrooms, getAllShowrooms, getShowroom } from "../controllers/showroom/showroom.controllers"
-import { ShowroomValidation } from "../middlewares/validators/showroomValidation"
+import { addShowroom, deleteShowroom, findNearbyShowrooms, getAllShowrooms, getShowroom } from "../controllers/showroom/showroom.controllers.js"
+import { showroomIdValidation, ShowroomValidation } from "../middlewares/validators/showroomValidation.js"
+import { brandIdValidation, handleValidationErrors } from "../middlewares/validators/brandValidation.js"
 
 const router = Router()
 
-router.post("/add/:_id", ShowroomValidation, addRandomShowroom)
-router.get("/get/:_id", getShowroom)
-router.get("/get_all", getAllShowrooms)
-router.get("/find_nearby", findNearbyShowrooms)
-router.delete("/delete/:_id", deleteShowroom)
+router.post("/add/:_id", brandIdValidation, ShowroomValidation, handleValidationErrors, addShowroom)
+router.get("/get/:_id", showroomIdValidation, getShowroom)
+router.get("/get-all", getAllShowrooms)
+router.get("/find-nearby", findNearbyShowrooms)
+router.delete("/delete/:_id", showroomIdValidation, deleteShowroom)
 
 export default router

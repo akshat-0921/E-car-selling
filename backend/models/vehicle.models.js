@@ -59,8 +59,8 @@ const customisationSchema = new Schema({
    addOn: { type: [String] }
 });
 
-// Main Car Schema
-const CarSchema = new Schema({
+// Main Vehicle Schema
+const VehicleSchema = new Schema({
    brandId: { type: Schema.Types.ObjectId, ref: "Brand" },
    name: { type: String, required: true },
    category: {
@@ -80,4 +80,4 @@ const CarSchema = new Schema({
    price: { type: Number }
 }, { timestamps: true });
 
-export const Car = mongoose.model("Car", CarSchema);
+export const Vehicle = mongoose.model("Vehicle", VehicleSchema);

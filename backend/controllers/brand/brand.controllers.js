@@ -1,6 +1,6 @@
 import { Brand } from "../../models/brand.models.js";
-import { Car } from "../../models/car.models.js";
 import { Showroom } from "../../models/showroom.models.js";
+import { Vehicle } from "../../models/vehicle.models.js";
 
 const addBrand = async (req, res) => {
    try {
@@ -53,7 +53,7 @@ const deleteBrand = async (req, res) => {
       const brand = await Brand.findById(brandId)
       if (!brand) { return res.status(404).json({ success: false, msg: "Brand does not exist" }) }
 
-      await Car.deleteMany({ brandId })
+      await Vehicle.deleteMany({ brandId })
       await Showroom.deleteMany({ brandId })
       await Brand.findByIdAndDelete(brandId)
 
@@ -74,28 +74,28 @@ const getShowroomsInBrand = async (req, res) => {
       if (showrooms.length === 0) {
          return res.status(404).json({ success: false, msg: "No showrooms found for the brand" })
       }
-      return res.status(200).json({ success: true, msg: `Showrooms for the brand ${brand} fetched successfully`, showrooms })
+      return res.status(200).json({ success: true, msg: `Showrooms for the brand ${brand.name} fetched successfully`, showrooms })
    } catch (error) {
       console.log(error)
       return res.status(500).json({ success: false, msg: "An error occured while fetching showrooms in the brand. Please try again" })
    }
 }
 
-const getCarsInBrand = async (req, res) => {
+const getVehiclesInBrand = async (req, res) => {
    try {
       const brandId = req.params?._id
       const brand = await Brand.findById(brandId)
       if (!brand) { return res.status(404).json({ success: false, msg: "Brand does not exist" }) }
 
-      const cars = await Car.find({ brandId })
-      if (cars.length === 0) {
-         return res.status(404).json({ success: false, msg: "No cars found for the brand" })
+      const vehicles = await Vehicle.find({ brandId })
+      if (vehicles.length === 0) {
+         return res.status(404).json({ success: false, msg: "No Vehicles found for the brand" })
       }
-      return res.status(200).json({ success: true, msg: `Cars for the brand ${brand} fetched successfully`, cars })
+      return res.status(200).json({ success: true, msg: `Vehicles for the brand ${brand.name} fetched successfully`, Vehicles })
    } catch (error) {
       console.log(error)
-      return res.status(500).json({ success: false, msg: "An error occured while fetching cars in the brand. Please try again" })
+      return res.status(500).json({ success: false, msg: "An error occured while fetching Vehicles in the brand. Please try again" })
    }
 }
 
-export { addBrand, getAllBrands, updateBrand, deleteBrand, getCarsInBrand, getShowroomsInBrand }
+export { addBrand, getAllBrands, updateBrand, deleteBrand, getVehiclesInBrand, getShowroomsInBrand }

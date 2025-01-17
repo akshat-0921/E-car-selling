@@ -1,28 +1,40 @@
 import { Showroom } from "../../models/showroom.models.js";
 import { Brand } from "../../models/brand.models.js";
-import { Car } from "../../models/car.models.js";
+import { Vehicle } from "../../models/vehicle.models.js";
 
 const addShowroom = async (req, res) => {
    try {
-      const brandId = req.params._id;
+      const brandId = req.params?._id;
+      if (!brandId) {
+         return res.status(400).json({ success: false, msg: "Brand id required" });
+      }
       const { name, address, city, state, zipCode, contactNumber, lat, lon } = req.body;
 
-      const newShowroom = await Showroom.create({ brand: brandId, name, address, city, state, zipCode, contactNumber, lat, lon });
+      const newShowroom = await Showroom.create({ brandId, name, address, city, state, zipCode, contactNumber, lat, lon });
+
       const updatedBrand = await Brand.findByIdAndUpdate(
-         { _id: brandId }, { $push: { showrooms: newShowroom._id } }, { new: true }
+         { _id: brandId },
+         { $push: { showrooms: newShowroom._id } },
+         { new: true }
       );
+
+      if (!updatedBrand) {
+         return res.status(400).json({ success: false, msg: "Brand does not exist" });
+      }
 
       return res.status(201).json({ success: true, msg: "Showroom added", showroom: newShowroom });
    } catch (error) {
-      console.log(error);
-      return res.status(500).json({ success: false, msg: "An error occured while adding showroom. Please try again later" });
+      console.error('Error while adding showroom:', error);  // Log the actual error for debugging
+      return res.status(500).json({
+         success: false, msg: "An error occurred while adding showroom. Please try again later", error: error.message
+      });
    }
 }
 
 const getShowroom = async (req, res) => {
    try {
       const showroomId = req.params?._id;
-      const showroom = await Showroom.findById(showroomId);
+      const showroom = await Showroom.findById(showroomId).populate("vehicles");
       if (!showroom) { return res.status(404).json({ success: false, msg: "Showroom not found" }) }
 
       return res.status(200).json({ success: true, showroom });
@@ -72,26 +84,30 @@ const deleteShowroom = async (req, res) => {
    try {
       const showroomId = req.params._id;
       const showroom = await Showroom.findById(showroomId);
-      if (!showroom) { return res.status(404).json({ success: false, msg: "Showroom not found" }) }
+      if (!showroom) {
+         return res.status(404).json({ success: false, msg: "Showroom not found" });
+      }
 
-      const brandId = showroom.brand;
+      const brandId = showroom.brandId;
       const brand = await Brand.findByIdAndUpdate(
          { _id: brandId }, { $pull: { showrooms: showroomId } }, { new: true }
       );
-      if (!brand) { return res.status(404).json({ success: false, msg: "Brand not found" }) }
+      if (!brand) {
+         return res.status(404).json({ success: false, msg: "Brand not found" });
+      }
 
-      await Car.updateMany(
+      await Vehicle.updateMany(
          { showrooms: showroomId },
          { $pull: { showrooms: showroomId } }
       );
 
-      await showroom.remove();
+      await Showroom.findByIdAndDelete(showroomId);
 
       return res.status(200).json({ success: true, msg: "Showroom deleted successfully" });
    } catch (error) {
       console.log(error);
-      return res.status(500).json({ success: false, msg: "An error occured while deleting showroom. Please try again later" });
+      return res.status(500).json({ success: false, msg: "An error occurred while deleting showroom. Please try again later" });
    }
-}
+};
 
 export { addShowroom, getShowroom, getAllShowrooms, findNearbyShowrooms, deleteShowroom };

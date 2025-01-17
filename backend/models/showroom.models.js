@@ -2,7 +2,7 @@ import mongoose, { Schema } from "mongoose";
 
 
 const ShowroomSchema = Schema({
-   brandId: { type: mongoose.Schema.Types.ObjectId, ref: "Brand", required: true },
+   brandId: { type: Schema.Types.ObjectId, ref: "Brand", required: true },
    name: { type: String, required: true },
    address: { type: String, required: true },
    city: { type: String, required: true },
@@ -12,7 +12,7 @@ const ShowroomSchema = Schema({
    lat: { type: Number, required: true },
    lon: { type: Number, required: true },
    coordinates: { type: [Number], index: '2dsphere' },
-   cars: [{ type: mongoose.Schema.Types.ObjectId, ref: "Car" }],
+   vehicles: [{ type: mongoose.Schema.Types.ObjectId, ref: "Vehicle" }],
 }, { timestamps: true })
 
 ShowroomSchema.pre('save', function (next) {

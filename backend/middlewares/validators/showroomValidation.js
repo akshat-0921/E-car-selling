@@ -1,14 +1,6 @@
-import { body, validationResult } from 'express-validator';
+import { body, param, validationResult } from 'express-validator';
 
 const ShowroomValidation = [
-   param('_id')
-      .isMongoId().withMessage('Invalid brand ID')
-      .custom(async (value) => {
-         const brandExists = await Brand.exists({ _id: value });
-         if (!brandExists) {
-            throw new Error('Seller not found');
-         }
-      }),
    body('name').notEmpty().withMessage('Name is required'),
    body('address').notEmpty().withMessage('Address is required'),
    body('city').notEmpty().withMessage('City is required'),
@@ -20,15 +12,18 @@ const ShowroomValidation = [
       .matches(/^\d+$/).withMessage('Contact number must contain only digits'), // Matches only numbers
    body('lat').notEmpty().withMessage('Latitude is required'),
    body('lon').notEmpty().withMessage('Longitude is required'),
-
-   (req, res, next) => {
-      const errors = validationResult(req);
-      if (!errors.isEmpty()) {
-         return res.status(400).json({ errors: errors.array() });
-      }
-      next();
-   }
 ];
 
+const showroomIdValidation = [
+   param('_id')
+      .isMongoId().withMessage('Invalid brand ID')
+      .custom(async (value) => {
+         const showroomExists = await Showroom.exists({ _id: value });
+         if (!showroomExists) {
+            throw new Error('Showroom not found');
+         }
+      }),
+]
 
-export { ShowroomValidation };
+
+export { ShowroomValidation, showroomIdValidation };

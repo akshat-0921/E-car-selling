@@ -1,13 +1,12 @@
+import mongoose, { Schema } from "mongoose"
+
 const BrandSchema = new mongoose.Schema({
    name: { type: String, required: true },
    logo: { type: String },
    description: { type: String },
    showrooms: [{ type: mongoose.Schema.Types.ObjectId, ref: "Showroom" }], // Explicit reference to showrooms
-   cars: [{ type: mongoose.Schema.Types.ObjectId, ref: "Car" }] // Explicit reference to cars
+   vehicles: [{ type: mongoose.Schema.Types.ObjectId, ref: "Vehicle" }] // Explicit reference to cars
 }, { timestamps: true });
-
-
-// import mongoose, { Schema } from "mongoose"
 
 // const BrandSchema = Schema({
 //    name: { type: String, required: True },
@@ -35,4 +34,4 @@ const BrandSchema = new mongoose.Schema({
 // BrandSchema.set('toObject', { virtuals: true })
 // BrandSchema.set('toJSON', { virtuals: true })
 
-// export const Brand = mongoose.model("Brand", BrandSchema)
+export const Brand = mongoose.model("Brand", BrandSchema)
