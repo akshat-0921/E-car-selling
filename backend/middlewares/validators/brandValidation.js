@@ -9,6 +9,12 @@ const brandValidation = [
 const brandIdValidation = [
    param('_id')
       .isMongoId().withMessage('Invalid brand ID')
+      .custom(async (value) => {
+         const brandExists = await Brand.exists({ _id: value });
+         if (!brandExists) {
+            throw new Error('Brand not found');
+         }
+      }),
 ];
 
 const handleValidationErrors = (req, res, next) => {

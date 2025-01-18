@@ -2,61 +2,61 @@ import mongoose, { Schema } from "mongoose";
 
 // Engine Schema
 const engineSchema = new Schema({
-   engine: { type: String },
-   power: { type: String },
-   torque: { type: String },
-   fuelCapacity: { type: String }
+   engine: { type: String, default: "N/A" },
+   power: { type: String, default: "N/A" },
+   torque: { type: String, default: "N/A" },
+   fuelCapacity: { type: String, default: "N/A" }
 });
 
 // Performance Schema
 const performanceSchema = new Schema({
-   topSpeed: { type: String },
-   acceleration: { type: String },
-   driveType: { type: String, enum: ["FWD", "RWD", "AWD", "4WD"] },
-   suspension: { type: String }
+   topSpeed: { type: String, default: "N/A" },
+   acceleration: { type: String, default: "N/A" },
+   driveType: { type: String, enum: ["FWD", "RWD", "AWD", "4WD"], default: "N/A" },
+   suspension: { type: String, default: "N/A" }
 });
 
 // Transmission Schema
 const transmissionSchema = new Schema({
-   transmission: { type: String },
-   gearCount: { type: String }
+   transmission: { type: String, default: "N/A" },
+   gearCount: { type: String, default: "N/A" }
 });
 
 // Dimension Schema
 const dimensionSchema = new Schema({
-   length: { type: String },
-   width: { type: String },
-   height: { type: String },
-   groundClearance: { type: String },
-   weight: { type: String }
+   length: { type: String, default: "N/A" },
+   width: { type: String, default: "N/A" },
+   height: { type: String, default: "N/A" },
+   groundClearance: { type: String, default: "N/A" },
+   weight: { type: String, default: "N/A" }
 });
 
 // Safety Features Schema
 const safetySchema = new Schema({
    airbags: { type: Boolean, default: false },
-   brakingSystem: { type: String, enum: ["ABS", "ESC", "AEB"] },
-   cameraAndSensor: { type: [String] },
-   crashTestRating: { type: String }
+   brakingSystem: { type: String, enum: ["ABS", "ESC", "AEB"], default: "N/A" },
+   cameraAndSensor: { type: [String], default: [] },
+   crashTestRating: { type: String, default: "N/A" }
 });
 
 // Connectivity Schema
 const connectivitySchema = new Schema({
-   connectivity: { type: [String] },
-   voiceControl: { type: Boolean },
-   keylessEntry: { type: String }
+   connectivity: { type: [String], default: [] },
+   voiceControl: { type: Boolean, default: false },
+   keylessEntry: { type: String, default: "N/A" }
 });
 
 // Warranty Schema
 const warrantySchema = new Schema({
-   warrantyPeriod: { type: String },
-   serviceInterval: { type: String } // every 10000 km
+   warrantyPeriod: { type: String, default: "N/A" },
+   serviceInterval: { type: String, default: "N/A" } // every 10000 km
 });
 
 // Customization Schema
 const customisationSchema = new Schema({
-   trimLevels: { type: String }, // base, sport, luxury
-   color: { type: [String] },
-   addOn: { type: [String] }
+   trimLevels: { type: String, default: "N/A" }, // base, sport, luxury
+   color: { type: [String], default: [] },
+   addOn: { type: [String], default: [] }
 });
 
 // Main Vehicle Schema
@@ -76,8 +76,8 @@ const VehicleSchema = new Schema({
    connectivity: connectivitySchema,
    warranty: warrantySchema,
    customisation: customisationSchema,
-   year: { type: String },
-   price: { type: Number }
+   year: { type: String, required: true },
+   price: { type: Number, required: true }
 }, { timestamps: true });
 
 export const Vehicle = mongoose.model("Vehicle", VehicleSchema);
