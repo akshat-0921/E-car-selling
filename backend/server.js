@@ -16,13 +16,21 @@ connectDB();
 import brandRouter from "./routes/brand.routes.js";
 import showroomRouter from "./routes/showroom.routes.js";
 import userRoutes from "./routes/user.routes.js";
+<<<<<<< HEAD
+import adminRoutes from "./routes/admin.routes.js";
+=======
 import vehicleRouter from "./routes/vehicle.routes.js";
+>>>>>>> a04544ca6b7f96ec20c5638a729290eb368b2ae0
 
 // Routes
 app.use("/api/brand", brandRouter);
 app.use("/api/showroom", showroomRouter);
 app.use("/api/user", userRoutes);
+<<<<<<< HEAD
+app.use("/api/admin", adminRoutes);
+=======
 app.use("/api/vehicle", vehicleRouter);
+>>>>>>> a04544ca6b7f96ec20c5638a729290eb368b2ae0
 
 app.get("/", (req, res) => {
    console.log("API Working");
