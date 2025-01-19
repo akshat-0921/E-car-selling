@@ -1,6 +1,7 @@
 import { Vehicle } from "../../models/vehicle.models.js";
 import { Brand } from "../../models/brand.models.js";
 import { Showroom } from "../../models/showroom.models.js"
+import { ShowroomVehicle } from "../../models/showroomVehicle.models.js";
 
 const addVehicle = async (req, res) => {
    try {
@@ -9,7 +10,8 @@ const addVehicle = async (req, res) => {
       const { engine, performance, transmission, dimensions, safetyFeatures,
          connectivity, warranty, customisation
       } = req.body
-
+      const brand = await Brand.findById(brandId)
+      if (!brand) { return res.status(404).json({ success: false, msg: "Brand does not exist" }) }
       const vehicle = await Vehicle.create({
          name,
          category,
@@ -47,9 +49,10 @@ const getAllVehicles = async (req, res) => {
 const getVehicle = async (req, res) => {
    try {
       const vehicleId = req.params._id
+      // if (!vehicleId) return res.status(400).json({ success: false, msg: "brandId required" })
       const vehicle = await Vehicle.findById(vehicleId)
-      if (!vehicle) { return res.status(404).json({ success: false, msg: "Vehicle does not exist" }) }
-      return res.status({ success: true, msg: "Vehicle found", vehicle })
+      // if (!vehicle) { return res.status(404).json({ success: false, msg: "Vehicle does not exist" }) }
+      return res.status(200).json({ success: true, msg: "Vehicle found", vehicle })
    } catch (error) {
       console.log(error)
       return res.status(500).json({ success: false, msg: "An error occured while fetching the vehicle. Please try again" })
@@ -128,8 +131,11 @@ const insertVehicleToShowroom = async (req, res) => {
    try {
       const vehicleId = req.params._id
       const { showroomId } = req.body
+      if (!showroomId) { return res.status(400).json({ success: false, msg: "Showroom id required" }) }
       const vehicle = await Vehicle.findByIdAndUpdate(vehicleId, { $push: { showrooms: showroomId } })
       const showroom = await Showroom.findByIdAndUpdate(showroomId, { $push: { vehicles: vehicleId } })
+      if (!showroom) { return res.status(404).json({ success: false, msg: "Showroom does not exist" }) }
+      const showroomVehicle = await ShowroomVehicle.create({ showroomId, vehicleId })
       return res.status(200).json({ success: true, msg: `Vehicle ${vehicle.name} added to showroom ${showroom.name}` })
    } catch (error) {
       console.log(error)
@@ -141,8 +147,12 @@ const removeVehicleFromShowroom = async (req, res) => {
    try {
       const vehicleId = req.params._id
       const { showroomId } = req.body
+      if (!showroomId) { return res.status(400).json({ success: false, msg: "Showroom id required" }) }
       const vehicle = await Vehicle.findByIdAndUpdate(vehicleId, { $pull: { showrooms: showroomId } })
       const showroom = await Showroom.findByIdAndUpdate(showroomId, { $pull: { vehicles: vehicleId } })
+      if (!showroom) { return res.status(404).json({ success: false, msg: "Showroom does not exist" }) }
+      const deleteShowroomVehilce = await ShowroomVehicle.findOneAndDelete(showroomId, vehicleId)
+      if (!deleteShowroomVehilce) { return res.status(400).json({ success: false, msg: "Vehicle could not be removed from showroom" }) }
       return res.status(200).json({ success: true, msg: `Vehicle ${vehicle.name} removed from showroom ${showroom.name}` })
    } catch (error) {
       console.log(error)

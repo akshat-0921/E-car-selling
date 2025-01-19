@@ -5,7 +5,7 @@ import { handleValidationErrors, vechicleValidation, vehicleIdValidation } from 
 
 const router = Router()
 
-router.post("/add/:_id", brandIdValidation, vechicleValidation, handleValidationErrors, addVehicle)
+router.post("/add/:_id", vechicleValidation, handleValidationErrors, addVehicle)
 router.get("/get-all", getAllVehicles)
 router.get("/get/:_id", vehicleIdValidation, handleValidationErrors, getVehicle)
 router.put("/update/:_id", vehicleIdValidation, handleValidationErrors, updateVehicle)
