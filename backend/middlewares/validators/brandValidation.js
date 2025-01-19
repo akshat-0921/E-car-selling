@@ -1,5 +1,5 @@
 import { body, param, validationResult } from "express-validator";
-
+import { Brand } from "../../models/brand.models.js";
 const brandValidation = [
    body('name').notEmpty().withMessage('Name is required'),
    // body('logo').notEmpty().withMessage('Logo is required'),

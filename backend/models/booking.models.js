@@ -6,6 +6,7 @@ const BookingSchema = Schema({
    showroomId: { type: Schema.Types.ObjectId, ref: "Showroom", required: true },
    bookingDate: { type: String, required: true },
    deliveryDate: { type: String, required: true },
+   status: { type: String, enum: ["In transit", "Completed", "Availabe", "Unavailabe"] },
    paymentStatus: { type: String, enum: ["Pending", "Confirmed", "Completed", "Cancelled"], default: "Pending" },
    amount: { type: Number, required: true }
 }, { timestamps: true })
