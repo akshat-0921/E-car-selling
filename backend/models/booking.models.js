@@ -8,7 +8,7 @@ const BookingSchema = Schema({
    deliveryDate: { type: String, required: true },
    status: { type: String, enum: ["In transit", "Completed", "Availabe", "Unavailabe"] },
    paymentStatus: { type: String, enum: ["Pending", "Confirmed", "Completed", "Cancelled"], default: "Pending" },
-   amount: { type: String, required: true }
+   amount: { type: Number, required: true }
 }, { timestamps: true })
 
 export const Booking = mongoose.model("Booking", BookingSchema)

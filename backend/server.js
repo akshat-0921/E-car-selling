@@ -22,6 +22,7 @@ import showroomRouter from "./routes/showroom.routes.js";
 import userRoutes from "./routes/user.routes.js";
 import adminRoutes from "./routes/admin.routes.js";
 import vehicleRouter from "./routes/vehicle.routes.js";
+const paymentRoutes = require("./routes/payment.routes");
 
 // Routes
 app.use("/api/brand", brandRouter);
@@ -29,6 +30,7 @@ app.use("/api/showroom", showroomRouter);
 app.use("/api/user", userRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/vehicle", vehicleRouter);
+app.use("/api/payment", paymentRoutes);
 
 // Root route
 app.get("/", (req, res) => {
