@@ -12,5 +12,6 @@ router.put("/update/:_id", vehicleIdValidation, handleValidationErrors, updateVe
 router.delete("/delete/:_id", vehicleIdValidation, handleValidationErrors, deleteVehicle)
 router.post("/insert-to-showroom/:_id", vehicleIdValidation, handleValidationErrors, insertVehicleToShowroom)
 router.post("/delete-from-showroom/:_id", vehicleIdValidation, handleValidationErrors, removeVehicleFromShowroom)
+router.post("/purchase", vehicleController.purchaseVehicle);
 
 export default router
