@@ -1,11 +1,12 @@
 import mongoose, { Schema } from "mongoose";
 
 const ReviewSchema = Schema({
-   userId: { type: Schema.Types.ObjectId, ref: "User", required: true },
-   carId: { type: Schema.Types.ObjectId, ref: "Car", required: true },
-   showroomId: { type: Schema.Types.ObjectId, ref: "Showroom", required: true },
+   user: { type: Schema.Types.ObjectId, ref: "User", required: true },
+   vehicle: { type: Schema.Types.ObjectId, ref: "Car", required: true },
+   showroom: { type: Schema.Types.ObjectId, ref: "Showroom", required: true },
+   website: { type: Boolean, default: false },
    rating: { type: Number, required: true },
-   comment: { type: String },
+   review: { type: String },
    date: { type: String, default: Date.now() }
 }, { timestamps: true })
 

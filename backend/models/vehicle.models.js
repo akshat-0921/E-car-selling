@@ -60,24 +60,29 @@ const customisationSchema = new Schema({
 });
 
 // Main Vehicle Schema
-const VehicleSchema = new Schema({
-   brandId: { type: Schema.Types.ObjectId, ref: "Brand" },
-   name: { type: String, required: true },
-   category: {
-      type: String, required: true,
-      enum: ["Petrol", "Diesel", "CNG", "Electric", "Hybrid", "Hydrogen", "LPG", "Plug-in Hybrid", "Ethanol", "Biodiesel"]
+const VehicleSchema = new Schema(
+   {
+      brandId: { type: Schema.Types.ObjectId, ref: "Brand" },
+      name: { type: String, required: true },
+      category: {
+         type: String, required: true,
+         enum: ["Petrol", "Diesel", "CNG", "Electric", "Hybrid", "Hydrogen", "LPG", "Plug-in Hybrid", "Ethanol", "Biodiesel"]
+      },
+      showrooms: [{ type: Schema.Types.ObjectId, ref: "Showroom" }],
+      engine: engineSchema,
+      performance: performanceSchema,
+      transmission: transmissionSchema,
+      dimensions: dimensionSchema,
+      safetyFeatures: safetySchema,
+      connectivity: connectivitySchema,
+      warranty: warrantySchema,
+      customisation: customisationSchema,
+      year: { type: String, required: true },
+      price: { type: Number, required: true },
+      ratingAndReviews: [{ type: Schema.Types.ObjectId, ref: "Review" }],
+      buyers: [{ type: Schema.Types.ObjectId, ref: "User" }]
    },
-   showrooms: [{ type: Schema.Types.ObjectId, ref: "Showroom" }],
-   engine: engineSchema,
-   performance: performanceSchema,
-   transmission: transmissionSchema,
-   dimensions: dimensionSchema,
-   safetyFeatures: safetySchema,
-   connectivity: connectivitySchema,
-   warranty: warrantySchema,
-   customisation: customisationSchema,
-   year: { type: String, required: true },
-   price: { type: Number, required: true }
-}, { timestamps: true });
+   { timestamps: true }
+);
 
 export const Vehicle = mongoose.model("Vehicle", VehicleSchema);
