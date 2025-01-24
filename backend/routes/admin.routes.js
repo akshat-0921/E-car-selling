@@ -20,6 +20,6 @@ router.get("/profile", verifyAccessToken, viewProfile);
 router.post("/change-password", verifyAccessToken, changePassword);
 
 router.post("/forgot-password", forgotPassword);
-router.post("/reset-password", resetPassword);
+router.post("/reset-password/:token", resetPassword);
 
 export default router;

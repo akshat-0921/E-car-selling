@@ -5,8 +5,17 @@ const AdminSchema = new mongoose.Schema(
    {
       firstName: { type: String, required: true },
       lastName: { type: String, required: true },
-      email: { type: String, required: true, unique: true, match: [/.+\@.+\..+/, "Invalid email format"] },
-      phoneNumber: { type: String, required: true, match: [/^\+?[0-9\s-]{7,15}$/, "Invalid phone number format"] },
+      email: {
+         type: String,
+         required: true,
+         unique: true,
+         match: [/.+\@.+\..+/, "Invalid email format"],
+      },
+      phoneNumber: {
+         type: String,
+         required: true,
+         match: [/^\+?[0-9\s-]{7,15}$/, "Invalid phone number format"],
+      },
       password: { type: String, required: true, minlength: 8 },
       refreshToken: { type: String, default: null },
    },
@@ -15,15 +24,15 @@ const AdminSchema = new mongoose.Schema(
 
 AdminSchema.methods.createAccessToken = function () {
    return jwt.sign(
-      { _id: this._id, email: this.email },
+      { adminId: this._id, email: this.email },
       process.env.ACCESS_TOKEN_SECRET,
-      { expiresIn: "60m" }
+      { expiresIn: "15m" }
    );
 };
 
 AdminSchema.methods.createRefreshToken = function () {
    return jwt.sign(
-      { _id: this._id },
+      { adminId: this._id },
       process.env.REFRESH_TOKEN_SECRET,
       { expiresIn: "7d" }
    );
@@ -35,6 +44,11 @@ AdminSchema.statics.verifyRefreshToken = function (token) {
    } catch (error) {
       throw new Error("Invalid or expired refresh token");
    }
+};
+
+AdminSchema.methods.invalidateRefreshToken = async function () {
+   this.refreshToken = null;
+   await this.save({ validateBeforeSave: false });
 };
 
 export const Admin = mongoose.model("Admin", AdminSchema);
