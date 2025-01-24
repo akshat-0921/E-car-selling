@@ -5,6 +5,16 @@ import { PasswordReset } from '../../models/passwordReset.models.js';
 import { mailSender } from '../../utils/mailSender.utils.js';
 import { errorHandler } from '../../utils/errorHandler.utils.js';
 
+const generateTokens = async (admin) => {
+    const accessToken = jwt.sign({ adminId: admin._id }, process.env.JWT_SECRET, { expiresIn: "15m" }); // Short-lived
+    const refreshToken = jwt.sign({ adminId: admin._id }, process.env.REFRESH_TOKEN_SECRET, { expiresIn: "7d" }); // Long-lived
+
+    admin.refreshToken = refreshToken;
+    await admin.save({ validateBeforeSave: false });
+
+    return { accessToken, refreshToken };
+};
+
 const adminLogin = async (req, res) => {
     try {
         const { email, password } = req.body;
@@ -19,56 +29,78 @@ const adminLogin = async (req, res) => {
         if (!isPasswordValid) {
             return errorHandler(res, 400, "Invalid password");
         }
-        const token = jwt.sign({ adminId: admin._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
 
-        return res.status(200).json({
-            success: true,
-            message: "Login successful",
-            token,
-        });
+        const { accessToken, refreshToken } = await generateTokens(admin);
+
+        return res
+            .status(200)
+            .cookie("accessToken", accessToken, { httpOnly: true, maxAge: 15 * 60 * 1000 }) // 15 minutes
+            .cookie("refreshToken", refreshToken, { httpOnly: true, maxAge: 7 * 24 * 60 * 60 * 1000 }) // 7 days
+            .json({
+                success: true,
+                message: "Login successful",
+                accessToken,
+                refreshToken,
+            });
     } catch (error) {
         return errorHandler(res, 500, "Error during login");
     }
 };
 
-const changePassword = async (req, res) => {
+const refreshAccessToken = async (req, res) => {
     try {
-        const { currentPassword, newPassword, confirmPassword } = req.body;
+        const incomingRefreshToken = req.cookies?.refreshToken || req.headers["authorization"]?.replace("Bearer ", "");
 
-        if (newPassword !== confirmPassword) {
-            return errorHandler(res, 400, "Passwords do not match");
+        if (!incomingRefreshToken) {
+            return errorHandler(res, 401, "Unauthorized request");
         }
 
+        const decoded = jwt.verify(incomingRefreshToken, process.env.REFRESH_TOKEN_SECRET);
+        const admin = await Admin.findById(decoded.adminId);
+
+        if (!admin || admin.refreshToken !== incomingRefreshToken) {
+            return errorHandler(res, 401, "Invalid or expired refresh token");
+        }
+
+        const { accessToken, refreshToken } = await generateTokens(admin);
+
+        return res
+            .status(200)
+            .cookie("accessToken", accessToken, { httpOnly: true, maxAge: 15 * 60 * 1000 }) // 15 minutes
+            .cookie("refreshToken", refreshToken, { httpOnly: true, maxAge: 7 * 24 * 60 * 60 * 1000 }) // 7 days
+            .json({
+                success: true,
+                accessToken,
+                refreshToken,
+                message: "Access token refreshed successfully",
+            });
+    } catch (error) {
+        return errorHandler(res, 500, "Failed to refresh access token");
+    }
+};
+
+const adminLogout = async (req, res) => {
+    try {
         const adminId = req.adminId;
-        const admin = await Admin.findById(adminId);
+        const admin = await Admin.findByIdAndUpdate(adminId, { refreshToken: null }, { new: true });
 
         if (!admin) {
             return errorHandler(res, 404, "Admin not found");
         }
 
-        const isPasswordValid = await bcrypt.compare(currentPassword, admin.password);
-
-        if (!isPasswordValid) {
-            return errorHandler(res, 400, "Current password is incorrect");
-        }
-
-        const hashedPassword = await bcrypt.hash(newPassword, 10);
-        admin.password = hashedPassword;
-        await admin.save();
-
-        return res.status(200).json({
-            success: true,
-            message: "Password changed successfully",
-        });
+        return res
+            .status(200)
+            .clearCookie("accessToken", { httpOnly: true })
+            .clearCookie("refreshToken", { httpOnly: true })
+            .json({ success: true, message: "Admin logged out successfully" });
     } catch (error) {
-        return errorHandler(res, 500, "Error changing password");
+        return errorHandler(res, 500, "Error during logout");
     }
 };
 
 const viewProfile = async (req, res) => {
     try {
-        const adminId = req.adminId;
-        const admin = await Admin.findById(adminId);
+        const admin = await Admin.findById(req.adminId);
 
         if (!admin) {
             return errorHandler(res, 404, "Admin not found");
@@ -76,14 +108,34 @@ const viewProfile = async (req, res) => {
 
         return res.status(200).json({
             success: true,
-            profile: {
-                email: admin.email,
-                createdAt: admin.createdAt,
-                updatedAt: admin.updatedAt,
-            },
+            profile: { email: admin.email, createdAt: admin.createdAt },
         });
     } catch (error) {
         return errorHandler(res, 500, "Error fetching profile");
+    }
+};
+
+const changePassword = async (req, res) => {
+    try {
+        const { oldPassword, newPassword } = req.body;
+        const admin = await Admin.findById(req.adminId);
+
+        if (!admin) {
+            return errorHandler(res, 404, "Admin not found");
+        }
+
+        const isPasswordValid = await bcrypt.compare(oldPassword, admin.password);
+
+        if (!isPasswordValid) {
+            return errorHandler(res, 400, "Old password is incorrect");
+        }
+
+        admin.password = await bcrypt.hash(newPassword, 10);
+        await admin.save();
+
+        return res.status(200).json({ success: true, message: "Password updated successfully" });
+    } catch (error) {
+        return errorHandler(res, 500, "Error changing password");
     }
 };
 
@@ -96,63 +148,78 @@ const forgotPassword = async (req, res) => {
             return errorHandler(res, 404, "Admin not found");
         }
 
-        const resetToken = jwt.sign({ email: admin.email }, process.env.RESET_PASSWORD_SECRET, { expiresIn: '1h' });
-        await PasswordReset.create({ email: admin.email, token: resetToken });
-        const resetLink = `http://localhost:4000/api/admin/reset-password/${resetToken}`;
+        const resetToken = jwt.sign({ adminId: admin._id }, process.env.RESET_TOKEN_SECRET, { expiresIn: "1h" });
 
-        try {
-            await mailSender(admin.email, "Password Reset", `Click here to reset your password: ${resetLink}`);
-        } catch (emailError) {
-            return errorHandler(res, 500, "Failed to send password reset email.");
-        }
+        await PasswordReset.create({
+            adminId: admin._id,
+            token: resetToken,
+        });
+
+        await mailSender(admin.email, "Password Reset", `Your reset token is: ${resetToken}`);
 
         return res.status(200).json({
             success: true,
-            message: "Password reset email sent",
+            message: "Password reset link sent to your email",
         });
     } catch (error) {
-        return errorHandler(res, 500, "Error initiating password reset");
+        return errorHandler(res, 500, "Error sending password reset email");
     }
 };
 
 const resetPassword = async (req, res) => {
     try {
-        const { token } = req.params;
-        const { password, confirmPassword } = req.body;
+        const { resetToken, newPassword } = req.body;
 
-        const decoded = jwt.verify(token, process.env.RESET_PASSWORD_SECRET);
+        const decoded = jwt.verify(resetToken, process.env.RESET_TOKEN_SECRET);
+        const passwordReset = await PasswordReset.findOne({ token: resetToken });
 
-        if (!decoded) {
-            return errorHandler(res, 400, "Invalid or expired token");
+        if (!passwordReset || passwordReset.adminId.toString() !== decoded.adminId) {
+            return errorHandler(res, 400, "Invalid or expired reset token");
         }
 
-        const resetRequest = await PasswordReset.findOne({ token });
+        const admin = await Admin.findById(decoded.adminId);
 
-        if (!resetRequest) {
-            return errorHandler(res, 400, "Reset token not found");
+        if (!admin) {
+            return errorHandler(res, 404, "Admin not found");
         }
 
-        if (password !== confirmPassword) {
-            return errorHandler(res, 400, "Passwords do not match");
-        }
-
-        const hashedPassword = await bcrypt.hash(password, 10);
-        await Admin.updateOne({ email: decoded.email }, { password: hashedPassword });
-        await PasswordReset.deleteOne({ token });
+        admin.password = await bcrypt.hash(newPassword, 10);
+        await admin.save();
+        await PasswordReset.findByIdAndDelete(passwordReset._id);
 
         return res.status(200).json({
             success: true,
-            message: "Password has been reset successfully",
+            message: "Password reset successfully",
         });
     } catch (error) {
         return errorHandler(res, 500, "Error resetting password");
     }
 };
 
+const verifyAccessToken = (req, res, next) => {
+    const token = req.cookies?.accessToken || req.headers["authorization"]?.replace("Bearer ", "");
+
+    if (!token) {
+        return errorHandler(res, 401, "Unauthorized request");
+    }
+
+    try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        req.adminId = decoded.adminId;
+        next();
+    } catch (error) {
+        return errorHandler(res, 401, "Invalid or expired access token");
+    }
+};
+
 export {
     adminLogin,
-    changePassword,
+    refreshAccessToken,
+    adminLogout,
     viewProfile,
+    changePassword,
     forgotPassword,
-    resetPassword
+    resetPassword,
+    verifyAccessToken,
 };
+
