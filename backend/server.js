@@ -10,7 +10,10 @@ const port = 4000;
 // Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(cors());
+app.use(cors({
+   origin: process.env.CLIENT_URL || "http://localhost:3000", // Allow the client URL
+   credentials: true, // Enable cookies to be sent with cross-origin requests
+}));
 app.use(cookieParser());
 
 // Database connection
