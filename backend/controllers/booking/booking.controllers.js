@@ -54,34 +54,82 @@ const checkVehicleAvailability = async (req, res) => {
    }
 }
 
-const addBooking = async (req, res) => {
+// const addBooking = async (req, res) => {
+//    try {
+//       const userId = req.user._id
+//       const { showroomId, vehicleId } = req.params
+//       const { status } = req.body
+
+//       if (!userId) { return res.status(400).json({ success: false, msg: "User ID required" }); }
+//       if (!showroomId) { return res.status(400).json({ success: false, msg: "Showroom ID required" }); }
+//       if (!vehicleId) { return res.status(400).json({ success: false, msg: "Vehicle ID required" }); }
+
+//       const user = await User.findById(userId)
+//       if (!user) { return res.status(404).json({ success: false, msg: "User not found" }) }
+
+//       const showroomWithVehicle = await ShowroomVehicle.findOne({ showroomId, vehicleId })
+//       if (!showroomWithVehicle) { return res.status(404).json({ success: false, msg: "Vehicle not found in showroom" }) }
+//       if (showroomWithVehicle.count <= 0) { return res.status(400).json({ success: false, msg: "Vehicle is unavailable for booking" }); }
+
+//       const booking = await Booking.create({
+//          userId, showroomId, vehicleId, status: "Pending", date: new Date()
+//       })
+
+//       await booking.save()
+
+//       return res.status(201).json({ success: true, msg: "Payment is pending" })
+//    } catch (error) {
+//       console.error(error);
+//       return res.status(500).json({ success: false, msg: "An error occurred while booking" });
+//    }
+// }
+
+const createBooking = async (req, res) => {
    try {
       const userId = req.user._id
       const { showroomId, vehicleId } = req.params
-      const { status } = req.body
+      const { date, amount, paymentIntentId } = req.body;
 
-      if (!userId) { return res.status(400).json({ success: false, msg: "User ID required" }); }
-      if (!showroomId) { return res.status(400).json({ success: false, msg: "Showroom ID required" }); }
-      if (!vehicleId) { return res.status(400).json({ success: false, msg: "Vehicle ID required" }); }
+      if (!userId || !vehicleId || !date || !amount || !paymentIntentId) {
+         return errorHandler(res, 400, "All fields are required");
+      }
 
-      const user = await User.findById(userId)
-      if (!user) { return res.status(404).json({ success: false, msg: "User not found" }) }
+      const paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId);
+      let paymentStatus;
 
-      const showroomWithVehicle = await ShowroomVehicle.findOne({ showroomId, vehicleId })
-      if (!showroomWithVehicle) { return res.status(404).json({ success: false, msg: "Vehicle not found in showroom" }) }
-      if (showroomWithVehicle.count <= 0) { return res.status(400).json({ success: false, msg: "Vehicle is unavailable for booking" }); }
+      switch (paymentIntent.status) {
+         case "succeeded":
+            paymentStatus = "completed";
+            break;
+         case "requires_confirmation":
+         case "processing":
+            paymentStatus = "pending";
+            break;
+         case "canceled":
+            paymentStatus = "cancelled";
+            break;
+         default:
+            return errorHandler(res, 400, "Invalid payment status");
+      }
 
       const booking = await Booking.create({
-         userId, showroomId, vehicleId, status: "Pending", date: new Date()
-      })
+         userId,
+         vehicleId,
+         showroomId,
+         date,
+         paymentStatus,
+         amount,
+      });
 
-      await booking.save()
-
-      return res.status(201).json({ success: true, msg: "Payment is pending" })
+      return res.status(201).json({
+         success: true,
+         booking,
+         message: "Booking created successfully",
+      });
    } catch (error) {
-      console.error(error);
-      return res.status(500).json({ success: false, msg: "An error occurred while booking" });
+      console.error("Error creating booking:", error.message);
+      return errorHandler(res, 500, "Error occurred while creating the booking.");
    }
-}
+};
 
-export { checkVehicleAvailability, addBooking }
+export { checkVehicleAvailability, createBooking }

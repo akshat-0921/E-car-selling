@@ -2,29 +2,29 @@ const stripe = require("../../config/payment.js");
 import { errorHandler } from "../../utils/errorHandler.utils.js";
 
 const createPaymentIntent = async (req, res) => {
-    try {
-        const { amount, currency = "inr" } = req.body;
-        if (!amount) {
-            return errorHandler(res, 400, "Amount is required");
-        }
+   try {
+      const { amount, currency = "inr" } = req.body;
+      if (!amount) {
+         return errorHandler(res, 400, "Amount is required");
+      }
 
-        const paymentIntent = await stripe.paymentIntents.create({
-            amount,
-            currency,
-            payment_method_types: ["card"],
-        });
+      const paymentIntent = await stripe.paymentIntents.create({
+         amount: amount * 100,
+         currency,
+         payment_method_types: ["card"],
+      });
 
-        return res.status(200).json({
-            succes: true,
-            clientsecret: paymentIntent.client_secret,
-            paymentIntentId: paymentIntent.id,
-        });
-    } catch (error) {
-        console.error("Error creating payment intent:", error.message);
-        return errorHandler(res, 500, "Error occurred while creating the payment intent.");
-    }
+      return res.status(200).json({
+         succes: true,
+         clientsecret: paymentIntent.client_secret,
+         paymentIntentId: paymentIntent.id,
+      });
+   } catch (error) {
+      console.error("Error creating payment intent:", error.message);
+      return errorHandler(res, 500, "Error occurred while creating the payment intent.");
+   }
 };
 
 module.exports = {
-    createPaymentIntent,
+   createPaymentIntent,
 };

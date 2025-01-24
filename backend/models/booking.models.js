@@ -2,7 +2,7 @@ import mongoose, { Schema } from "mongoose";
 
 const BookingSchema = Schema({
    userId: { type: Schema.Types.ObjectId, ref: "User", required: true },
-   carId: { type: Schema.Types.ObjectId, ref: "Car", required: true },
+   vehicleId: { type: Schema.Types.ObjectId, ref: "Vehicle", required: true },
    showroomId: { type: Schema.Types.ObjectId, ref: "Showroom", required: true },
    bookingDate: { type: String, required: true },
    deliveryDate: { type: String, required: true },
