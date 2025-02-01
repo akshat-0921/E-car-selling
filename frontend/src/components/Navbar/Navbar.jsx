@@ -7,18 +7,15 @@ const Navbar = () => {
 
     return (
         <nav className="navbar">
-            {/* Left Section */}
             <div className="navbar-left">
                 <FaBars className="menu-icon" />
             </div>
 
-            {/* Center Section */}
             <div className="navbar-center">
                 <input type="text" placeholder="Search for cars..." className="search-input" />
                 <FaSearch className="search-icon" />
             </div>
 
-            {/* Right Section */}
             <div className="navbar-right">
                 <span className="tag">Brand</span>
                 <span className="tag">Showroom</span>
@@ -40,4 +37,5 @@ const Navbar = () => {
     );
 };
 
-export default Navbar
+export default Navbar;
+
