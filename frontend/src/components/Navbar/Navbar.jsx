@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { FaSearch, FaBars, FaHeart, FaUser } from "react-icons/fa";
 import "./Navbar.css";
 
-export const Navbar = () => {
+const Navbar = () => {
     const [showProfileMenu, setShowProfileMenu] = useState(false);
 
     return (
@@ -40,3 +40,4 @@ export const Navbar = () => {
     );
 };
 
+export default Navbar
