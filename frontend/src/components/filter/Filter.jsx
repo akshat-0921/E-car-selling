@@ -21,6 +21,21 @@ const bodyTypeOptions = [
    { value: "Truck", label: "Truck", image: truck },
 ];
 
+const brandOptions = [
+   { value: "Audi", label: "Audi" },
+   { value: "Bentley", label: "Bentley" },
+   { value: "BMW", label: "BMW" },
+   { value: "Bugatti", label: "Bugatti" },
+   { value: "Ferrari", label: "Ferrari" },
+   { value: "Ford", label: "Ford" },
+   { value: "Hyundai", label: "Hyundai" },
+   { value: "Jaguar", label: "Jaguar" },
+   { value: "Nissan", label: "Nissan" },
+   { value: "Porsche", label: "Porsche" },
+   { value: "Tesla", label: "Tesla" },
+   { value: "Toyota", label: "Toyota" },
+]
+
 const fuelTypeOptions = [
    { value: "Petrol", label: "Petrol" },
    { value: "Diesel", label: "Diesel" },
@@ -32,7 +47,7 @@ const Filter = ({ onFilterChange }) => {
       minPrice: 100000,
       maxPrice: 5000000,
       bodyType: [],
-      brand: "",
+      brand: "Audi",
       fuelType: [],
    });
 
@@ -132,14 +147,18 @@ const Filter = ({ onFilterChange }) => {
          />
 
          <label className="w-full text-sm text-gray-600 mt-3">Brand</label>
-         <input
-            type="text"
-            name="brand"
-            placeholder="Enter brand name"
-            value={filters.brand}
-            onChange={handleChange}
-            className="w-full p-2 mt-1 border rounded"
-         />
+         <Select
+            name="Brand"
+            options={brandOptions}
+            value={brandOptions.filter((option) =>
+               option.value === filters.brand
+            )}
+            onChange={(selected) => handleChange({ target: { name: "brand", value: selected.value } })}
+            className="w-full mt-1"
+            placeholder="Brand"
+         >
+
+         </Select>
 
          <label className="w-full text-sm text-gray-600 mt-3">Fuel Type</label>
          <Select
