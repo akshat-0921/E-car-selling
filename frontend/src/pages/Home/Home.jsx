@@ -1,7 +1,7 @@
 
-import Navbar from "../components/Navbar/Navbar";
-import BrandCard from "../components/brandCard/Brandcard";
-import ServiceCard from "../components/serviceCard/ServiceCard";
+import Navbar from "../../components/Navbar/Navbar";
+import BrandCard from "../../components/brandCard/Brandcard";
+import ServiceCard from "../../components/serviceCard/ServiceCard";
 
 const Home = () => {
    return (
