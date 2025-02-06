@@ -1,34 +1,44 @@
 import React, { useState } from "react";
 import { FaSearch, FaBars, FaHeart, FaUser } from "react-icons/fa";
-import "./Navbar.css";
 
 const Navbar = () => {
     const [showProfileMenu, setShowProfileMenu] = useState(false);
 
     return (
-        <nav className="navbar">
+        <nav className="flex items-center justify-between p-4 bg-gray-800 text-white">
+            {/* Left Section: Menu Icon */}
             <div className="navbar-left">
-                <FaBars className="menu-icon" />
+                <FaBars className="text-xl cursor-pointer" />
             </div>
 
-            <div className="navbar-center">
-                <input type="text" placeholder="Search for cars..." className="search-input" />
-                <FaSearch className="search-icon" />
+            {/* Center Section: Search Bar */}
+            <div className="flex items-center space-x-2">
+                <input
+                    type="text"
+                    placeholder="Search for cars..."
+                    className="p-2 w-64 bg-gray-700 rounded-md text-white focus:outline-none"
+                />
+                <FaSearch className="text-xl cursor-pointer" />
             </div>
 
-            <div className="navbar-right">
-                <span className="tag">Brand</span>
-                <span className="tag">Showroom</span>
-                <span className="tag">Location</span>
-                <FaHeart className="icon" />
+            {/* Right Section: Tags and Profile */}
+            <div className="flex items-center space-x-4">
+                <span className="cursor-pointer hover:text-blue-500">Brand</span>
+                <span className="cursor-pointer hover:text-blue-500">Showroom</span>
+                <span className="cursor-pointer hover:text-blue-500">Location</span>
+                <FaHeart className="text-xl cursor-pointer" />
 
-                <div className="profile-container">
-                    <FaUser className="icon profile-icon" onClick={() => setShowProfileMenu(!showProfileMenu)} />
+                {/* Profile Dropdown */}
+                <div className="relative">
+                    <FaUser
+                        className="text-xl cursor-pointer"
+                        onClick={() => setShowProfileMenu(!showProfileMenu)}
+                    />
                     {showProfileMenu && (
-                        <div className="profile-dropdown">
-                            <p>View Profile</p>
-                            <p>Settings</p>
-                            <p>Logout</p>
+                        <div className="absolute right-0 mt-2 w-48 bg-gray-700 text-white rounded-md shadow-lg">
+                            <p className="p-2 cursor-pointer hover:bg-gray-600">View Profile</p>
+                            <p className="p-2 cursor-pointer hover:bg-gray-600">Settings</p>
+                            <p className="p-2 cursor-pointer hover:bg-gray-600">Logout</p>
                         </div>
                     )}
                 </div>
@@ -38,4 +48,3 @@ const Navbar = () => {
 };
 
 export default Navbar;
-

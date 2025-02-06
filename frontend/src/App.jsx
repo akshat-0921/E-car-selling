@@ -6,16 +6,16 @@ import SignUpForm from "./components/Auth/SignUpForm";
 import Auth from "./components/Auth/Auth";
 
 function App() {
-   return (
-      <Router>
-         <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/login" element={<LoginForm />} />
-            <Route path="/signup" element={<SignUpForm />}></Route>
-            <Route path="/auth" element={<Auth />}></Route>
-         </Routes>
-      </Router>
-   );
+  return (
+    <Router>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/login" element={<LoginForm />} />
+        <Route path="/signup" element={<SignUpForm />}></Route>
+        <Route path="/auth" element={<Auth />}></Route>
+      </Routes>
+    </Router>
+  );
 }
 
 export default App;
