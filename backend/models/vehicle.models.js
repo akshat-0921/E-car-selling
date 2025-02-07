@@ -18,7 +18,7 @@ const performanceSchema = new Schema({
 
 // Transmission Schema
 const transmissionSchema = new Schema({
-   transmission: { type: String, default: "N/A" },
+   transmissionType: { type: String, default: "N/A" },
    gearCount: { type: String, default: "N/A" }
 });
 
