@@ -1,19 +1,18 @@
 import jwt from 'jsonwebtoken';
 import { errorHandler } from '../../utils/errorHandler.utils.js';
 
-export const adminAuth = (req, res, next) => {
-   const token = req.cookies.adminToken || req.headers.authorization?.split(' ')[1];
+const adminAuth = (req, res, next) => {
+   const token = req.cookies?.accessToken || req.headers["authorization"]?.replace("Bearer ", "");
 
    if (!token) {
-      return errorHandler(res, 401, "Access denied. No token provided");
+      return errorHandler(res, 401, "Unauthorized");
    }
 
    try {
-      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
       req.adminId = decoded.adminId;
       next();
    } catch (error) {
-      return errorHandler(res, 400, "Invalid token");
+      return errorHandler(res, 401, "Invalid or expired token");
    }
 };
-

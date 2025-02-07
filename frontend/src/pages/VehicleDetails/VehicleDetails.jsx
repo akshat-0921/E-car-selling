@@ -1,6 +1,5 @@
 import tucsonImage from "../../assets/cars/tucson.jpeg";
 
-
 import VehicleDetailsCard from "../../components/VehicleDetails/VehicleDetailsCard"
 
 const VehicleDetails = () => {
