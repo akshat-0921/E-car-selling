@@ -1,7 +1,4 @@
 import tucsonImage from "../../assets/cars/tucson.jpeg";
-// import fortunerImage from "./assets/cars/fortuner.jpg"; // Add more as needed
-
-
 import VehicleCard from "../../cards/Vehicle Card/VehicleCard"; // Ensure you import the VehicleCard component
 import Filter from "../../components/filter/Filter";
 
@@ -33,13 +30,19 @@ const vehicleList = [
 
 const Vehicle = () => {
    return (
-      <div className="flex">
-         <Filter />
-         <div className="flex flex-col w-full max-w-screen-sm gap-4 m-10">
-            {vehicleList.map((car, index) => (
-               <VehicleCard key={index} vehicle={car} />
-            ))}
+      <div className="flex flex-col justify-start">
+         <div className="flex w-screen items-start">
+            <div className="w-1/4 h-screen bg-gray-100 p-4">
+               <Filter />
+            </div>
+
+            <div className="flex flex-col w-3/4 overflow-auto max-w-screen gap-4 m-12">
+               {vehicleList.map((car, index) => (
+                  <VehicleCard key={index} vehicle={car} />
+               ))}
+            </div>
          </div>
+
       </div>
 
    );
