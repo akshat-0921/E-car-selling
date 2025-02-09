@@ -2,7 +2,8 @@ import React from "react";
 import Navbar from "../components/Navbar/Navbar";
 import BrandCard from "../components/BrandCard";
 import ServiceCard from "../components/ServiceCard";
-import Footer from "../components/Footer"; // Import Footer
+import Footer from "../components/Footer";
+import FeatureCard from "../components/FeatureCard";
 
 const Home = () => {
     return (
@@ -17,7 +18,7 @@ const Home = () => {
                 <h2 className="text-xl font-semibold text-gray-700">Book a Car Service</h2>
                 <ServiceCard />
             </div>
-
+            <FeatureCard />
             <Footer /> {/* Add Footer */}
         </>
     );
