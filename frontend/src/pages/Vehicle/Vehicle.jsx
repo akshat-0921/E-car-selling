@@ -1,6 +1,7 @@
 import tucsonImage from "../../assets/cars/tucson.jpeg";
-import VehicleCard from "../../cards/Vehicle Card/VehicleCard"; // Ensure you import the VehicleCard component
+import VehicleCard from "../../cards/Vehicle Card/VehicleCard";
 import Filter from "../../components/filter/Filter";
+import Navbar from "../../components/navbar/Navbar"; // Import Navbar
 
 const vehicleList = [
    {
@@ -8,12 +9,12 @@ const vehicleList = [
       brand: "Hyundai",
       name: "Tucson",
       category: "Diesel",
-      price: 3500000, // Number for better formatting
+      price: 3500000,
       mileage: "18 to 20.09 kmpl",
       transmission: "Automatic",
       power: "1997 cc",
       seating: "5",
-      image: tucsonImage // Replace with actual image URL
+      image: tucsonImage
    },
    {
       vehicleId: "94mkdsfp9m",
@@ -25,14 +26,15 @@ const vehicleList = [
       transmission: "Automatic",
       power: "2755 cc",
       seating: "7",
-      image: tucsonImage // Replace with actual image URL
+      image: tucsonImage
    }
 ];
-
 
 const Vehicle = () => {
    return (
       <div className="flex flex-col justify-start">
+         <Navbar /> {/* Merging remote Navbar component */}
+
          <div className="flex w-screen items-start">
             <div className="w-1/4 h-screen bg-gray-100 p-4">
                <Filter />
@@ -44,9 +46,7 @@ const Vehicle = () => {
                ))}
             </div>
          </div>
-
       </div>
-
    );
 };
 
