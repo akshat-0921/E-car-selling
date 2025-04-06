@@ -4,6 +4,8 @@ import LoginForm from "./components/Auth/LoginForm";
 import SignUpForm from "./components/Auth/SignUpForm";
 import Auth from "./components/Auth/Auth";
 import CarDetailPage from "./pages/CarDetailPage";
+import SearchPage from "./pages/SearchPage";
+import BrandSearchPage from "./pages/BrandSearchPage";
 
 function App() {
   return (
@@ -14,6 +16,8 @@ function App() {
         <Route path="/signup" element={<SignUpForm />} />
         <Route path="/auth" element={<Auth />} />
         <Route path="/car-model" element={<CarDetailPage />} />
+        <Route path="/search" element={<SearchPage />} />
+        <Route path="/brand-search" element={<BrandSearchPage />} />
       </Routes>
     </Router>
   );

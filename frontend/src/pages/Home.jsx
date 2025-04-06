@@ -26,13 +26,35 @@ const Home = () => {
             </section>
 
             {/* Car Model Navigation Button */}
-            <section className="text-center mt-12">
-                <button
-                    className="bg-indigo-600 text-white px-8 py-3 rounded-full text-lg font-semibold shadow-md hover:bg-indigo-700 transition"
-                    onClick={() => navigate("/car-model")}
-                >
-                    View Car Model Details
-                </button>
+            <section className="text-center mt-12 space-y-6">
+                <div>
+                    <button
+                        className="bg-indigo-600 text-white px-8 py-3 rounded-full text-lg font-semibold shadow-md hover:bg-indigo-700 transition"
+                        onClick={() => navigate("/car-model")}
+                    >
+                        View Car Model Details
+                    </button>
+                </div>
+
+                {/* Search Page Navigation Button */}
+                <div>
+                    <button
+                        className="bg-blue-500 text-white px-8 py-3 rounded-full text-lg font-semibold shadow-md hover:bg-blue-600 transition"
+                        onClick={() => navigate("/search")}
+                    >
+                        Search for Cars
+                    </button>
+                </div>
+
+                {/* Brand Search Page Navigation Button */}
+                <div>
+                    <button
+                        className="bg-green-500 text-white px-8 py-3 rounded-full text-lg font-semibold shadow-md hover:bg-green-600 transition"
+                        onClick={() => navigate("/brand-search")}
+                    >
+                        Explore by Brand
+                    </button>
+                </div>
             </section>
 
             {/* Features Section */}
