@@ -1,4 +1,4 @@
-
+import { useState } from "react";
 import { FaSearch, FaBars, FaHeart, FaUser } from "react-icons/fa";
 
 const Navbar = () => {
