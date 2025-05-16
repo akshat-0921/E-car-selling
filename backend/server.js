@@ -25,7 +25,8 @@ import showroomRouter from "./routes/showroom.routes.js";
 import userRoutes from "./routes/user.routes.js";
 import adminRoutes from "./routes/admin.routes.js";
 import vehicleRouter from "./routes/vehicle.routes.js";
-const paymentRoutes = require("./routes/payment.routes");
+import paymentRoutes from "./routes/payment.routes.js"
+// const paymentRoutes = require("./routes/payment.routes");
 
 // Routes
 app.use("/api/brand", brandRouter);

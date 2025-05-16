@@ -42,7 +42,7 @@ const SignUpForm = () => {
    };
 
    return (
-      <div className="flex justify-center items-center min-h-screen bg-gray-100">
+      <div className="flex justify-center items-start min-h-screen bg-gray-100">
          <form onSubmit={submitHandler} className="w-full max-w-md bg-white p-8 rounded-lg shadow-lg">
             <div className="mb-4">
                <p className="text-2xl font-semibold text-center text-blue-600">Sign Up</p>

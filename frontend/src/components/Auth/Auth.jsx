@@ -8,7 +8,7 @@ const Auth = () => {
    return (
       <div className="flex flex-col justify-center gap-0 items-center min-h-screen bg-gray-100 py-12">
          {/* Button Container */}
-         <div className="flex space-x-8">
+         <div className="flex space-x-8 mb-8">
             <button
                onClick={() => setIsSign(true)}
                className={`px-8 py-3 rounded-md shadow-md font-semibold transition-all duration-300 ${isSign ? "bg-blue-600 text-white" : "bg-gray-300"}`}

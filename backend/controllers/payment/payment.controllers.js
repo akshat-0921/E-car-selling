@@ -1,4 +1,4 @@
-const stripe = require("../../config/payment.js");
+import stripe from "../../config/payment.js";
 import { errorHandler } from "../../utils/errorHandler.utils.js";
 
 const createPaymentIntent = async (req, res) => {
@@ -15,8 +15,8 @@ const createPaymentIntent = async (req, res) => {
       });
 
       return res.status(200).json({
-         succes: true,
-         clientsecret: paymentIntent.client_secret,
+         success: true,
+         clientSecret: paymentIntent.client_secret,
          paymentIntentId: paymentIntent.id,
       });
    } catch (error) {
@@ -25,6 +25,4 @@ const createPaymentIntent = async (req, res) => {
    }
 };
 
-module.exports = {
-   createPaymentIntent,
-};
+export { createPaymentIntent }

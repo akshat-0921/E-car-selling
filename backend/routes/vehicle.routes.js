@@ -1,5 +1,5 @@
 import { Router } from "express"
-import { addVehicle, deleteVehicle, getAllVehicles, getVehicle, insertVehicleToShowroom, removeVehicleFromShowroom, updateVehicle } from "../controllers/vehicle/vehicle.controllers.js"
+import { addVehicle, deleteVehicle, getAllVehicles, getVehicle, insertVehicleToShowroom, purchaseVehicle, removeVehicleFromShowroom, updateVehicle } from "../controllers/vehicle/vehicle.controllers.js"
 import { brandIdValidation } from "../middlewares/validators/brandValidation.js"
 import { handleValidationErrors, vechicleValidation, vehicleIdValidation } from "../middlewares/validators/vechicleValidation.js"
 
@@ -12,6 +12,6 @@ router.put("/update/:_id", vehicleIdValidation, handleValidationErrors, updateVe
 router.delete("/delete/:_id", vehicleIdValidation, handleValidationErrors, deleteVehicle)
 router.post("/insert-to-showroom/:_id", vehicleIdValidation, handleValidationErrors, insertVehicleToShowroom)
 router.post("/delete-from-showroom/:_id", vehicleIdValidation, handleValidationErrors, removeVehicleFromShowroom)
-router.post("/purchase", vehicleController.purchaseVehicle);
+router.post("/purchase", purchaseVehicle);
 
 export default router

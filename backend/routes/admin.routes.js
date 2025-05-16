@@ -1,13 +1,13 @@
 import express from "express";
 import {
-    adminLogin,
-    refreshAccessToken,
-    adminLogout,
-    viewProfile,
-    changePassword,
-    forgotPassword,
-    resetPassword,
-    verifyAccessToken,
+   adminLogin,
+   refreshAccessToken,
+   adminLogout,
+   viewProfile,
+   changePassword,
+   forgotPassword,
+   resetPassword,
+   verifyAccessToken,
 } from "../controllers/admin/admin.controllers.js";
 
 const router = express.Router();
