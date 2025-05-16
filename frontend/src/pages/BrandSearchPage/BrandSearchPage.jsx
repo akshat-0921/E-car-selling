@@ -1,7 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import Navbar from "../components/Navbar/Navbar";
-import Footer from "../components/Footer";
+// import Navbar from "../../components/NavBar/Navbar";
+import Footer from "../../components/Footer/footer";
 
 const BrandSearchPage = () => {
     const navigate = useNavigate();

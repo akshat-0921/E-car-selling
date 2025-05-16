@@ -1,7 +1,7 @@
 import React from "react";
-import Navbar from "../components/Navbar/Navbar.jsx";
-import CarDetail from "../components/CarDetails.jsx";
-import Footer from "../components/footer.jsx";
+import Navbar from "../../components/NavBar/Navbar";
+import CarDetail from "../../components/CarModel/CarDetails";
+import Footer from "../../components/Footer/footer";
 
 const carData = {
     name: "Audi A6",

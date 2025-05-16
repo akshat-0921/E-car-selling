@@ -5,13 +5,12 @@ import Home from "./pages/Home/Home";
 import Auth from "./components/Auth/Auth";
 import Vehicle from "./pages/Vehicle/Vehicle";
 import VehicleDetails from "./pages/VehicleDetails/VehicleDetails";
-import SearchPage from "./pages/SearchPage";
-import BrandSearchPage from "./pages/BrandSearchPage";
+import SearchPage from "./pages/SearchPage/SearchPage";
+import BrandSearchPage from "./pages/BrandSearchPage/BrandSearchPage";
 
-// If you have LoginForm, SignUpForm, CarDetailPage components, import them as needed
 import LoginForm from "./components/Auth/LoginForm";
 import SignUpForm from "./components/Auth/SignUpForm";
-import CarDetailPage from "./pages/CarDetailPage";
+import CarDetailPage from "./pages/CarDetailPage/CarDetailPage";
 
 const router = createBrowserRouter([
   {
