@@ -5,6 +5,7 @@ import Auth from "./components/Auth/Auth";
 import Vehicle from "./pages/Vehicle/Vehicle";
 import VehicleDetails from "./pages/VehicleDetails/VehicleDetails";
 import AppLayout from "./pages/AppLayout/AppLayout";
+import Profile from "./pages/Profile/Profile";
 
 const router = createBrowserRouter([
    {
@@ -14,6 +15,10 @@ const router = createBrowserRouter([
          {
             path: "/",
             element: <Home />
+         },
+         {
+            path: "/profile",
+            element: <Profile />
          },
          {
             path: "/auth",

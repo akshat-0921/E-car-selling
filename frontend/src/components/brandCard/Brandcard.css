@@ -1,11 +1,10 @@
-.brand-card-container {
+/* .brand-card-container {
    display: grid;
    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
    gap: 20px;
    padding: 20px;
    max-width: 900px;
    margin: 50px auto;
-   /* Centers the card container */
 }
 
 .brand-card {
@@ -41,7 +40,6 @@
    margin: 0;
 }
 
-/* Responsive Design */
 @media (max-width: 768px) {
    .brand-card-container {
       grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
@@ -56,4 +54,4 @@
    .brand-card {
       padding: 10px;
    }
-}
+} */
