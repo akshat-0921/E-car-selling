@@ -1,9 +1,34 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Home from "./pages/Home";
-import LoginForm from "./components/Auth/LoginForm";
-import SignUpForm from "./components/Auth/SignUpForm";
+import { createBrowserRouter, BrowserRouter as Router, Routes, Route, RouterProvider } from "react-router-dom";
+import Home from "./pages/Home/Home";
 import Auth from "./components/Auth/Auth";
-import CarDetailPage from "./pages/CarDetailPage";
+import Vehicle from "./pages/Vehicle/Vehicle";
+import VehicleDetails from "./pages/VehicleDetails/VehicleDetails";
+import AppLayout from "./pages/AppLayout/AppLayout";
+
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: < AppLayout />,
+    children: [
+      {
+        path: "/",
+        element: <Home />
+      },
+      {
+        path: "/auth",
+        element: <Auth />
+      },
+      {
+        path: "/vehicles",
+        element: <Vehicle />
+      },
+      {
+        path: "/vehicles/:vehicleId",
+        element: <VehicleDetails />
+      },
+    ]
+  }
+])
 import SearchPage from "./pages/SearchPage";
 import BrandSearchPage from "./pages/BrandSearchPage";
 
@@ -21,6 +46,41 @@ function App() {
       </Routes>
     </Router>
   );
-}
 
-export default App;
+  import { createBrowserRouter, BrowserRouter as Router, Route, Routes, RouterProvider } from "react-router-dom";
+  import Home from "./pages/Home/Home";
+  import Auth from "./components/Auth/Auth";
+  import Vehicle from "./pages/Vehicle/Vehicle";
+  import VehicleDetails from "./pages/VehicleDetails/VehicleDetails";
+  import AppLayout from "./pages/AppLayout/AppLayout";
+
+  const router = createBrowserRouter([
+    {
+      path: "/",
+      element: < AppLayout />,
+      children: [
+        {
+          path: "/",
+          element: <Home />
+        },
+        {
+          path: "/auth",
+          element: <Auth />
+        },
+        {
+          path: "/vehicles",
+          element: <Vehicle />
+        },
+        {
+          path: "/vehicles/:vehicleId",
+          element: <VehicleDetails />
+        },
+      ]
+    }
+  ])
+
+  function App() {
+    return <RouterProvider router={router} />
+  }
+
+  export default App;
