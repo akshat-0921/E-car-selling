@@ -7,6 +7,7 @@ import Vehicle from "./pages/Vehicle/Vehicle";
 import VehicleDetails from "./pages/VehicleDetails/VehicleDetails";
 import SearchPage from "./pages/SearchPage/SearchPage";
 import BrandSearchPage from "./pages/BrandSearchPage/BrandSearchPage";
+import ShowroomPage from "./pages/Showroom/showRoom";
 
 import LoginForm from "./components/Auth/LoginForm";
 import SignUpForm from "./components/Auth/SignUpForm";
@@ -26,6 +27,7 @@ const router = createBrowserRouter([
       { path: "car-model", element: <CarDetailPage /> },
       { path: "search", element: <SearchPage /> },
       { path: "brand-search", element: <BrandSearchPage /> },
+      { path: "showrooms", element: <ShowroomPage /> },
     ],
   },
 ]);
