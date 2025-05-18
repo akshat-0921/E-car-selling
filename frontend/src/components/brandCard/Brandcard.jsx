@@ -12,15 +12,21 @@ const BrandCard = () => {
     };
 
     return (
-        <div className="flex flex-wrap justify-center gap-6 p-6">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6 p-6 max-w-[1200px] mx-auto">
             {brands.map((brand, index) => (
                 <div
                     key={index}
-                    className="brand-card w-48 h-48 flex flex-col items-center justify-center p-4 bg-white rounded-lg shadow-lg cursor-pointer hover:scale-105 transform transition-all duration-200"
+                    className="w-full flex flex-col items-center justify-center p-4 bg-white rounded-lg shadow-lg cursor-pointer hover:scale-105 transform transition-transform duration-200 border border-gray-200"
                     onClick={() => handleClick(brand.name)}
                 >
-                    <img src={brand.img} alt={brand.name} className="w-24 h-24 object-contain mb-4" />
-                    <p className="text-xl font-semibold text-gray-800">{brand.name}</p>
+                    <img
+                        src={brand.img}
+                        alt={brand.name}
+                        className="w-24 h-24 object-contain mb-3"
+                    />
+                    <p className="text-base font-semibold text-gray-800 text-center">
+                        {brand.name}
+                    </p>
                 </div>
             ))}
         </div>

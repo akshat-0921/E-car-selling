@@ -179,7 +179,7 @@ const Filter = ({ onFilterChange }) => {
          >
             Apply Filters
          </button>
-      </form >
+      </form>
    );
 };
 
