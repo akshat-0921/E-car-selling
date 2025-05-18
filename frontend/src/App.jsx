@@ -34,7 +34,8 @@ const router = createBrowserRouter([
       { path: "Test-Drive", element: <TestDriveBookingPage /> },
     ],
   },
-]);
+]
+);
 
 function App() {
   return <RouterProvider router={router} />;
