@@ -1,7 +1,6 @@
 import tucsonImage from "../../assets/cars/tucson.jpeg";
 import VehicleCard from "../../cards/Vehicle Card/VehicleCard";
 import Filter from "../../components/filter/Filter";
-import Navbar from "../../components/navbar/Navbar"; // Import Navbar
 
 const vehicleList = [
    {
@@ -33,7 +32,6 @@ const vehicleList = [
 const Vehicle = () => {
    return (
       <div className="flex flex-col justify-start">
-         <Navbar /> {/* Merging remote Navbar component */}
 
          <div className="flex w-screen items-start">
             <div className="w-1/4 h-screen bg-gray-100 p-4">

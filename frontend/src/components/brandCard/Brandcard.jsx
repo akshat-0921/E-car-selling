@@ -12,6 +12,7 @@ const BrandCard = () => {
     }
 
     return (
+<<<<<<< HEAD
         <div className="max-w-7xl mx-auto">
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6 p-6">
                 {brands.map((brand, index) => (
@@ -21,6 +22,28 @@ const BrandCard = () => {
                         onClick={() => handleClick(brand.name)}
                     >
                         <div className="absolute inset-0 bg-gradient-to-b from-rose-500/0 to-rose-500/80 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10"></div>
+=======
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6 p-6 max-w-[1200px] mx-auto">
+            {brands.map((brand, index) => (
+                <div
+                    key={index}
+                    className="w-full flex flex-col items-center justify-center p-4 bg-white rounded-lg shadow-lg cursor-pointer hover:scale-105 transform transition-transform duration-200 border border-gray-200"
+                    onClick={() => handleClick(brand.name)}
+                >
+                    <img
+                        src={brand.img}
+                        alt={brand.name}
+                        className="w-24 h-24 object-contain mb-3"
+                    />
+                    <p className="text-base font-semibold text-gray-800 text-center">
+                        {brand.name}
+                    </p>
+                </div>
+            ))}
+        </div>
+    );
+};
+>>>>>>> 2938213ae7de6588b056e54312fd3e314af3882a
 
                         <div className="flex flex-col items-center justify-center p-6 h-full">
                             <div className="w-24 h-24 flex items-center justify-center mb-4 relative z-0 group-hover:scale-110 transition-transform duration-300">
