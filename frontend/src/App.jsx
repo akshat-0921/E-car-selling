@@ -30,7 +30,8 @@ const router = createBrowserRouter([
       { path: "showrooms", element: <ShowroomPage /> },
     ],
   },
-]);
+]
+);
 
 function App() {
   return <RouterProvider router={router} />;
