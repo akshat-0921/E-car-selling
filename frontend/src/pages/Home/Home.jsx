@@ -1,8 +1,9 @@
 
 import { useNavigate } from "react-router-dom";
 import BrandCard from "../../components/brandCard/Brandcard";
-import ServiceCard from "../../components/serviceCard/ServiceCard";
+// import ServiceCard from "../../components/serviceCard/ServiceCard";
 import FeatureCard from "../../components/FeatureCard/Featurecard";
+import HeroSlider from "../../components/HeroSlider/slider";
 
 const Home = () => {
     const navigate = useNavigate();
@@ -11,16 +12,17 @@ const Home = () => {
         <>
             {/* <Navbar /> */}
             {/* Car Brand Section */}
+            <HeroSlider />
             <section className="text-center mt-16 px-4">
                 <h1 className="text-3xl font-bold text-gray-800 mb-6">Select Your Car Brand</h1>
                 <BrandCard />
             </section>
 
-            {/* Car Service Section */}
+            {/* Car Service Section
             <section className="text-center mt-12 px-4">
                 <h2 className="text-2xl font-semibold text-gray-700 mb-6">Book a Car Service</h2>
                 <ServiceCard />
-            </section>
+            </section> */}
 
             {/* Car Model Navigation Button */}
             <section className="text-center mt-12 space-y-6">
@@ -51,14 +53,34 @@ const Home = () => {
                         Explore by Brand
                     </button>
                 </div>
+
+                <div>
+                    <button
+                        className="bg-purple-500 text-white px-8 py-3 rounded-full text-lg font-semibold shadow-md hover:bg-purple-600 transition"
+                        onClick={() => navigate("/showrooms")}
+                    >
+                        View Nearby Showrooms
+                    </button>
+                </div>
+
+                <div className="text-center mt-12">
+                    <button
+                        className="bg-emerald-600 text-white px-8 py-3 rounded-full text-lg font-semibold shadow-md hover:bg-emerald-700 transition"
+                        onClick={() => navigate("/Car-Model-Selection")}
+                    >
+                        Select Car Model
+                    </button>
+                </div>
+                <div className="text-center mt-12">
+                    <button
+                        className="bg-orange-600 text-white px-8 py-3 rounded-full text-lg font-semibold shadow-md hover:bg-orange-700 transition"
+                        onClick={() => navigate("/Test-Drive")}
+                    >
+                        Test Drive
+                    </button>
+                </div>
             </section>
 
-            <button
-                className="bg-purple-500 text-white px-8 py-3 rounded-full text-lg font-semibold shadow-md hover:bg-green-600 transition"
-                onClick={() => navigate("/showrooms")}
-            >
-                View Nearby Showrooms
-            </button>
 
 
             {/* Features Section */}

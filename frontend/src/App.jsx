@@ -8,6 +8,8 @@ import VehicleDetails from "./pages/VehicleDetails/VehicleDetails";
 import SearchPage from "./pages/SearchPage/SearchPage";
 import BrandSearchPage from "./pages/BrandSearchPage/BrandSearchPage";
 import ShowroomPage from "./pages/Showroom/showRoom";
+import CarModelSelectionPage from "./pages/CarModelSelection/carlist";
+import TestDriveBookingPage from "./pages/TestDrive/testDrive";
 
 import LoginForm from "./components/Auth/LoginForm";
 import SignUpForm from "./components/Auth/SignUpForm";
@@ -28,6 +30,8 @@ const router = createBrowserRouter([
       { path: "search", element: <SearchPage /> },
       { path: "brand-search", element: <BrandSearchPage /> },
       { path: "showrooms", element: <ShowroomPage /> },
+      { path: "Car-Model-Selection", element: <CarModelSelectionPage /> },
+      { path: "Test-Drive", element: <TestDriveBookingPage /> },
     ],
   },
 ]);
