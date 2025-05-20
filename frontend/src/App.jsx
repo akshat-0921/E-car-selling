@@ -1,4 +1,4 @@
-import React from "react";
+
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
 import AppLayout from "./pages/AppLayout/AppLayout";
@@ -17,29 +17,29 @@ import TestDriveBookingPage from "./pages/TestDrive/testDrive";
 import Profile from "./pages/Profile/Profile";
 
 const router = createBrowserRouter([
-  {
-    path: "/",
-    element: <AppLayout />,
-    children: [
-      { index: true, element: <Home /> },
-      { path: "auth", element: <Auth /> },
-      { path: "login", element: <LoginForm /> },
-      { path: "signup", element: <SignUpForm /> },
-      { path: "vehicles", element: <Vehicle /> },
-      { path: "vehicles/:vehicleId", element: <VehicleDetails /> },
-      { path: "car-model", element: <CarDetailPage /> },
-      { path: "search", element: <SearchPage /> },
-      { path: "brand-search", element: <BrandSearchPage /> },
-      { path: "showrooms", element: <ShowroomPage /> },
-      { path: "Car-Model-Selection", element: <CarModelSelectionPage /> },
-      { path: "Test-Drive", element: <TestDriveBookingPage /> },
-      { path: "profile", element: <Profile /> },
-    ],
-  },
+   {
+      path: "/",
+      element: <AppLayout />,
+      children: [
+         { index: true, element: <Home /> },
+         { path: "auth", element: <Auth /> },
+         { path: "login", element: <LoginForm /> },
+         { path: "signup", element: <SignUpForm /> },
+         { path: "vehicles", element: <Vehicle /> },
+         { path: "vehicles/:vehicleId", element: <VehicleDetails /> },
+         { path: "car-model", element: <CarDetailPage /> },
+         { path: "search", element: <SearchPage /> },
+         { path: "brand-search", element: <BrandSearchPage /> },
+         { path: "showrooms", element: <ShowroomPage /> },
+         { path: "Car-Model-Selection", element: <CarModelSelectionPage /> },
+         { path: "Test-Drive", element: <TestDriveBookingPage /> },
+         { path: "profile", element: <Profile /> },
+      ],
+   },
 ]);
 
 function App() {
-  return <RouterProvider router={router} />;
+   return <RouterProvider router={router} />;
 }
 
 export default App;
