@@ -1,186 +1,183 @@
-import { useState } from "react";
-import { FaFilter } from "react-icons/fa";
-import Select from "react-select";
+import { useState, useEffect } from "react"
+import { useNavigate, useLocation } from "react-router-dom"
+// import { useGetAllBrandsQuery } from "../../redux/api/brandApi"
 
-// Import SVG images.  Adjust paths if needed.
-import suv from "../../assets/bodyType/suv_clr.svg";
-import sedan from "../../assets/bodyType/sedan_clr.svg";
-import hatchback from "../../assets/bodyType/hatchback_clr.svg";
-import coupe from "../../assets/bodyType/coupe_clr.svg";
-import convertible from "../../assets/bodyType/convertible_clr.svg";
-import van from "../../assets/bodyType/van_clr.svg";
-import truck from "../../assets/bodyType/truck_clr.svg";
+const VehicleFilters = ({ onFilter }) => {
+   const navigate = useNavigate()
+   const location = useLocation()
+   const { data: brandsData } = useGetAllBrandsQuery()
 
-const bodyTypeOptions = [
-   { value: "SUV", label: "SUV", image: suv },
-   { value: "Sedan", label: "Sedan", image: sedan },
-   { value: "Hatchback", label: "Hatchback", image: hatchback },
-   { value: "Coupe", label: "Coupe", image: coupe },
-   { value: "Convertible", label: "Convertible", image: convertible },
-   { value: "Van", label: "Van", image: van },
-   { value: "Truck", label: "Truck", image: truck },
-];
-
-const brandOptions = [
-   { value: "Audi", label: "Audi" },
-   { value: "Bentley", label: "Bentley" },
-   { value: "BMW", label: "BMW" },
-   { value: "Bugatti", label: "Bugatti" },
-   { value: "Ferrari", label: "Ferrari" },
-   { value: "Ford", label: "Ford" },
-   { value: "Hyundai", label: "Hyundai" },
-   { value: "Jaguar", label: "Jaguar" },
-   { value: "Nissan", label: "Nissan" },
-   { value: "Porsche", label: "Porsche" },
-   { value: "Tesla", label: "Tesla" },
-   { value: "Toyota", label: "Toyota" },
-]
-
-const fuelTypeOptions = [
-   { value: "Petrol", label: "Petrol" },
-   { value: "Diesel", label: "Diesel" },
-   { value: "Electric", label: "Electric" },
-];
-
-const Filter = ({ onFilterChange }) => {
+   // Initialize filters from URL params
    const [filters, setFilters] = useState({
-      minPrice: 100000,
-      maxPrice: 5000000,
-      bodyType: [],
-      brand: "Audi",
-      fuelType: [],
-   });
+      brand: "",
+      minPrice: "",
+      maxPrice: "",
+      fuelType: "",
+      transmission: "",
+      sort: "newest",
+   })
 
-   const handleMultipleChange = (selected, name) => {
+   // Update filters when URL changes
+   useEffect(() => {
+      const params = new URLSearchParams(location.search)
+
       setFilters({
-         ...filters,
-         [name]: selected ? selected.map(item => item.value) : [],
-      });
-   };
+         brand: params.get("brand") || "",
+         minPrice: params.get("minPrice") || "",
+         maxPrice: params.get("maxPrice") || "",
+         fuelType: params.get("fuelType") || "",
+         transmission: params.get("transmission") || "",
+         sort: params.get("sort") || "newest",
+      })
+   }, [location.search])
 
-   const handleChange = (e) => {
-      const { name, value } = e.target;
+   // Handle filter change
+   const handleFilterChange = (e) => {
+      const { name, value } = e.target
+
       setFilters({
          ...filters,
          [name]: value,
-      });
-   };
+      })
+   }
 
-   const handleMinPriceChange = (e) => {
-      const minPrice = parseInt(e.target.value, 10);
-      if (minPrice <= filters.maxPrice) {
-         setFilters({ ...filters, minPrice });
+   // Apply filters
+   const applyFilters = () => {
+      const params = new URLSearchParams(location.search)
+
+      // Update or remove params based on filter values
+      Object.entries(filters).forEach(([key, value]) => {
+         if (value) {
+            params.set(key, value)
+         } else {
+            params.delete(key)
+         }
+      })
+
+      // Keep search query if it exists
+      const searchQuery = params.get("q")
+      if (searchQuery) {
+         params.set("q", searchQuery)
       }
-   };
 
-   const handleMaxPriceChange = (e) => {
-      const maxPrice = parseInt(e.target.value, 10);
-      if (maxPrice >= filters.minPrice) {
-         setFilters({ ...filters, maxPrice });
+      // Navigate to the same page with updated query params
+      navigate(`${location.pathname}?${params.toString()}`)
+
+      // Call the callback
+      if (onFilter) {
+         onFilter(filters)
       }
-   };
+   }
 
-   const handleSubmit = (e) => {
-      e.preventDefault();
-      onFilterChange(filters);
-   };
+   // Reset filters
+   const resetFilters = () => {
+      // Keep only search query if it exists
+      const params = new URLSearchParams()
+      const searchQuery = new URLSearchParams(location.search).get("q")
 
-   const formatOptionLabel = ({ label, image }) => (
-      <div className="flex items-center">
-         <img src={image} alt={label} className="w-6 h-6 mr-2" />
-         <span>{label}</span>
-      </div>
-   );
+      if (searchQuery) {
+         params.set("q", searchQuery)
+      }
+
+      // Reset filters state
+      setFilters({
+         brand: "",
+         minPrice: "",
+         maxPrice: "",
+         fuelType: "",
+         transmission: "",
+         sort: "newest",
+      })
+
+      // Navigate to the same page with only search query
+      navigate(`${location.pathname}?${params.toString()}`)
+
+      // Call the callback
+      if (onFilter) {
+         onFilter({})
+      }
+   }
 
    return (
-      <form onSubmit={handleSubmit} className="flex flex-col p-4 bg-white rounded-lg shadow-md w-full max-w-sm">
-         <div className="flex items-center mb-4">
-            <FaFilter size={18} className="mr-2 text-gray-700" />
-            <p className="text-lg font-semibold text-gray-700">Filter By</p>
+      <div className="vehicle-filters">
+         <h3>Filter Vehicles</h3>
+
+         <div className="filter-group">
+            <label htmlFor="brand">Brand</label>
+            <select id="brand" name="brand" value={filters.brand} onChange={handleFilterChange}>
+               <option value="">All Brands</option>
+               {brandsData?.brands?.map((brand) => (
+                  <option key={brand._id} value={brand._id}>
+                     {brand.name}
+                  </option>
+               ))}
+            </select>
          </div>
 
-         <label className="w-full text-sm text-gray-600">Price Range</label>
-         <div className="flex flex-col space-y-2 mt-1">
-            <div className="flex items-center">
-               <label htmlFor="minPrice" className="mr-2">Min:</label>
-               <input
-                  type="range"
-                  id="minPrice"
-                  name="minPrice"
-                  min="100000"
-                  max="5000000"
-                  value={filters.minPrice}
-                  onChange={handleMinPriceChange}
-                  className="w-full"
-               />
-               <span className="ml-2">₹{filters.minPrice}</span>
-            </div>
-            <div className="flex items-center mt-2">
-               <label htmlFor="maxPrice" className="mr-2">Max:</label>
-               <input
-                  type="range"
-                  id="maxPrice"
-                  name="maxPrice"
-                  min="100000"
-                  max="5000000"
-                  value={filters.maxPrice}
-                  onChange={handleMaxPriceChange}
-                  className="w-full"
-               />
-               <span className="ml-2">₹{filters.maxPrice}</span>
-            </div>
+         <div className="filter-group">
+            <label htmlFor="minPrice">Min Price</label>
+            <input
+               type="number"
+               id="minPrice"
+               name="minPrice"
+               value={filters.minPrice}
+               onChange={handleFilterChange}
+               placeholder="Min Price"
+            />
          </div>
 
-         <label className="w-full text-sm text-gray-600 mt-3">Body Type</label>
-         <Select
-            name="bodyType"
-            isMulti
-            options={bodyTypeOptions}
-            value={bodyTypeOptions.filter((option) =>
-               filters.bodyType.includes(option.value)
-            )}
-            onChange={(selected) => handleMultipleChange(selected, "bodyType")}
-            className="w-full mt-1"
-            placeholder="Select body type"
-            formatOptionLabel={formatOptionLabel}
-            formatGroupLabel={formatOptionLabel} // For grouped options (if any)
-         />
+         <div className="filter-group">
+            <label htmlFor="maxPrice">Max Price</label>
+            <input
+               type="number"
+               id="maxPrice"
+               name="maxPrice"
+               value={filters.maxPrice}
+               onChange={handleFilterChange}
+               placeholder="Max Price"
+            />
+         </div>
 
-         <label className="w-full text-sm text-gray-600 mt-3">Brand</label>
-         <Select
-            name="Brand"
-            options={brandOptions}
-            value={brandOptions.filter((option) =>
-               option.value === filters.brand
-            )}
-            onChange={(selected) => handleChange({ target: { name: "brand", value: selected.value } })}
-            className="w-full mt-1"
-            placeholder="Brand"
-         >
+         <div className="filter-group">
+            <label htmlFor="fuelType">Fuel Type</label>
+            <select id="fuelType" name="fuelType" value={filters.fuelType} onChange={handleFilterChange}>
+               <option value="">All Types</option>
+               <option value="electric">Electric</option>
+               <option value="hybrid">Hybrid</option>
+               <option value="plugin_hybrid">Plug-in Hybrid</option>
+            </select>
+         </div>
 
-         </Select>
+         <div className="filter-group">
+            <label htmlFor="transmission">Transmission</label>
+            <select id="transmission" name="transmission" value={filters.transmission} onChange={handleFilterChange}>
+               <option value="">All Transmissions</option>
+               <option value="automatic">Automatic</option>
+               <option value="manual">Manual</option>
+            </select>
+         </div>
 
-         <label className="w-full text-sm text-gray-600 mt-3">Fuel Type</label>
-         <Select
-            name="fuelType"
-            isMulti
-            options={fuelTypeOptions}
-            value={fuelTypeOptions.filter((option) =>
-               filters.fuelType.includes(option.value)
-            )}
-            onChange={(selected) => handleMultipleChange(selected, "fuelType")}
-            className="w-full mt-1"
-            placeholder="Select fuel type"
-         />
+         <div className="filter-group">
+            <label htmlFor="sort">Sort By</label>
+            <select id="sort" name="sort" value={filters.sort} onChange={handleFilterChange}>
+               <option value="newest">Newest First</option>
+               <option value="oldest">Oldest First</option>
+               <option value="price_low">Price: Low to High</option>
+               <option value="price_high">Price: High to Low</option>
+            </select>
+         </div>
 
-         <button
-            type="submit"
-            className="w-full mt-4 bg-blue-600 text-white p-2 rounded hover:bg-blue-700"
-         >
-            Apply Filters
-         </button>
-      </form>
-   );
-};
+         <div className="filter-actions">
+            <button type="button" className="apply-filters-btn" onClick={applyFilters}>
+               Apply Filters
+            </button>
 
-export default Filter;
+            <button type="button" className="reset-filters-btn" onClick={resetFilters}>
+               Reset Filters
+            </button>
+         </div>
+      </div>
+   )
+}
+
+export default VehicleFilters

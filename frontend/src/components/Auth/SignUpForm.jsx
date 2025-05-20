@@ -1,156 +1,210 @@
-import { useState } from "react";
-import { FaEye, FaEyeSlash } from "react-icons/fa";
+
+import { useState } from "react"
+import { Link, useNavigate } from "react-router-dom"
+// import { useSendOtpMutation, useVerifyOtpMutation, useRegisterMutation } from "../../redux/api/authApi"
 
 const SignUpForm = () => {
-   const [firstName, setFirstName] = useState("");
-   const [lastName, setLastName] = useState("");
-   const [email, setEmail] = useState("");
-   const [password, setPassword] = useState("");
-   const [showPassword, setShowPassword] = useState(false);
-   const [otp, setOtp] = useState("");
-   const [otpSent, setOtpSent] = useState(false);
-   const [verified, setVerified] = useState(false);
+   const navigate = useNavigate()
+   const [step, setStep] = useState(1)
+   const [formData, setFormData] = useState({
+      name: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+      otp: "",
+   })
+   const [errors, setErrors] = useState({})
+   const [isOtpSent, setIsOtpSent] = useState(false)
+   const [isOtpVerified, setIsOtpVerified] = useState(false)
 
-   // Simulating API call for sending OTP
-   const sendOtpHandler = async () => {
-      if (!email) {
-         alert("Please enter your email to receive OTP!");
-         return;
-      }
-      // Simulated API call (replace with actual backend request)
-      console.log("Sending OTP to:", email);
-      setOtpSent(true);
-   };
+   const [sendOtp, { isLoading: isSendingOtp }] = useSendOtpMutation()
+   const [verifyOtp, { isLoading: isVerifyingOtp }] = useVerifyOtpMutation()
+   const [register, { isLoading: isRegistering }] = useRegisterMutation()
 
-   // Simulating API call for OTP verification
-   const verifyOtpHandler = async () => {
-      if (otp === "123456") { // Replace with actual OTP verification logic
-         setVerified(true);
-         alert("OTP Verified!");
-      } else {
-         alert("Invalid OTP, please try again.");
-      }
-   };
+   const handleChange = (e) => {
+      const { name, value } = e.target
+      setFormData({
+         ...formData,
+         [name]: value,
+      })
 
-   const submitHandler = (e) => {
-      e.preventDefault();
-      if (!verified) {
-         alert("Please verify your OTP first!");
-         return;
+      // Clear error for this field when user types
+      if (errors[name]) {
+         setErrors({
+            ...errors,
+            [name]: "",
+         })
       }
-      console.log("User Signed Up:", { firstName, lastName, email, password });
-   };
+   }
+
+   const validateForm = () => {
+      const newErrors = {}
+
+      if (step === 1) {
+         if (!formData.name.trim()) newErrors.name = "Name is required"
+         if (!formData.email.trim()) newErrors.email = "Email is required"
+         else if (!/\S+@\S+\.\S+/.test(formData.email)) newErrors.email = "Email is invalid"
+      } else if (step === 2) {
+         if (!formData.otp.trim()) newErrors.otp = "OTP is required"
+         else if (formData.otp.length !== 6) newErrors.otp = "OTP must be 6 digits"
+      } else if (step === 3) {
+         if (!formData.password) newErrors.password = "Password is required"
+         else if (formData.password.length < 8) newErrors.password = "Password must be at least 8 characters"
+
+         if (!formData.confirmPassword) newErrors.confirmPassword = "Please confirm your password"
+         else if (formData.password !== formData.confirmPassword) newErrors.confirmPassword = "Passwords do not match"
+      }
+
+      setErrors(newErrors)
+      return Object.keys(newErrors).length === 0
+   }
+
+   const handleSendOtp = async (e) => {
+      e.preventDefault()
+
+      if (!validateForm()) return
+
+      try {
+         const response = await sendOtp({ email: formData.email }).unwrap()
+         if (response.success) {
+            setIsOtpSent(true)
+            setStep(2)
+         }
+      } catch (error) {
+         setErrors({
+            ...errors,
+            general: error.data?.message || "Failed to send OTP. Please try again.",
+         })
+      }
+   }
+
+   const handleVerifyOtp = async (e) => {
+      e.preventDefault()
+
+      if (!validateForm()) return
+
+      try {
+         const response = await verifyOtp({
+            email: formData.email,
+            otp: formData.otp,
+         }).unwrap()
+
+         if (response.success) {
+            setIsOtpVerified(true)
+            setStep(3)
+         }
+      } catch (error) {
+         setErrors({
+            ...errors,
+            otp: error.data?.message || "Invalid OTP. Please try again.",
+         })
+      }
+   }
+
+   const handleRegister = async (e) => {
+      e.preventDefault()
+
+      if (!validateForm()) return
+
+      try {
+         const response = await register({
+            name: formData.name,
+            email: formData.email,
+            password: formData.password,
+         }).unwrap()
+
+         if (response.success) {
+            navigate("/login")
+         }
+      } catch (error) {
+         setErrors({
+            ...errors,
+            general: error.data?.message || "Registration failed. Please try again.",
+         })
+      }
+   }
 
    return (
-      <div className="flex justify-center items-start min-h-screen bg-gray-100">
-         <form onSubmit={submitHandler} className="w-full max-w-md bg-white p-8 rounded-lg shadow-lg">
-            <div className="mb-4">
-               <p className="text-2xl font-semibold text-center text-blue-600">Sign Up</p>
-               <hr className="my-2" />
-            </div>
+      <div className="signup-form-container">
+         <h2>Create Your Account</h2>
 
-            <div className="mb-4">
-               <label className="block text-sm font-medium text-gray-700">First Name:</label>
-               <input
-                  onChange={(e) => setFirstName(e.target.value)}
-                  value={firstName}
-                  type="text"
-                  placeholder="First Name"
-                  required
-                  className="w-full mt-2 px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-               />
-            </div>
+         {errors.general && <div className="error-message">{errors.general}</div>}
 
-            <div className="mb-4">
-               <label className="block text-sm font-medium text-gray-700">Last Name:</label>
-               <input
-                  onChange={(e) => setLastName(e.target.value)}
-                  value={lastName}
-                  type="text"
-                  placeholder="Last Name"
-                  required
-                  className="w-full mt-2 px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-               />
-            </div>
-
-            <div className="mb-4">
-               <label className="block text-sm font-medium text-gray-700">Email:</label>
-               <input
-                  onChange={(e) => setEmail(e.target.value)}
-                  value={email}
-                  type="email"
-                  placeholder="Email"
-                  required
-                  className="w-full mt-2 px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-               />
-            </div>
-
-            <div className="mb-4 relative">
-               <label className="block text-sm font-medium text-gray-700">Password</label>
-               <div className="relative">
-                  <input
-                     onChange={(e) => setPassword(e.target.value)}
-                     value={password}
-                     type={showPassword ? "text" : "password"}
-                     placeholder="Password"
-                     required
-                     className="w-full mt-2 px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 pr-10"
-                  />
-                  <button
-                     type="button"
-                     className="absolute top-3 right-3 text-gray-500 hover:text-gray-700"
-                     onClick={() => setShowPassword(!showPassword)}
-                  >
-                     {showPassword ? <FaEyeSlash size={18} /> : <FaEye size={18} />}
-                  </button>
+         {step === 1 && (
+            <form onSubmit={handleSendOtp}>
+               <div className="form-group">
+                  <label htmlFor="name">Full Name</label>
+                  <input type="text" id="name" name="name" value={formData.name} onChange={handleChange} />
+                  {errors.name && <span className="error">{errors.name}</span>}
                </div>
-            </div>
 
-            {!otpSent ? (
-               <button
-                  type="button"
-                  onClick={sendOtpHandler}
-                  className="w-1/3 py-2 bg-green-500 text-white font-semibold rounded-md shadow-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-400 mb-4"
-               >
-                  Send OTP
+               <div className="form-group">
+                  <label htmlFor="email">Email</label>
+                  <input type="email" id="email" name="email" value={formData.email} onChange={handleChange} />
+                  {errors.email && <span className="error">{errors.email}</span>}
+               </div>
+
+               <button type="submit" className="submit-btn" disabled={isSendingOtp}>
+                  {isSendingOtp ? "Sending OTP..." : "Send OTP"}
                </button>
-            ) : (
-               <>
-                  <div className="mb-4">
-                     <label className="block text-sm font-medium text-gray-700">Enter OTP:</label>
-                     <input
-                        onChange={(e) => setOtp(e.target.value)}
-                        value={otp}
-                        type="text"
-                        placeholder="Enter OTP"
-                        required
-                        className="w-1/3 mt-2 px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                     />
-                  </div>
+            </form>
+         )}
 
-                  <button
-                     type="button"
-                     onClick={verifyOtpHandler}
-                     className="w-1/3 py-2 bg-blue-500 text-white font-semibold rounded-md shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 mb-4"
-                  >
-                     Verify OTP
-                  </button>
-               </>
-            )}
-            <div>
-               <button
-                  type="submit"
-                  className={`w-1/3 py-2 text-white font-semibold rounded-md shadow-md focus:outline-none focus:ring-2 ${verified ? "bg-blue-600 hover:bg-blue-700 focus:ring-blue-500" : "bg-gray-400 cursor-not-allowed"
-                     }`}
-                  disabled={!verified}
-               >
-                  Sign Up
+         {step === 2 && (
+            <form onSubmit={handleVerifyOtp}>
+               <div className="form-group">
+                  <label htmlFor="otp">Enter OTP sent to your email</label>
+                  <input type="text" id="otp" name="otp" value={formData.otp} onChange={handleChange} maxLength={6} />
+                  {errors.otp && <span className="error">{errors.otp}</span>}
+               </div>
+
+               <button type="submit" className="submit-btn" disabled={isVerifyingOtp}>
+                  {isVerifyingOtp ? "Verifying..." : "Verify OTP"}
                </button>
-            </div>
 
-         </form>
+               <button type="button" className="back-btn" onClick={() => setStep(1)} disabled={isSendingOtp}>
+                  Back
+               </button>
+            </form>
+         )}
+
+         {step === 3 && (
+            <form onSubmit={handleRegister}>
+               <div className="form-group">
+                  <label htmlFor="password">Password</label>
+                  <input type="password" id="password" name="password" value={formData.password} onChange={handleChange} />
+                  {errors.password && <span className="error">{errors.password}</span>}
+               </div>
+
+               <div className="form-group">
+                  <label htmlFor="confirmPassword">Confirm Password</label>
+                  <input
+                     type="password"
+                     id="confirmPassword"
+                     name="confirmPassword"
+                     value={formData.confirmPassword}
+                     onChange={handleChange}
+                  />
+                  {errors.confirmPassword && <span className="error">{errors.confirmPassword}</span>}
+               </div>
+
+               <button type="submit" className="submit-btn" disabled={isRegistering}>
+                  {isRegistering ? "Creating Account..." : "Create Account"}
+               </button>
+
+               <button type="button" className="back-btn" onClick={() => setStep(2)} disabled={isVerifyingOtp}>
+                  Back
+               </button>
+            </form>
+         )}
+
+         <div className="form-footer">
+            <p>
+               Already have an account? <Link to="/login">Login</Link>
+            </p>
+         </div>
       </div>
-   );
-};
+   )
+}
 
-export default SignUpForm;
+export default SignUpForm

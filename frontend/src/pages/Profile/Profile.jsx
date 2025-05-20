@@ -1,4 +1,3 @@
-"use client"
 
 import { useState } from "react"
 import { FaUser, FaEdit, FaCheck, FaEnvelope, FaPhone, FaMapMarkerAlt, FaIdCard } from "react-icons/fa"

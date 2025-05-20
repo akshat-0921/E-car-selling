@@ -1,5 +1,3 @@
-"use client"
-
 import { useState } from "react"
 import { Calendar, Car, CheckCircle, MapPin, Phone } from "lucide-react"
 import ServiceCard from "../../components/serviceCard/ServiceCard"
