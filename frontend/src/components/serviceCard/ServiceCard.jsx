@@ -1,7 +1,8 @@
 import React, { useState } from "react";
-import brandImages from "../../assets/brandImages";
+import brandImages from "../../assets/brandImages"; // Assuming it’s an object of images
 
-const serviceBg = brandImages["CarService"] || Object.values(brandImages)[0];
+// Choose a specific service-related image from brandImages
+const serviceBg = brandImages["CarService"] || Object.values(brandImages)[0]; // fallback
 
 const serviceCharges = {
   Tesla: 5000,
