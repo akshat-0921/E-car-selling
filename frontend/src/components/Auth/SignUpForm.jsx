@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
+import axios from "axios"
 
 const SignUpForm = () => {
    const [firstName, setFirstName] = useState("");
@@ -9,148 +10,150 @@ const SignUpForm = () => {
    const [showPassword, setShowPassword] = useState(false);
    const [otp, setOtp] = useState("");
    const [otpSent, setOtpSent] = useState(false);
-   const [verified, setVerified] = useState(false);
+   const [phoneNumber, setPhoneNumber] = useState("");
 
-   // Simulating API call for sending OTP
+   const API = import.meta.env.VITE_BACKEND_URL;
+
    const sendOtpHandler = async () => {
-      if (!email) {
-         alert("Please enter your email to receive OTP!");
-         return;
-      }
-      // Simulated API call (replace with actual backend request)
-      console.log("Sending OTP to:", email);
-      setOtpSent(true);
-   };
-
-   // Simulating API call for OTP verification
-   const verifyOtpHandler = async () => {
-      if (otp === "123456") { // Replace with actual OTP verification logic
-         setVerified(true);
-         alert("OTP Verified!");
-      } else {
-         alert("Invalid OTP, please try again.");
+      if (!email) return alert("Please enter your email to receive OTP!");
+      console.log(API)
+      try {
+         const res = await axios.post(`${API}/user/send-otp`, { email });
+         alert("OTP sent to your email!");
+         setOtpSent(true);
+      } catch (error) {
+         console.log(error)
+         alert(error.response?.data?.message || "Failed to send OTP");
       }
    };
 
-   const submitHandler = (e) => {
+   const submitHandler = async (e) => {
       e.preventDefault();
-      if (!verified) {
-         alert("Please verify your OTP first!");
+
+      if (!otpSent) {
+         alert("Please send OTP to your email first!")
+         return
+      }
+
+      if (!otp || otp.length !== 6) {
+         alert("Please enter a valid 6 digit OTP");
          return;
       }
-      console.log("User Signed Up:", { firstName, lastName, email, password });
+
+      try {
+         const res = await axios.post(`${API}/user/register`, {
+            firstName,
+            lastName,
+            email,
+            phoneNumber,
+            password,
+            otp,
+         });
+
+         alert(res.data.message || "Registered successfully!")
+
+      } catch (error) {
+         alert(error.response?.data?.message || "Registration failed")
+      }
    };
 
    return (
-      <div className="flex justify-center items-start min-h-screen bg-gray-100">
-         <form onSubmit={submitHandler} className="w-full max-w-md bg-white p-8 rounded-lg shadow-lg">
-            <div className="mb-4">
-               <p className="text-2xl font-semibold text-center text-blue-600">Sign Up</p>
-               <hr className="my-2" />
-            </div>
+      <form
+         onSubmit={submitHandler}
+         className="bg-white p-8 rounded-2xl shadow-lg max-w-md mx-auto mt-10"
+      >
+         <h2 className="text-2xl font-bold text-center text-blue-600 mb-6">Sign Up</h2>
 
+         <div className="flex flex-col sm:flex-row gap-4 mb-4">
+            <input
+               type="text"
+               placeholder="First Name"
+               required
+               value={firstName}
+               onChange={(e) => setFirstName(e.target.value)}
+               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+            <input
+               type="text"
+               placeholder="Last Name"
+               required
+               value={lastName}
+               onChange={(e) => setLastName(e.target.value)}
+               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+         </div>
+
+         <div className="mb-4">
+            <input
+               type="email"
+               placeholder="Email"
+               required
+               value={email}
+               onChange={(e) => setEmail(e.target.value)}
+               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+         </div>
+
+         <div className="mb-4">
+            <input
+               type="string"
+               placeholder="Phone Number"
+               required
+               value={phoneNumber}
+               onChange={(e) => setPhoneNumber(e.target.value)}
+               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+         </div>
+
+         <div className="mb-4 relative">
+            <input
+               type={showPassword ? "text" : "password"}
+               placeholder="Password"
+               required
+               value={password}
+               onChange={(e) => setPassword(e.target.value)}
+               className="w-full px-4 py-2 border border-gray-300 rounded-lg pr-12 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+            <button
+               type="button"
+               className="absolute right-4 top-2.5 text-gray-500 hover:text-gray-700"
+               onClick={() => setShowPassword(!showPassword)}
+               tabIndex={-1}
+            >
+               {showPassword ? <FaEyeSlash size={20} /> : <FaEye size={20} />}
+            </button>
+         </div>
+
+         {!otpSent ? (
+            <button
+               type="button"
+               onClick={sendOtpHandler}
+               className="w-full py-2 mb-4 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 transition"
+            >
+               Send OTP
+            </button>
+         ) : (
             <div className="mb-4">
-               <label className="block text-sm font-medium text-gray-700">First Name:</label>
                <input
-                  onChange={(e) => setFirstName(e.target.value)}
-                  value={firstName}
                   type="text"
-                  placeholder="First Name"
+                  placeholder="Enter OTP"
                   required
-                  className="w-full mt-2 px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  value={otp}
+                  onChange={(e) => setOtp(e.target.value)}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                />
             </div>
+         )}
 
-            <div className="mb-4">
-               <label className="block text-sm font-medium text-gray-700">Last Name:</label>
-               <input
-                  onChange={(e) => setLastName(e.target.value)}
-                  value={lastName}
-                  type="text"
-                  placeholder="Last Name"
-                  required
-                  className="w-full mt-2 px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-               />
-            </div>
-
-            <div className="mb-4">
-               <label className="block text-sm font-medium text-gray-700">Email:</label>
-               <input
-                  onChange={(e) => setEmail(e.target.value)}
-                  value={email}
-                  type="email"
-                  placeholder="Email"
-                  required
-                  className="w-full mt-2 px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-               />
-            </div>
-
-            <div className="mb-4 relative">
-               <label className="block text-sm font-medium text-gray-700">Password</label>
-               <div className="relative">
-                  <input
-                     onChange={(e) => setPassword(e.target.value)}
-                     value={password}
-                     type={showPassword ? "text" : "password"}
-                     placeholder="Password"
-                     required
-                     className="w-full mt-2 px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 pr-10"
-                  />
-                  <button
-                     type="button"
-                     className="absolute top-3 right-3 text-gray-500 hover:text-gray-700"
-                     onClick={() => setShowPassword(!showPassword)}
-                  >
-                     {showPassword ? <FaEyeSlash size={18} /> : <FaEye size={18} />}
-                  </button>
-               </div>
-            </div>
-
-            {!otpSent ? (
-               <button
-                  type="button"
-                  onClick={sendOtpHandler}
-                  className="w-1/3 py-2 bg-green-500 text-white font-semibold rounded-md shadow-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-400 mb-4"
-               >
-                  Send OTP
-               </button>
-            ) : (
-               <>
-                  <div className="mb-4">
-                     <label className="block text-sm font-medium text-gray-700">Enter OTP:</label>
-                     <input
-                        onChange={(e) => setOtp(e.target.value)}
-                        value={otp}
-                        type="text"
-                        placeholder="Enter OTP"
-                        required
-                        className="w-1/3 mt-2 px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                     />
-                  </div>
-
-                  <button
-                     type="button"
-                     onClick={verifyOtpHandler}
-                     className="w-1/3 py-2 bg-blue-500 text-white font-semibold rounded-md shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 mb-4"
-                  >
-                     Verify OTP
-                  </button>
-               </>
-            )}
-            <div>
-               <button
-                  type="submit"
-                  className={`w-1/3 py-2 text-white font-semibold rounded-md shadow-md focus:outline-none focus:ring-2 ${verified ? "bg-blue-600 hover:bg-blue-700 focus:ring-blue-500" : "bg-gray-400 cursor-not-allowed"
-                     }`}
-                  disabled={!verified}
-               >
-                  Sign Up
-               </button>
-            </div>
-
-         </form>
-      </div>
+         <button
+            type="submit"
+            className={`w-full py-2 font-semibold rounded-lg shadow text-white transition ${otpSent ? "bg-blue-600 hover:bg-blue-700 focus:ring-2 focus:ring-blue-500" : "bg-gray-400 cursor-not-allowed"
+               }`}
+            disabled={!otpSent}
+         >
+            Sign Up
+         </button>
+      </form>
    );
 };
-
 export default SignUpForm;

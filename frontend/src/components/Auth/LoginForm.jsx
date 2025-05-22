@@ -8,60 +8,54 @@ const LoginForm = () => {
 
    const onSubmitHandler = (e) => {
       e.preventDefault();
+      // Handle login submit here
    };
 
    return (
-      <div className="flex justify-center items-start min-h-screen bg-gray-100">
-         <form onSubmit={onSubmitHandler} className="w-full max-w-md bg-white p-8 rounded-lg shadow-lg">
-            <div className="mb-4">
-               <p className="text-2xl font-semibold text-center text-blue-600">Login</p>
-               <hr className="my-2" />
-            </div>
+      <form onSubmit={onSubmitHandler} className="bg-white p-6 rounded-md shadow-md max-w-md mx-auto">
+         <h2 className="text-xl font-semibold text-center text-blue-600 mb-4">Login</h2>
 
-            <div className="mb-4">
-               <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email:</label>
-               <input
-                  id="email"
-                  onChange={(e) => setEmail(e.target.value)}
-                  value={email}
-                  type="email"
-                  placeholder="Email"
-                  required
-                  className="w-full mt-2 px-4 py-2 border border-gray-300 rounded-md shadow-sm hover:shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-               />
-            </div>
+         <div className="mb-3">
+            <input
+               type="email"
+               placeholder="Email"
+               required
+               value={email}
+               onChange={(e) => setEmail(e.target.value)}
+               className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+         </div>
 
-            <div className="mb-4 relative">
-               <label htmlFor="password" className="block text-sm font-medium text-gray-700">Password</label>
-               <div className="relative">
-                  <input
-                     id="password"
-                     onChange={(e) => setPassword(e.target.value)}
-                     value={password}
-                     type={showPassword ? "text" : "password"}
-                     placeholder="Password"
-                     required
-                     className="w-full mt-2 px-4 py-2 border border-gray-300 rounded-md shadow-sm hover:shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                  <button className="absolute top-3 right-3 text-gray-500 hover:text-gray-700"
-                     onClick={() => setShowPassword(!showPassword)}
-                  >
-                     {showPassword ? <FaEyeSlash size={18} /> : <FaEye size={18} />}
-                  </button>
-               </div>
-            </div>
+         <div className="mb-3 relative">
+            <input
+               type={showPassword ? "text" : "password"}
+               placeholder="Password"
+               required
+               value={password}
+               onChange={(e) => setPassword(e.target.value)}
+               className="w-full px-3 py-2 border border-gray-300 rounded pr-10 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+            <button
+               type="button"
+               className="absolute right-3 top-2 text-gray-500 hover:text-gray-700"
+               onClick={() => setShowPassword(!showPassword)}
+               tabIndex={-1}
+            >
+               {showPassword ? <FaEyeSlash size={18} /> : <FaEye size={18} />}
+            </button>
+         </div>
 
-            <div>
-               <button
-                  type="submit"
-                  className="w-1/3 mb-4 py-2 px-4 bg-blue-600 text-white font-semibold rounded-md shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-               >
-                  Login
-               </button>
-            </div>
-            <button className="text-sm text-blue-600 underline hover:no-underline">Forgot Password?</button>
-         </form>
-      </div>
+         <button
+            type="submit"
+            className="w-full py-2 mb-3 bg-blue-600 text-white rounded font-semibold hover:bg-blue-700 transition"
+         >
+            Login
+         </button>
+
+         <button className="text-sm text-blue-600 underline hover:no-underline" type="button">
+            Forgot Password?
+         </button>
+      </form>
    );
 };
 

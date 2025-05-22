@@ -97,37 +97,6 @@ const Navbar = () => {
                      >
                         <FaUser className="text-sm" />
                      </button>
-                     {/* 
-                     {showProfileMenu && (
-                        <div className="absolute right-0 mt-2 w-56 bg-white text-gray-800 rounded-lg shadow-lg overflow-hidden z-50 border border-gray-200 animate-fadeIn">
-                           <div className="p-3 border-b border-gray-200 bg-gray-50">
-                              <p className="font-medium">John Doe</p>
-                              <p className="text-xs text-gray-500">john@gmail.com</p>
-                           </div>
-                           <div className="py-1">
-                              <Link to="/profile" className="flex items-center px-4 py-2 hover:bg-gray-100">
-                                 <span className="w-8">👤</span>
-                                 <span>View Profile</span>
-                              </Link>
-                              <Link to="/settings" className="flex items-center px-4 py-2 hover:bg-gray-100">
-                                 <span className="w-8">⚙️</span>
-                                 <span>Settings</span>
-                              </Link>
-                              <Link to="/favorites" className="flex items-center px-4 py-2 hover:bg-gray-100">
-                                 <span className="w-8">❤️</span>
-                                 <span>Favorites</span>
-                              </Link>
-                           </div>
-                           <div className="border-t border-gray-200">
-                              <button className="w-full text-left px-4 py-2 text-red-600 hover:bg-gray-100 flex items-center">
-                                 <span className="w-8">🚪</span>
-                                 <span>Logout</span>
-                              </button>
-                           </div>
-
-
-                        </div>
-                     )} */}
 
                      {showProfileMenu && (
                         <div className="absolute right-0 mt-2 w-56 bg-white text-gray-800 rounded-lg shadow-lg overflow-hidden z-50 border border-gray-200 animate-fadeIn">
