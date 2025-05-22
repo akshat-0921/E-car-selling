@@ -1,8 +1,12 @@
 import { useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import axios from "axios";
+import { useDispatch } from "react-redux";
+import { login } from "../../redux/authSlice";
 
 const LoginForm = () => {
+   const dispatch = useDispatch();
+
    const [email, setEmail] = useState("");
    const [password, setPassword] = useState("");
    const [showPassword, setShowPassword] = useState(false);
@@ -12,7 +16,9 @@ const LoginForm = () => {
    const onSubmitHandler = async (e) => {
       e.preventDefault();
       try {
-         const res = await axios.post(`${API}/user/login`, { email, password })
+         const res = await axios.post(`${API}/user/login`, { email, password }, { withCredentials: true })
+         dispatch(login(res.data.user))
+         console.log(res.data)
          alert(res.data.message || "Logged In successfully")
       } catch (error) {
          alert(error.response?.data?.message || "Failed to login")
