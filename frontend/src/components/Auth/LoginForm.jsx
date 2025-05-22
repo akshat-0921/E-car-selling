@@ -1,14 +1,24 @@
-import { useState } from "react";
-import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { useState, useContext } from "react"
+import { FaEye, FaEyeSlash } from "react-icons/fa"
+import { toast } from "react-toastify"
+import { AuthContext } from "../../context/AuthContext"
 
 const LoginForm = () => {
-   const [email, setEmail] = useState("");
-   const [password, setPassword] = useState("");
-   const [showPassword, setShowPassword] = useState(false);
+   const [email, setEmail] = useState("")
+   const [password, setPassword] = useState("")
+   const [showPassword, setShowPassword] = useState(false)
+   const { login, loading } = useContext(AuthContext)
 
-   const onSubmitHandler = (e) => {
-      e.preventDefault();
-   };
+   const onSubmitHandler = async (e) => {
+      e.preventDefault()
+
+      if (!email || !password) {
+         toast.error("Please enter both email and password")
+         return
+      }
+
+      await login({ email, password })
+   }
 
    return (
       <div className="flex justify-center items-start min-h-screen bg-gray-100">
@@ -19,7 +29,9 @@ const LoginForm = () => {
             </div>
 
             <div className="mb-4">
-               <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email:</label>
+               <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+                  Email:
+               </label>
                <input
                   id="email"
                   onChange={(e) => setEmail(e.target.value)}
@@ -32,7 +44,9 @@ const LoginForm = () => {
             </div>
 
             <div className="mb-4 relative">
-               <label htmlFor="password" className="block text-sm font-medium text-gray-700">Password</label>
+               <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+                  Password
+               </label>
                <div className="relative">
                   <input
                      id="password"
@@ -43,7 +57,9 @@ const LoginForm = () => {
                      required
                      className="w-full mt-2 px-4 py-2 border border-gray-300 rounded-md shadow-sm hover:shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
-                  <button className="absolute top-3 right-3 text-gray-500 hover:text-gray-700"
+                  <button
+                     type="button"
+                     className="absolute top-3 right-3 text-gray-500 hover:text-gray-700"
                      onClick={() => setShowPassword(!showPassword)}
                   >
                      {showPassword ? <FaEyeSlash size={18} /> : <FaEye size={18} />}
@@ -54,15 +70,22 @@ const LoginForm = () => {
             <div>
                <button
                   type="submit"
-                  className="w-1/3 mb-4 py-2 px-4 bg-blue-600 text-white font-semibold rounded-md shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  disabled={loading}
+                  className="w-1/3 mb-4 py-2 px-4 bg-blue-600 text-white font-semibold rounded-md shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-400 disabled:cursor-not-allowed"
                >
-                  Login
+                  {loading ? "Logging in..." : "Login"}
                </button>
             </div>
-            <button className="text-sm text-blue-600 underline hover:no-underline">Forgot Password?</button>
+            <button
+               type="button"
+               className="text-sm text-blue-600 underline hover:no-underline"
+               onClick={() => toast.info("Password reset functionality will be implemented soon!")}
+            >
+               Forgot Password?
+            </button>
          </form>
       </div>
-   );
-};
+   )
+}
 
-export default LoginForm;
+export default LoginForm

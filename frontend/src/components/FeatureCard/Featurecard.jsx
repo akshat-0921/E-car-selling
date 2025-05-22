@@ -1,5 +1,5 @@
-import { FaCar, FaRegCalendarCheck, FaTools, FaMoneyBillWave, FaShieldAlt, FaHeadset } from "react-icons/fa"
 
+import { FaCar, FaRegCalendarCheck, FaTools, FaMoneyBillWave, FaShieldAlt, FaHeadset } from "react-icons/fa"
 const features = [
     {
         icon: <FaHeadset className="text-5xl text-rose-500" />,

@@ -1,45 +1,93 @@
-import { useState } from "react";
-import { FaEye, FaEyeSlash } from "react-icons/fa";
+
+import { useState } from "react"
+import { FaEye, FaEyeSlash } from "react-icons/fa"
+import { toast } from "react-toastify"
+import { authAPI } from "../../api"
 
 const SignUpForm = () => {
-   const [firstName, setFirstName] = useState("");
-   const [lastName, setLastName] = useState("");
-   const [email, setEmail] = useState("");
-   const [password, setPassword] = useState("");
-   const [showPassword, setShowPassword] = useState(false);
-   const [otp, setOtp] = useState("");
-   const [otpSent, setOtpSent] = useState(false);
-   const [verified, setVerified] = useState(false);
+   const [firstName, setFirstName] = useState("")
+   const [lastName, setLastName] = useState("")
+   const [email, setEmail] = useState("")
+   const [password, setPassword] = useState("")
+   const [showPassword, setShowPassword] = useState(false)
+   const [otp, setOtp] = useState("")
+   const [otpSent, setOtpSent] = useState(false)
+   const [verified, setVerified] = useState(false)
+   const [loading, setLoading] = useState(false)
 
-   // Simulating API call for sending OTP
+   // Send OTP to user's email
    const sendOtpHandler = async () => {
       if (!email) {
-         alert("Please enter your email to receive OTP!");
-         return;
+         toast.error("Please enter your email to receive OTP!")
+         return
       }
-      // Simulated API call (replace with actual backend request)
-      console.log("Sending OTP to:", email);
-      setOtpSent(true);
-   };
 
-   // Simulating API call for OTP verification
+      try {
+         setLoading(true)
+         const response = await authAPI.sendOtp(email)
+         if (response.data.success) {
+            setOtpSent(true)
+            toast.success("OTP sent to your email!")
+         } else {
+            toast.error(response.data.message || "Failed to send OTP")
+         }
+      } catch (error) {
+         console.error("Error sending OTP:", error)
+         toast.error(error.response?.data?.message || "Failed to send OTP")
+      } finally {
+         setLoading(false)
+      }
+   }
+
+   // Verify OTP
    const verifyOtpHandler = async () => {
-      if (otp === "123456") { // Replace with actual OTP verification logic
-         setVerified(true);
-         alert("OTP Verified!");
-      } else {
-         alert("Invalid OTP, please try again.");
+      if (!otp) {
+         toast.error("Please enter the OTP")
+         return
       }
-   };
 
-   const submitHandler = (e) => {
-      e.preventDefault();
-      if (!verified) {
-         alert("Please verify your OTP first!");
-         return;
+      try {
+         setLoading(true)
+         const response = await authAPI.verifyOtp({ email, otp })
+         if (response.data.success) {
+            setVerified(true)
+            toast.success("OTP Verified!")
+         } else {
+            toast.error(response.data.message || "Invalid OTP, please try again.")
+         }
+      } catch (error) {
+         console.error("Error verifying OTP:", error)
+         toast.error(error.response?.data?.message || "Invalid OTP, please try again.")
+      } finally {
+         setLoading(false)
       }
-      console.log("User Signed Up:", { firstName, lastName, email, password });
-   };
+   }
+
+   // Submit signup form
+   const submitHandler = async (e) => {
+      e.preventDefault()
+      if (!verified) {
+         toast.error("Please verify your OTP first!")
+         return
+      }
+
+      try {
+         setLoading(true)
+         const userData = { firstName, lastName, email, password }
+         const response = await authAPI.signup(userData)
+         if (response.data.success) {
+            toast.success("Registration successful! Please login.")
+            // Redirect to login page or handle as needed
+         } else {
+            toast.error(response.data.message || "Registration failed")
+         }
+      } catch (error) {
+         console.error("Error during signup:", error)
+         toast.error(error.response?.data?.message || "Registration failed")
+      } finally {
+         setLoading(false)
+      }
+   }
 
    return (
       <div className="flex justify-center items-start min-h-screen bg-gray-100">
@@ -110,9 +158,10 @@ const SignUpForm = () => {
                <button
                   type="button"
                   onClick={sendOtpHandler}
-                  className="w-1/3 py-2 bg-green-500 text-white font-semibold rounded-md shadow-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-400 mb-4"
+                  disabled={loading}
+                  className="w-1/3 py-2 bg-green-500 text-white font-semibold rounded-md shadow-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-400 mb-4 disabled:bg-gray-400 disabled:cursor-not-allowed"
                >
-                  Send OTP
+                  {loading ? "Sending..." : "Send OTP"}
                </button>
             ) : (
                <>
@@ -131,26 +180,26 @@ const SignUpForm = () => {
                   <button
                      type="button"
                      onClick={verifyOtpHandler}
-                     className="w-1/3 py-2 bg-blue-500 text-white font-semibold rounded-md shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 mb-4"
+                     disabled={loading}
+                     className="w-1/3 py-2 bg-blue-500 text-white font-semibold rounded-md shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 mb-4 disabled:bg-gray-400 disabled:cursor-not-allowed"
                   >
-                     Verify OTP
+                     {loading ? "Verifying..." : "Verify OTP"}
                   </button>
                </>
             )}
             <div>
                <button
                   type="submit"
+                  disabled={!verified || loading}
                   className={`w-1/3 py-2 text-white font-semibold rounded-md shadow-md focus:outline-none focus:ring-2 ${verified ? "bg-blue-600 hover:bg-blue-700 focus:ring-blue-500" : "bg-gray-400 cursor-not-allowed"
-                     }`}
-                  disabled={!verified}
+                     } disabled:bg-gray-400 disabled:cursor-not-allowed`}
                >
-                  Sign Up
+                  {loading ? "Signing Up..." : "Sign Up"}
                </button>
             </div>
-
          </form>
       </div>
-   );
-};
+   )
+}
 
-export default SignUpForm;
+export default SignUpForm

@@ -1,43 +1,103 @@
-"use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Calendar, Car, CheckCircle, MapPin, Phone } from "lucide-react"
+import { useLocation } from "react-router-dom"
+import { showroomAPI, vehicleAPI } from "../../api"
+import { toast } from "react-toastify"
 import ServiceCard from "../../components/serviceCard/ServiceCard"
 import TestDriveCard from "../../components/testDriveCard/testdrivecard"
 
-const nearbyCenters = [
-    {
-        id: 1,
-        name: "Audi Center Delhi",
-        brand: "Audi",
-        model: ["Q5", "e-tron"],
-        address: "Ring Road, Delhi",
-        phone: "9876543210",
-    },
-    {
-        id: 2,
-        name: "BMW Center Gurugram",
-        brand: "BMW",
-        model: ["X5", "i4"],
-        address: "Sector 29, Gurugram",
-        phone: "9876543222",
-    },
-    {
-        id: 3,
-        name: "Tesla Center Noida",
-        brand: "Tesla",
-        model: ["Model S", "Model 3"],
-        address: "Sector 18, Noida",
-        phone: "9876543233",
-    },
-]
-
 const TestDriveBookingPage = () => {
+    const location = useLocation()
     const [step, setStep] = useState(1)
     const [purpose, setPurpose] = useState("service")
     const [selectedBrand, setSelectedBrand] = useState("")
     const [selectedModel, setSelectedModel] = useState("")
     const [selectedCenter, setSelectedCenter] = useState(null)
+    const [nearbyCenters, setNearbyCenters] = useState([])
+    const [brands, setBrands] = useState([])
+    const [models, setModels] = useState([])
+    const [loading, setLoading] = useState(true)
+
+    // Parse query parameters
+    useEffect(() => {
+        const searchParams = new URLSearchParams(location.search)
+        const showroomId = searchParams.get("showroom")
+
+        if (showroomId) {
+            // If showroom is specified, fetch it and set as selected
+            const fetchShowroom = async () => {
+                try {
+                    const response = await showroomAPI.getShowroomById(showroomId)
+                    if (response.data.success) {
+                        setSelectedCenter(response.data.showroom)
+                        setStep(2) // Skip to step 2
+                    }
+                } catch (error) {
+                    console.error("Error fetching showroom:", error)
+                }
+            }
+
+            fetchShowroom()
+        }
+    }, [location.search])
+
+    // Fetch centers, brands, and models
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                setLoading(true)
+
+                // Fetch showrooms/centers
+                const centersResponse = await showroomAPI.getAllShowrooms()
+                if (centersResponse.data.success) {
+                    setNearbyCenters(centersResponse.data.showrooms || [])
+                } else {
+                    toast.error(centersResponse.data.message || "Failed to fetch service centers")
+                }
+
+                // Fetch brands
+                const brandsResponse = await vehicleAPI.getAllVehicles({ groupBy: "brand" })
+                if (brandsResponse.data.success) {
+                    const uniqueBrands = [
+                        ...new Set(brandsResponse.data.vehicles.map((v) => (typeof v.brand === "object" ? v.brand.name : v.brand))),
+                    ]
+                    setBrands(uniqueBrands)
+                }
+            } catch (error) {
+                console.error("Error fetching data:", error)
+                toast.error("Failed to load service centers and brands")
+            } finally {
+                setLoading(false)
+            }
+        }
+
+        fetchData()
+    }, [])
+
+    // Fetch models when brand changes
+    useEffect(() => {
+        if (!selectedBrand) {
+            setModels([])
+            return
+        }
+
+        const fetchModels = async () => {
+            try {
+                const response = await vehicleAPI.getVehiclesByBrand(selectedBrand)
+                if (response.data.success) {
+                    setModels(response.data.vehicles || [])
+                } else {
+                    toast.error(response.data.message || "Failed to fetch models")
+                }
+            } catch (error) {
+                console.error("Error fetching models:", error)
+                toast.error("Failed to load vehicle models")
+            }
+        }
+
+        fetchModels()
+    }, [selectedBrand])
 
     const handleNext = () => {
         if (step === 1 && selectedCenter) setStep(2)
@@ -47,8 +107,16 @@ const TestDriveBookingPage = () => {
     const filteredCenters = nearbyCenters.filter(
         (c) =>
             (!selectedBrand || selectedBrand === "all" || c.brand === selectedBrand) &&
-            (!selectedModel || selectedModel === "all" || c.model.includes(selectedModel)),
+            (!selectedModel || selectedModel === "all" || (c.models && c.models.includes(selectedModel))),
     )
+
+    if (loading && step === 1) {
+        return (
+            <div className="flex justify-center items-center h-64">
+                <p className="text-gray-500">Loading service centers...</p>
+            </div>
+        )
+    }
 
     return (
         <div className="bg-slate-50 min-h-screen py-8">
@@ -62,7 +130,9 @@ const TestDriveBookingPage = () => {
                     <div className="flex items-center">
                         {[1, 2, 3].map((s, i) => (
                             <div key={s} className="flex items-center">
-                                <div className={`flex items-center justify-center w-10 h-10 rounded-full ${step >= s ? "bg-blue-600 text-white" : "bg-slate-200"}`}>
+                                <div
+                                    className={`flex items-center justify-center w-10 h-10 rounded-full ${step >= s ? "bg-blue-600 text-white" : "bg-slate-200"}`}
+                                >
                                     {s}
                                 </div>
                                 {i < 2 && <div className={`w-16 h-1 ${step > s ? "bg-blue-600" : "bg-slate-200"}`} />}
@@ -87,7 +157,7 @@ const TestDriveBookingPage = () => {
                             >
                                 <option value="">Select Brand</option>
                                 <option value="all">All Brands</option>
-                                {[...new Set(nearbyCenters.map((c) => c.brand))].map((brand) => (
+                                {brands.map((brand) => (
                                     <option key={brand} value={brand}>
                                         {brand}
                                     </option>
@@ -97,19 +167,16 @@ const TestDriveBookingPage = () => {
                             <select
                                 value={selectedModel}
                                 onChange={(e) => setSelectedModel(e.target.value)}
-                                disabled={!selectedBrand}
+                                disabled={!selectedBrand || selectedBrand === "all"}
                                 className="border p-2 rounded"
                             >
                                 <option value="">Select Model</option>
                                 <option value="all">All Models</option>
-                                {selectedBrand &&
-                                    nearbyCenters
-                                        .find((c) => c.brand === selectedBrand)
-                                        ?.model.map((m) => (
-                                            <option key={m} value={m}>
-                                                {m}
-                                            </option>
-                                        ))}
+                                {models.map((model) => (
+                                    <option key={model._id} value={model.name}>
+                                        {model.name}
+                                    </option>
+                                ))}
                             </select>
                         </div>
 
@@ -120,8 +187,8 @@ const TestDriveBookingPage = () => {
                             ) : (
                                 filteredCenters.map((center) => (
                                     <div
-                                        key={center.id}
-                                        className={`border rounded-lg p-4 my-2 flex justify-between items-center cursor-pointer transition hover:shadow ${selectedCenter?.id === center.id ? "border-blue-600 ring-1 ring-blue-600" : ""
+                                        key={center._id || center.id}
+                                        className={`border rounded-lg p-4 my-2 flex justify-between items-center cursor-pointer transition hover:shadow ${selectedCenter?._id === center._id ? "border-blue-600 ring-1 ring-blue-600" : ""
                                             }`}
                                         onClick={() => setSelectedCenter(center)}
                                     >
@@ -136,7 +203,7 @@ const TestDriveBookingPage = () => {
                                                 {center.phone}
                                             </p>
                                         </div>
-                                        {selectedCenter?.id === center.id && <CheckCircle className="w-5 h-5 text-blue-600" />}
+                                        {selectedCenter?._id === center._id && <CheckCircle className="w-5 h-5 text-blue-600" />}
                                     </div>
                                 ))
                             )}
@@ -205,17 +272,16 @@ const TestDriveBookingPage = () => {
                             {purpose === "service" ? "Schedule your service appointment" : "Schedule your test drive"}
                         </p>
 
-                        {purpose === "service" ? (
-                            <ServiceCard />
-                        ) : (
-                            <TestDriveCard />
-                        )}
+                        {purpose === "service" ? <ServiceCard /> : <TestDriveCard />}
 
                         <div className="flex justify-between">
                             <button onClick={() => setStep(2)} className="border px-4 py-2 rounded">
                                 Back
                             </button>
-                            <button disabled={purpose === "test"} className="bg-blue-600 text-white px-4 py-2 rounded disabled:opacity-50">
+                            <button
+                                disabled={purpose === "test"}
+                                className="bg-blue-600 text-white px-4 py-2 rounded disabled:opacity-50"
+                            >
                                 {purpose === "service" ? "Book Service" : "Book Test Drive"}
                             </button>
                         </div>
