@@ -15,6 +15,7 @@ import ShowroomPage from "./pages/Showroom/showRoom";
 import CarModelSelectionPage from "./pages/CarModelSelection/carlist";
 import TestDriveBookingPage from "./pages/TestDrive/testDrive";
 import Profile from "./pages/Profile/Profile";
+import SettingsPage from "./pages/Settings/Settings";
 
 const router = createBrowserRouter([
    {
@@ -34,6 +35,7 @@ const router = createBrowserRouter([
          { path: "Car-Model-Selection", element: <CarModelSelectionPage /> },
          { path: "Test-Drive", element: <TestDriveBookingPage /> },
          { path: "profile", element: <Profile /> },
+         { path: "settings", element: <SettingsPage /> }
       ],
    },
 ]);
