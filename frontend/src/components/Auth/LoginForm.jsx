@@ -1,14 +1,22 @@
 import { useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
+import axios from "axios";
 
 const LoginForm = () => {
    const [email, setEmail] = useState("");
    const [password, setPassword] = useState("");
    const [showPassword, setShowPassword] = useState(false);
 
-   const onSubmitHandler = (e) => {
+   const API = import.meta.env.VITE_BACKEND_URL;
+
+   const onSubmitHandler = async (e) => {
       e.preventDefault();
-      // Handle login submit here
+      try {
+         const res = await axios.post(`${API}/user/login`, { email, password })
+         alert(res.data.message || "Logged In successfully")
+      } catch (error) {
+         alert(error.response?.data?.message || "Failed to login")
+      }
    };
 
    return (
