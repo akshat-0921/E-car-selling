@@ -3,10 +3,10 @@ import { useState } from "react";
 import { FaSearch, FaBars, FaHeart, FaUser, FaTimes } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { useSelector, useDispatch } from 'react-redux';
-import { logout } from '../../redux/authSlice';
+import { logout, setLoading, setError } from '../../redux/authSlice';
 
 const Navbar = () => {
-   const { isLoggedIn, user } = useSelector((state) => state.auth);
+   const { isLoggedIn, user, loading, error } = useSelector((state) => state.auth);
    const dispatch = useDispatch();
 
    const [showProfileMenu, setShowProfileMenu] = useState(false);
@@ -18,27 +18,30 @@ const Navbar = () => {
    const API = import.meta.env.VITE_BACKEND_URL;
 
    const handleLogout = async () => {
+      dispatch(setLoading(true));
+      dispatch(setError(null));
+
       try {
          const res = await axios.post(`${API}/user/logout`, {}, { withCredentials: true });
          dispatch(logout());
          alert(res.data.message || "Logged out successfully");
-      } catch (error) {
-         console.log(error)
-         console.log(error)
-         alert(error?.response?.data?.message || "Cannot log out");
+      } catch (err) {
+         dispatch(setError(err?.response?.data?.message || "Logout failed"));
+         alert(err?.response?.data?.message || "Logout failed");
+      } finally {
+         dispatch(setLoading(false));
       }
    };
 
    return (
       <nav className="bg-gradient-to-r from-gray-900 to-gray-800 text-white shadow-md sticky top-0 z-50">
+         {/* Top Bar */}
          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex items-center justify-between h-16">
-               {/* Logo & Brand */}
+               {/* Logo */}
                <div className="flex-shrink-0 flex items-center">
                   <Link to="/" className="flex items-center">
-                     <span className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 to-indigo-600">
-                        Drive
-                     </span>
+                     <span className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 to-indigo-600">Drive</span>
                      <span className="ml-1 text-lg font-medium">It</span>
                   </Link>
                </div>
@@ -61,20 +64,12 @@ const Navbar = () => {
 
                {/* Desktop Links */}
                <div className="hidden md:flex items-center space-x-6">
-                  <Link to="/brands" className="text-gray-300 hover:text-white hover:underline underline-offset-4 decoration-indigo-500 decoration-2 font-medium transition-all">
-                     Brands
-                  </Link>
-                  <Link to="/showrooms" className="text-gray-300 hover:text-white hover:underline underline-offset-4 decoration-indigo-500 decoration-2 font-medium transition-all">
-                     Showrooms
-                  </Link>
-                  <Link to="/locations" className="text-gray-300 hover:text-white hover:underline underline-offset-4 decoration-indigo-500 decoration-2 font-medium transition-all">
-                     Locations
-                  </Link>
+                  <Link to="/brands" className="text-gray-300 hover:text-white font-medium">Brands</Link>
+                  <Link to="/showrooms" className="text-gray-300 hover:text-white font-medium">Showrooms</Link>
+                  <Link to="/locations" className="text-gray-300 hover:text-white font-medium">Locations</Link>
                   <Link to="/favorites" className="relative group">
                      <FaHeart className="text-xl text-gray-300 group-hover:text-indigo-400 transition-colors" />
-                     <span className="absolute -top-2 -right-2 bg-indigo-500 text-white text-xs font-bold rounded-full h-4 w-4 flex items-center justify-center">
-                        2
-                     </span>
+                     <span className="absolute -top-2 -right-2 bg-indigo-500 text-white text-xs font-bold rounded-full h-4 w-4 flex items-center justify-center">2</span>
                   </Link>
 
                   {/* Profile Dropdown */}
@@ -106,27 +101,26 @@ const Navbar = () => {
                                  </div>
                                  <div className="py-1">
                                     <Link to="/profile" className="flex items-center px-4 py-2 hover:bg-gray-100">
-                                       <span className="w-8">👤</span>
-                                       <span>View Profile</span>
+                                       <span className="w-8">👤</span> View Profile
                                     </Link>
                                     <Link to="/settings" className="flex items-center px-4 py-2 hover:bg-gray-100">
-                                       <span className="w-8">⚙️</span>
-                                       <span>Settings</span>
+                                       <span className="w-8">⚙️</span> Settings
                                     </Link>
                                     <Link to="/favorites" className="flex items-center px-4 py-2 hover:bg-gray-100">
-                                       <span className="w-8">❤️</span>
-                                       <span>Favorites</span>
+                                       <span className="w-8">❤️</span> Favorites
                                     </Link>
                                  </div>
                                  <div className="border-t border-gray-200">
                                     <button
                                        onClick={handleLogout}
                                        className="w-full text-left px-4 py-2 text-red-600 hover:bg-gray-100 flex items-center"
+                                       disabled={loading}
                                     >
                                        <span className="w-8">🚪</span>
-                                       <span>Logout</span>
+                                       <span>{loading ? "Logging out..." : "Logout"}</span>
                                     </button>
                                  </div>
+                                 {error && <p className="text-sm text-red-500 px-4 py-1">{error}</p>}
                               </>
                            ) : (
                               <>
@@ -155,13 +149,11 @@ const Navbar = () => {
                   </div>
                </div>
 
-               {/* Mobile menu button */}
+               {/* Mobile Hamburger */}
                <div className="md:hidden flex items-center space-x-4">
                   <Link to="/favorites" className="relative">
                      <FaHeart className="text-xl text-gray-300" />
-                     <span className="absolute -top-2 -right-2 bg-indigo-500 text-white text-xs font-bold rounded-full h-4 w-4 flex items-center justify-center">
-                        2
-                     </span>
+                     <span className="absolute -top-2 -right-2 bg-indigo-500 text-white text-xs font-bold rounded-full h-4 w-4 flex items-center justify-center">2</span>
                   </Link>
                   <button
                      onClick={() => setShowMobileMenu(!showMobileMenu)}
@@ -172,45 +164,6 @@ const Navbar = () => {
                </div>
             </div>
          </div>
-
-         {/* Mobile Menu */}
-         {showMobileMenu && (
-            <div className="md:hidden bg-gray-800 shadow-lg animate-slideDown">
-               <div className="px-4 pt-2 pb-3 space-y-1 border-b border-gray-700">
-                  <div className="relative mb-3 mt-2">
-                     <input
-                        type="text"
-                        placeholder="Search for cars..."
-                        className="w-full py-2 pl-10 pr-4 rounded-md bg-gray-700 border border-gray-600 text-white placeholder-gray-400 focus:outline-none focus:border-indigo-500"
-                     />
-                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <FaSearch className="text-gray-400" />
-                     </div>
-                  </div>
-                  <Link to="/brands" className="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-gray-700">Brands</Link>
-                  <Link to="/showrooms" className="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-gray-700">Showrooms</Link>
-                  <Link to="/locations" className="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-gray-700">Locations</Link>
-               </div>
-               {isLoggedIn && (
-                  <div className="pt-4 pb-3 border-t border-gray-700">
-                     <div className="flex items-center px-4">
-                        <div className="h-10 w-10 rounded-full bg-gray-700 flex items-center justify-center">
-                           <FaUser className="text-gray-300" />
-                        </div>
-                        <div className="ml-3">
-                           <div className="text-base font-medium text-white">{user?.name || "User"}</div>
-                           <div className="text-sm font-medium text-gray-400">{user?.email}</div>
-                        </div>
-                     </div>
-                     <div className="mt-3 px-2 space-y-1">
-                        <Link to="/profile" className="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-gray-700">Your Profile</Link>
-                        <Link to="/settings" className="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-gray-700">Settings</Link>
-                        <button onClick={handleLogout} className="w-full text-left block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-gray-700">Sign out</button>
-                     </div>
-                  </div>
-               )}
-            </div>
-         )}
       </nav>
    );
 };

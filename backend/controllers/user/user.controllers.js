@@ -68,14 +68,6 @@ const sendOtp = async (req, res) => {
    }
 };
 
-const verifyOtp = async (req, res) => {
-   try {
-      const { email, otp } = req.body
-      if (!email || !otp) { return res.status(404).json({ success: false, msg: "Enter all details" }) }
-   } catch (error) {
-
-   }
-}
 
 const registerUser = async (req, res) => {
    try {
@@ -146,21 +138,63 @@ const loginUser = async (req, res) => {
 
       const { accessToken, refreshToken } = await generateTokens(user);
 
+      // Only send required fields — nothing extra
+      const userSafe = {
+         firstName: user.firstName,
+         lastName: user.lastName,
+         email: user.email,
+         phoneNumber: user.phoneNumber,
+         address: user.address || "",
+      };
+
       return res
          .status(200)
          .cookie("accessToken", accessToken, { httpOnly: true })
          .cookie("refreshToken", refreshToken, { httpOnly: true })
          .json({
             success: true,
-            user: { id: user._id, email: user.email, role: user.role, address: user.address },
+            user: userSafe,
             accessToken,
-            refreshToken,
             message: "User logged in",
          });
    } catch (error) {
       return errorHandler(res, 500, "Cannot log in. Please try again later.");
    }
 };
+
+
+// const loginUser = async (req, res) => {
+//    try {
+//       const { email, password } = req.body;
+
+//       if (!email || !password) {
+//          return errorHandler(res, 400, "Email and password are required");
+//       }
+
+//       const user = await User.findOne({ email });
+
+//       if (!user || !(await bcrypt.compare(password, user.password))) {
+//          return errorHandler(res, 401, "Invalid email or password");
+//       }
+
+//       const { accessToken, refreshToken } = await generateTokens(user);
+
+//       return res
+//          .status(200)
+//          .cookie("accessToken", accessToken, { httpOnly: true })
+//          .cookie("refreshToken", refreshToken, { httpOnly: true })
+//          .json({
+//             success: true,
+//             // user: { id: user._id, email: user.email, role: user.role, address: user.address },
+//             user: { user },
+//             accessToken,
+//             refreshToken,
+//             message: "User logged in",
+//          });
+//    } catch (error) {
+//       return errorHandler(res, 500, "Cannot log in. Please try again later.");
+//    }
+// };
 
 const logoutUser = async (req, res) => {
    try {
@@ -175,6 +209,48 @@ const logoutUser = async (req, res) => {
       return errorHandler(res, 500, "Cannot log out. Please try again later.");
    }
 };
+
+
+const updateProfile = async (req, res) => {
+   try {
+      const userId = req.user._id;
+      const { firstName, lastName, email, phone } = req.body;
+
+      // Check if at least one field is provided
+      if (!firstName && !lastName && !email && !phone) {
+         return res.status(400).json({
+            success: false,
+            msg: "At least one field (firstName, lastName, email, or phone) is required to update profile",
+         });
+      }
+
+      const user = await User.findById(userId);
+      if (!user) return res.status(404).json({ success: false, msg: "User not found" });
+
+      if (firstName) user.firstName = firstName;
+      if (lastName) user.lastName = lastName;
+      if (email) user.email = email;
+      if (phone) user.phone = phone;
+
+      await user.save();
+
+      return res.status(200).json({
+         success: true,
+         msg: "Profile updated successfully",
+         user: {
+            firstName: user.firstName,
+            lastName: user.lastName,
+            email: user.email,
+            phone: user.phone,
+            address: user.address
+         },
+      });
+   } catch (error) {
+      console.error("Profile update error:", error);
+      return res.status(500).json({ success: false, msg: "Internal server error" });
+   }
+};
+
 
 const refreshAccessToken = async (req, res) => {
    try {
@@ -199,14 +275,13 @@ const refreshAccessToken = async (req, res) => {
          .cookie("refreshToken", refreshToken, { httpOnly: true })
          .json({
             success: true,
-            accessToken,
-            refreshToken,
             message: "Tokens refreshed successfully",
          });
    } catch (error) {
       return errorHandler(res, 500, "Failed to refresh tokens. Please try again later.");
    }
 };
+
 
 const changePassword = async (req, res) => {
    try {
@@ -301,5 +376,5 @@ export {
    changePassword,
    forgotPassword,
    resetPassword,
-
+   updateProfile,
 };

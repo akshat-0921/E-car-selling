@@ -1,11 +1,12 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import axios from "axios";
-import { useDispatch } from "react-redux";
-import { login } from "../../redux/authSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { login, setLoading, setError } from "../../redux/authSlice";
 
 const LoginForm = () => {
    const dispatch = useDispatch();
+   const { loading, error, user } = useSelector((state) => state.auth);
 
    const [email, setEmail] = useState("");
    const [password, setPassword] = useState("");
@@ -15,19 +16,30 @@ const LoginForm = () => {
 
    const onSubmitHandler = async (e) => {
       e.preventDefault();
+      dispatch(setLoading(true));
+      dispatch(setError(null));
+
       try {
-         const res = await axios.post(`${API}/user/login`, { email, password }, { withCredentials: true })
-         dispatch(login(res.data.user))
-         console.log(res.data)
-         alert(res.data.message || "Logged In successfully")
+         const res = await axios.post(`${API}/user/login`, { email, password }, { withCredentials: true });
+         dispatch(login(res.data.user));
+         alert(res.data.message || "Logged In successfully");
       } catch (error) {
-         alert(error.response?.data?.message || "Failed to login")
+         dispatch(setError(error.response?.data?.message || "Login failed"));
+         alert(error.response?.data?.message || "Failed to login");
+      } finally {
+         dispatch(setLoading(false));
       }
    };
+
+   // useEffect(() => {
+   //    if (user) console.log("User from Redux store changed:", user);
+   // }, [user]);
 
    return (
       <form onSubmit={onSubmitHandler} className="bg-white p-6 rounded-md shadow-md max-w-md mx-auto">
          <h2 className="text-xl font-semibold text-center text-blue-600 mb-4">Login</h2>
+
+         {error && <div className="mb-3 text-red-500 text-sm">{error}</div>}
 
          <div className="mb-3">
             <input
@@ -61,9 +73,11 @@ const LoginForm = () => {
 
          <button
             type="submit"
-            className="w-full py-2 mb-3 bg-blue-600 text-white rounded font-semibold hover:bg-blue-700 transition"
+            disabled={loading}
+            className={`w-full py-2 mb-3 text-white rounded font-semibold transition ${loading ? "bg-blue-300 cursor-not-allowed" : "bg-blue-600 hover:bg-blue-700"
+               }`}
          >
-            Login
+            {loading ? "Logging in..." : "Login"}
          </button>
 
          <button className="text-sm text-blue-600 underline hover:no-underline" type="button">
