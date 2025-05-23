@@ -68,6 +68,15 @@ const sendOtp = async (req, res) => {
    }
 };
 
+const verifyOtp = async (req, res) => {
+   try {
+      const { email, otp } = req.body
+      if (!email || !otp) { return res.status(404).json({ success: false, msg: "Enter all details" }) }
+   } catch (error) {
+
+   }
+}
+
 const registerUser = async (req, res) => {
    try {
       const { error } = registerSchema.validate(req.body);

@@ -1,13 +1,13 @@
 import express from "express";
 import {
-    registerUser,
-    loginUser,
-    sendOtp,
-    logoutUser,
-    refreshAccessToken,
-    changePassword,
-    forgotPassword,
-    resetPassword
+   registerUser,
+   loginUser,
+   sendOtp,
+   logoutUser,
+   refreshAccessToken,
+   changePassword,
+   forgotPassword,
+   resetPassword
 } from "../controllers/user/user.controllers.js";
 
 const router = express.Router();
