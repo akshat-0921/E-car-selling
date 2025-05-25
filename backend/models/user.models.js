@@ -15,11 +15,15 @@ const userSchema = new mongoose.Schema({
 }, { timestamps: true });
 
 userSchema.methods.createAccessToken = function () {
-   return jwt.sign({ _id: this._id, username: this.username, email: this.email }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '60m' });
+   return jwt.sign({ _id: this._id, username: this.username, email: this.email }, process.env.ACCESS_TOKEN_SECRET,
+      //  { expiresIn: '60m' }
+   );
 };
 
 userSchema.methods.createRefreshToken = function () {
-   return jwt.sign({ _id: this._id }, process.env.REFRESH_TOKEN_SECRET, { expiresIn: '7d' });
+   return jwt.sign({ _id: this._id }, process.env.REFRESH_TOKEN_SECRET,
+      //  { expiresIn: '7d' }
+   );
 };
 
 export const User = mongoose.model("User", userSchema);
