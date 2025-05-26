@@ -1,4 +1,3 @@
-
 import { createContext, useState, useEffect } from "react"
 import { toast } from "react-toastify"
 import { useNavigate } from "react-router-dom"
@@ -12,7 +11,6 @@ const AuthProvider = ({ children }) => {
     const [loading, setLoading] = useState(true)
     const navigate = useNavigate()
 
-    // Check if user is already logged in on initial load
     useEffect(() => {
         const checkAuthStatus = async () => {
             try {
@@ -23,7 +21,6 @@ const AuthProvider = ({ children }) => {
                         setUser(response.data.user)
                         setIsAuthenticated(true)
                     } else {
-                        // Token invalid or expired
                         localStorage.removeItem("token")
                     }
                 }
@@ -118,17 +115,21 @@ const AuthProvider = ({ children }) => {
         }
     }
 
-    const value = {
-        user,
-        isAuthenticated,
-        loading,
-        login,
-        signup,
-        logout,
-        updateProfile,
-    }
-
-    return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
+    return (
+        <AuthContext.Provider
+            value={{
+                user,
+                isAuthenticated,
+                loading,
+                login,
+                signup,
+                logout,
+                updateProfile,
+            }}
+        >
+            {children}
+        </AuthContext.Provider>
+    )
 }
 
 export default AuthProvider
