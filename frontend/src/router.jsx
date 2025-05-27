@@ -22,32 +22,32 @@ import Profile from "./pages/Profile/Profile";
 import SettingsPage from "./pages/Settings/Settings";
 
 const router = createBrowserRouter([
-    {
-        path: "/",
-        element: (
-            <AuthProvider>
-                <VehicleProvider>
-                    <AppLayout />
-                </VehicleProvider>
-            </AuthProvider>
-        ),
-        children: [
-            { index: true, element: <Home /> },
-            { path: "auth", element: <Auth /> },
-            { path: "login", element: <LoginForm /> },
-            { path: "signup", element: <SignUpForm /> },
-            { path: "vehicles", element: <Vehicle /> },
-            { path: "vehicles/:vehicleId", element: <VehicleDetails /> },
-            { path: "car-model", element: <CarDetailPage /> },
-            { path: "search", element: <SearchPage /> },
-            { path: "brand-search", element: <BrandSearchPage /> },
-            { path: "showrooms", element: <ShowroomPage /> },
-            { path: "Car-Model-Selection", element: <CarModelSelectionPage /> },
-            { path: "Test-Drive", element: <TestDriveBookingPage /> },
-            { path: "profile", element: <Profile /> },
-            { path: "settings", element: <SettingsPage /> },
-        ],
-    },
+   {
+      path: "/",
+      element: (
+         // <AuthProvider>
+         //     <VehicleProvider>
+         <AppLayout />
+         //     </VehicleProvider>
+         // </AuthProvider>
+      ),
+      children: [
+         { index: true, element: <Home /> },
+         { path: "auth", element: <Auth /> },
+         { path: "login", element: <LoginForm /> },
+         { path: "signup", element: <SignUpForm /> },
+         { path: "vehicles", element: <Vehicle /> },
+         { path: "vehicles/:vehicleId", element: <VehicleDetails /> },
+         { path: "car-model", element: <CarDetailPage /> },
+         { path: "search", element: <SearchPage /> },
+         { path: "brand-search", element: <BrandSearchPage /> },
+         { path: "showrooms", element: <ShowroomPage /> },
+         { path: "Car-Model-Selection", element: <CarModelSelectionPage /> },
+         { path: "Test-Drive", element: <TestDriveBookingPage /> },
+         { path: "profile", element: <Profile /> },
+         { path: "settings", element: <SettingsPage /> },
+      ],
+   },
 ])
 
 export default router
