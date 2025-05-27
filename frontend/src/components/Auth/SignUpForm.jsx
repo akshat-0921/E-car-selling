@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-import axios from "axios"
+import axios from "axios";
 
 const SignUpForm = () => {
    const [firstName, setFirstName] = useState("");
@@ -16,13 +16,12 @@ const SignUpForm = () => {
 
    const sendOtpHandler = async () => {
       if (!email) return alert("Please enter your email to receive OTP!");
-      console.log(API)
       try {
          const res = await axios.post(`${API}/user/send-otp`, { email });
          alert("OTP sent to your email!");
          setOtpSent(true);
       } catch (error) {
-         console.log(error)
+         console.log(error);
          alert(error.response?.data?.message || "Failed to send OTP");
       }
    };
@@ -31,8 +30,8 @@ const SignUpForm = () => {
       e.preventDefault();
 
       if (!otpSent) {
-         alert("Please send OTP to your email first!")
-         return
+         alert("Please send OTP to your email first!");
+         return;
       }
 
       if (!otp || otp.length !== 6) {
@@ -50,10 +49,9 @@ const SignUpForm = () => {
             otp,
          });
 
-         alert(res.data.message || "Registered successfully!")
-
+         alert(res.data.message || "Registered successfully!");
       } catch (error) {
-         alert(error.response?.data?.message || "Registration failed")
+         alert(error.response?.data?.message || "Registration failed");
       }
    };
 
@@ -96,7 +94,7 @@ const SignUpForm = () => {
 
          <div className="mb-4">
             <input
-               type="string"
+               type="text"
                placeholder="Phone Number"
                required
                value={phoneNumber}
@@ -147,8 +145,7 @@ const SignUpForm = () => {
 
          <button
             type="submit"
-            className={`w-full py-2 font-semibold rounded-lg shadow text-white transition ${otpSent ? "bg-blue-600 hover:bg-blue-700 focus:ring-2 focus:ring-blue-500" : "bg-gray-400 cursor-not-allowed"
-               }`}
+            className={`w-full py-2 font-semibold rounded-lg shadow text-white transition ${otpSent ? "bg-blue-600 hover:bg-blue-700 focus:ring-2 focus:ring-blue-500" : "bg-gray-400 cursor-not-allowed"}`}
             disabled={!otpSent}
          >
             Sign Up
@@ -156,4 +153,5 @@ const SignUpForm = () => {
       </form>
    );
 };
+
 export default SignUpForm;

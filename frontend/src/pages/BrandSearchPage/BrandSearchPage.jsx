@@ -1,25 +1,57 @@
-import { useNavigate } from "react-router-dom"
+import { useState, useEffect } from "react"
+import { useNavigate, useLocation } from "react-router-dom"
+import { brandAPI } from "../../api"
+import { toast } from "react-toastify"
 
 const BrandSearchPage = () => {
     const navigate = useNavigate()
+    const location = useLocation()
+    const [brandDetails, setBrandDetails] = useState(null)
+    const [loading, setLoading] = useState(true)
 
-    const brandDetails = {
-        name: "Audi",
-        carsAvailable: 8,
-        rating: 4.6,
-        description:
-            "Audi is a German luxury car manufacturer known for premium vehicles with cutting-edge technology and performance.",
-        highlights: ["Luxurious interiors", "Advanced infotainment system", "Quattro all-wheel drive", "High resale value"],
-        faqs: [
-            {
-                question: "What is the starting price of Audi cars in India?",
-                answer: "The starting price is around ₹43 lakhs.",
-            },
-            {
-                question: "Are Audi cars good for long drives?",
-                answer: "Yes, they are equipped with comfort and performance features ideal for long-distance travel.",
-            },
-        ],
+    useEffect(() => {
+        const fetchBrandDetails = async () => {
+            try {
+                setLoading(true)
+                const searchParams = new URLSearchParams(location.search)
+                const brandId = searchParams.get("brand")
+
+                if (!brandId) {
+                    toast.error("Brand ID is missing")
+                    return
+                }
+
+                const response = await brandAPI.getBrandDetails(brandId)
+                if (response.data.success) {
+                    setBrandDetails(response.data.brand)
+                } else {
+                    toast.error(response.data.message || "Failed to fetch brand details")
+                }
+            } catch (error) {
+                console.error("Error fetching brand details:", error)
+                toast.error(error.response?.data?.message || "Failed to fetch brand details")
+            } finally {
+                setLoading(false)
+            }
+        }
+
+        fetchBrandDetails()
+    }, [location.search])
+
+    if (loading) {
+        return (
+            <div className="flex justify-center items-center h-64">
+                <p className="text-gray-500">Loading brand details...</p>
+            </div>
+        )
+    }
+
+    if (!brandDetails) {
+        return (
+            <div className="flex justify-center items-center h-64">
+                <p className="text-gray-500">Brand details not found</p>
+            </div>
+        )
     }
 
     return (
@@ -30,11 +62,11 @@ const BrandSearchPage = () => {
                     <div className="flex items-center gap-6 mt-4">
                         <div className="flex items-center gap-2 bg-gray-100 px-4 py-2 rounded-full">
                             <span className="text-gray-600">Available Models:</span>
-                            <span className="font-semibold text-gray-900">{brandDetails.carsAvailable}</span>
+                            <span className="font-semibold text-gray-900">{brandDetails.carsAvailable || 0}</span>
                         </div>
                         <div className="flex items-center gap-1 bg-yellow-50 px-4 py-2 rounded-full">
                             <span className="text-yellow-500 text-lg">★</span>
-                            <span className="font-semibold text-gray-900">{brandDetails.rating}/5</span>
+                            <span className="font-semibold text-gray-900">{brandDetails.rating || "N/A"}/5</span>
                         </div>
                     </div>
                 </div>
@@ -44,7 +76,7 @@ const BrandSearchPage = () => {
 
                     <button
                         className="bg-gradient-to-r from-indigo-600 to-indigo-700 text-white px-8 py-3 rounded-lg hover:from-indigo-700 hover:to-indigo-800 transition shadow-md hover:shadow-lg transform hover:-translate-y-0.5 active:translate-y-0"
-                        onClick={() => navigate("/car-model")}
+                        onClick={() => navigate(`/vehicles?brand=${brandDetails._id}`)}
                     >
                         View Car Models
                     </button>
@@ -65,12 +97,16 @@ const BrandSearchPage = () => {
                             Key Highlights
                         </h2>
                         <ul className="space-y-3">
-                            {brandDetails.highlights.map((item, index) => (
-                                <li key={index} className="flex items-start">
-                                    <span className="text-indigo-500 mr-2">•</span>
-                                    <span className="text-gray-700">{item}</span>
-                                </li>
-                            ))}
+                            {brandDetails.highlights && brandDetails.highlights.length > 0 ? (
+                                brandDetails.highlights.map((item, index) => (
+                                    <li key={index} className="flex items-start">
+                                        <span className="text-indigo-500 mr-2">•</span>
+                                        <span className="text-gray-700">{item}</span>
+                                    </li>
+                                ))
+                            ) : (
+                                <li className="text-gray-500">No highlights available</li>
+                            )}
                         </ul>
                     </div>
 
@@ -88,12 +124,16 @@ const BrandSearchPage = () => {
                             FAQs
                         </h2>
                         <div className="space-y-4">
-                            {brandDetails.faqs.map((faq, index) => (
-                                <div key={index} className="border-b border-gray-200 pb-4 last:border-0 last:pb-0">
-                                    <p className="font-semibold text-gray-800 mb-1">Q: {faq.question}</p>
-                                    <p className="text-gray-600">A: {faq.answer}</p>
-                                </div>
-                            ))}
+                            {brandDetails.faqs && brandDetails.faqs.length > 0 ? (
+                                brandDetails.faqs.map((faq, index) => (
+                                    <div key={index} className="border-b border-gray-200 pb-4 last:border-0 last:pb-0">
+                                        <p className="font-semibold text-gray-800 mb-1">Q: {faq.question}</p>
+                                        <p className="text-gray-600">A: {faq.answer}</p>
+                                    </div>
+                                ))
+                            ) : (
+                                <div className="text-gray-500">No FAQs available</div>
+                            )}
                         </div>
                     </div>
                 </div>

@@ -81,13 +81,13 @@ const Profile = () => {
                readOnly={editField !== fieldKey}
                onChange={(e) => handleChange(fieldKey, e.target.value)}
                className={`w-full border rounded-lg px-4 py-3 text-gray-700 focus:outline-none transition-all duration-200 ${editField === fieldKey
-                     ? "border-indigo-500 shadow-sm focus:ring-2 focus:ring-indigo-200"
-                     : "border-gray-200 bg-gray-50"
+                  ? "border-indigo-500 shadow-sm focus:ring-2 focus:ring-indigo-200"
+                  : "border-gray-200 bg-gray-50"
                   }`}
             />
             {editField === fieldKey ? (
                <button
-                  onClick={handleSave}
+                  onClick={() => handleSave(fieldKey)}
                   className="absolute right-3 flex items-center justify-center h-8 w-8 rounded-full text-white bg-green-500 hover:bg-green-600 transition-colors"
                   aria-label="Save"
                >
@@ -114,6 +114,22 @@ const Profile = () => {
       );
    }
 
+   if (loading || authLoading) {
+      return (
+         <div className="flex justify-center items-center min-h-screen">
+            <p className="text-lg text-gray-600">Loading profile...</p>
+         </div>
+      )
+   }
+
+   if (!user) {
+      return (
+         <div className="flex justify-center items-center min-h-screen">
+            <p className="text-lg text-gray-600">Please log in to view your profile</p>
+         </div>
+      )
+   }
+
    return (
       <div className="bg-gradient-to-b from-gray-50 to-gray-100 min-h-screen py-12 px-4">
          <div className="max-w-xl mx-auto">
@@ -126,7 +142,7 @@ const Profile = () => {
                      </div>
                      <div className="ml-6">
                         <h2 className="text-2xl font-bold">
-                           {user.firstName} {user.lastName}
+                           {userData.firstName} {userData.lastName}
                         </h2>
                         <p className="text-indigo-200 mt-1">Premium Member</p>
                      </div>
