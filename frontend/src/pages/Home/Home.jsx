@@ -97,13 +97,13 @@ const Home = () => {
             <div className="max-w-3xl mx-auto">
                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                   <button
-                     onClick={() => navigate("/car-model")}
+                     onClick={() => navigate("/brands")}
                      className="group relative overflow-hidden rounded-lg bg-white p-6 shadow-lg transition-all duration-300 hover:shadow-xl"
                   >
                      <div className="absolute inset-0 bg-gradient-to-r from-rose-500 to-rose-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                      <div className="relative z-10 flex flex-col items-center space-y-3">
                         <span className="text-xl font-semibold text-gray-800 group-hover:text-white transition-colors duration-300">
-                           View Car Model Details
+                           See Brands
                         </span>
                         <span className="text-sm text-gray-500 group-hover:text-white/80 transition-colors duration-300">
                            Explore our extensive catalog of car models

@@ -2,9 +2,6 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-import AuthProvider from "./context/AuthContext";
-import VehicleProvider from "./context/VehicleContext";
-
 import AppLayout from "./pages/AppLayout/AppLayout";
 import Home from "./pages/Home/Home";
 import Auth from "./components/Auth/Auth";
@@ -20,16 +17,14 @@ import CarModelSelectionPage from "./pages/CarModelSelection/carlist";
 import TestDriveBookingPage from "./pages/TestDrive/testDrive";
 import Profile from "./pages/Profile/Profile";
 import SettingsPage from "./pages/Settings/Settings";
+import ShowBrands from "./pages/Brands/Brands";
+import BrandCard from "./components/brandCard/Brandcard";
 
 const router = createBrowserRouter([
    {
       path: "/",
       element: (
-         // <AuthProvider>
-         //     <VehicleProvider>
          <AppLayout />
-         //     </VehicleProvider>
-         // </AuthProvider>
       ),
       children: [
          { index: true, element: <Home /> },
@@ -41,6 +36,7 @@ const router = createBrowserRouter([
          { path: "car-model", element: <CarDetailPage /> },
          { path: "search", element: <SearchPage /> },
          { path: "brand-search", element: <BrandSearchPage /> },
+         { path: "brands", element: <BrandCard /> },
          { path: "showrooms", element: <ShowroomPage /> },
          { path: "Car-Model-Selection", element: <CarModelSelectionPage /> },
          { path: "Test-Drive", element: <TestDriveBookingPage /> },
