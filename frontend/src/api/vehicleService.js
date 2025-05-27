@@ -20,8 +20,9 @@ export const getAllVehicles = async () => {
 
 export const getVehicleById = async (vehicleId) => {
    try {
-      const response = await API.get(`/vehicle/${vehicleId}`);
-      return response.data;
+      const response = await API.get(`/vehicle/get/${vehicleId}`);
+      console.log(response.data.vehicle)
+      return response.data.vehicle;
    } catch (error) {
       console.error(`Error fetching vehicle ${vehicleId}:`, error);
       throw error;

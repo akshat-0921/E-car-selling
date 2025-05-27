@@ -18,7 +18,7 @@ export const fetchVehicleDetails = createAsyncThunk(
    async (id, thunkAPI) => {
       try {
          const response = await getVehicleById(id);
-         return response.data.vehicle;
+         return response;
       } catch (error) {
          return thunkAPI.rejectWithValue(error.response?.data?.message || "Failed to fetch vehicle details");
       }

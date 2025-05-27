@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
-import { login, setLoading, setError } from "../../redux/authSlice";
+import { login, setLoading, setError, fetchCurrentUser } from "../../redux/authSlice";
 
 const LoginForm = () => {
    const dispatch = useDispatch();
