@@ -162,6 +162,24 @@ const loginUser = async (req, res) => {
    }
 };
 
+const getCurrentUser = (req, res) => {
+   try {
+      if (!req.user) {
+         return res.status(401).json({ success: false, msg: "Not authenticated" })
+      }
+
+      const userSafe = {
+         firstName: req.user.firstName,
+         lastName: req.user.lastName,
+         email: req.user.email,
+         phoneNumber: req.user.phoneNumber,
+         address: req.user.address || "",
+      }
+      return res.status(200).json({ success: true, user: userSafe })
+   } catch (error) {
+      return res.status(500).json({ success: false, msg: "Failed to fetch user details" })
+   }
+}
 
 // const loginUser = async (req, res) => {
 //    try {
@@ -377,4 +395,5 @@ export {
    forgotPassword,
    resetPassword,
    updateProfile,
+   getCurrentUser,
 };

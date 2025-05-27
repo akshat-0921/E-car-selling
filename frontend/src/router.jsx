@@ -36,7 +36,7 @@ const router = createBrowserRouter([
          { path: "car-model", element: <CarDetailPage /> },
          { path: "search", element: <SearchPage /> },
          { path: "brand-search", element: <BrandSearchPage /> },
-         { path: "brands", element: <BrandCard /> },
+         { path: "brands", element: <ShowBrands /> },
          { path: "showrooms", element: <ShowroomPage /> },
          { path: "Car-Model-Selection", element: <CarModelSelectionPage /> },
          { path: "Test-Drive", element: <TestDriveBookingPage /> },

@@ -53,15 +53,23 @@ const getVehicle = async (req, res) => {
    try {
       const vehicleId = req.params._id;
       const vehicle = await Vehicle.findById(vehicleId);
+
       if (!vehicle) {
          return res.status(404).json({ success: false, msg: "Vehicle does not exist" });
       }
-      return res.status(200).json({ success: true, msg: "Vehicle found", vehicle });
+
+      const brand = await Brand.findById(vehicle.brandId);
+
+      const vehicleObject = vehicle.toObject();
+      vehicleObject.brand = brand;
+
+      return res.status(200).json({ success: true, msg: "Vehicle found", vehicle: vehicleObject });
    } catch (error) {
       console.log(error);
       return res.status(500).json({ success: false, msg: "An error occurred while fetching the vehicle. Please try again" });
    }
 };
+
 
 const updateVehicle = async (req, res) => {
    try {

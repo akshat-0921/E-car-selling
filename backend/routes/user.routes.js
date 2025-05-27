@@ -8,7 +8,8 @@ import {
    changePassword,
    forgotPassword,
    resetPassword,
-   updateProfile
+   updateProfile,
+   getCurrentUser
 } from "../controllers/user/user.controllers.js";
 import { userAuth } from "../middlewares/auth/userAuth.middleware.js";
 
@@ -23,5 +24,6 @@ router.post("/refresh-token", refreshAccessToken);
 router.post("/change-password", changePassword);
 router.post('/forgot-password', forgotPassword);
 router.post('/reset-password/:token', resetPassword);
+router.get("/me", userAuth, getCurrentUser)
 
 export default router;
