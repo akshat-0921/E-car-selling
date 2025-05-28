@@ -1,4 +1,3 @@
-"use client"
 import { Swiper, SwiperSlide } from "swiper/react"
 import { Autoplay, Navigation, Pagination, EffectFade } from "swiper/modules"
 import "swiper/css"
@@ -74,7 +73,7 @@ const HeroSlider = () => {
 
             {/* Custom Pagination */}
             <div className="swiper-pagination !bottom-6 !z-20">
-                <style jsx>{`
+                <style>{`
                     :global(.swiper-pagination-bullet) {
                         width: 12px;
                         height: 12px;
