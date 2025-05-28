@@ -18,6 +18,7 @@ import TestDriveBookingPage from "./pages/TestDrive/testDrive";
 import Profile from "./pages/Profile/Profile";
 import SettingsPage from "./pages/Settings/Settings";
 import ShowBrands from "./pages/Brands/Brands";
+import BrandDetails from "./pages/Brands/BrandDetails";
 import BrandCard from "./components/brandCard/Brandcard";
 
 const router = createBrowserRouter([
@@ -33,6 +34,7 @@ const router = createBrowserRouter([
          { path: "signup", element: <SignUpForm /> },
          { path: "vehicles", element: <Vehicle /> },
          { path: "vehicles/:vehicleId", element: <VehicleDetails /> },
+         { path: "brands/:brandId", element: <BrandDetails /> },
          { path: "car-model", element: <CarDetailPage /> },
          { path: "search", element: <SearchPage /> },
          { path: "brand-search", element: <BrandSearchPage /> },

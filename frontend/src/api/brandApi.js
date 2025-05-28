@@ -16,3 +16,13 @@ export const getAllBrands = async () => {
       throw error
    }
 }
+
+export const fetchVehiclesByBrand = async (id) => {
+   try {
+      const response = await API.get(`brand/get-vehicles/${id}`)
+      return response.data.vehicles
+   } catch (error) {
+      console.log('Error fetching vehicles', error)
+      throw error
+   }
+}

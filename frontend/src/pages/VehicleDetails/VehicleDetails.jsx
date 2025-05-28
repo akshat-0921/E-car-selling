@@ -7,7 +7,8 @@ import VehicleDetailsCard from "../../components/VehicleDetails/VehicleDetailsCa
 const VehicleDetails = () => {
    const { vehicleId } = useParams();
    const dispatch = useDispatch();
-   const { selectedVehicle, loading, error } = useSelector((state) => state.vehicle);
+   // const { selectedVehicle, loading, error } = useSelector((state) => state.vehicle);
+   const { selectedVehicle, detailsLoading, detailsError } = useSelector((state) => state.vehicle);
 
    useEffect(() => {
       if (vehicleId) {
@@ -19,8 +20,8 @@ const VehicleDetails = () => {
       };
    }, [dispatch, vehicleId]);
 
-   if (loading) return <div className="text-center mt-8">Loading...</div>;
-   if (error) return <div className="text-center mt-8 text-red-500">{error}</div>;
+   if (detailsLoading) return <div className="text-center mt-8">Loading...</div>;
+   if (detailsError) return <div className="text-center mt-8 text-red-500">{detailsError}</div>;
    if (!selectedVehicle) return null;
 
    return <VehicleDetailsCard vehicle={selectedVehicle} />;
