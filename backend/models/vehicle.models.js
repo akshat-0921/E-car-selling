@@ -67,6 +67,27 @@ const VehicleSchema = new Schema(
       category: {
          type: String, required: true,
          enum: ["Petrol", "Diesel", "CNG", "Electric", "Hybrid", "Hydrogen", "LPG", "Plug-in Hybrid", "Ethanol", "Biodiesel"]
+      }, bodyType: {
+         type: String,
+         required: true,
+         enum: [
+            "Hatchback",
+            "Sedan",
+            "SUV",
+            "Crossover",
+            "Coupe",
+            "Convertible",
+            "Wagon",
+            "Pickup Truck",
+            "Van",
+            "Minivan",
+            "Roadster",
+            "Off-Road",
+            "Compact",
+            "Luxury Sedan",
+            "Sports Car",
+            "Electric SUV"
+         ]
       },
       showrooms: [{ type: Schema.Types.ObjectId, ref: "Showroom" }],
       engine: engineSchema,

@@ -7,13 +7,14 @@ import { User } from "../../models/user.models.js";
 const addVehicle = async (req, res) => {
    try {
       const brandId = req.params._id;
-      const { name, category, price, year } = req.body;
+      const { name, category, price, year, bodyType } = req.body;
       const { engine, performance, transmission, dimensions, safetyFeatures, connectivity, warranty, customisation } = req.body;
       const brand = await Brand.findById(brandId);
       if (!brand) { return res.status(404).json({ success: false, msg: "Brand does not exist" }); }
       const vehicle = await Vehicle.create({
          name,
          category,
+         bodyType,
          year,
          price,
          brandId,
@@ -76,7 +77,7 @@ const updateVehicle = async (req, res) => {
       const vehicleId = req.params._id;
       if (!req.body) { return res.status(400).json({ success: false, msg: "Enter some fields" }); }
 
-      const { name, category, price, year } = req.body;
+      const { name, category, price, year, bodyType } = req.body;
       const { engine, performance, transmission, dimensions, safetyFeatures, connectivity, warranty, customisation } = req.body;
 
       const vehicle = await Vehicle.findById(vehicleId);
@@ -90,6 +91,7 @@ const updateVehicle = async (req, res) => {
             $set: {
                name: name || vehicle.name,
                category: category || vehicle.category,
+               bodyType: bodyType || vehicle.bodyType,
                price: price || vehicle.price,
                year: year || vehicle.year,
                engine: engine || vehicle.engine,
