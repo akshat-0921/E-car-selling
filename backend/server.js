@@ -26,7 +26,7 @@ import userRoutes from "./routes/user.routes.js";
 import adminRoutes from "./routes/admin.routes.js";
 import vehicleRouter from "./routes/vehicle.routes.js";
 import paymentRoutes from "./routes/payment.routes.js"
-// const paymentRoutes = require("./routes/payment.routes");
+import filterRoutes from "./routes/filter.routes.js"
 
 // Routes
 app.use("/api/brand", brandRouter);
@@ -35,6 +35,7 @@ app.use("/api/user", userRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/vehicle", vehicleRouter);
 app.use("/api/payment", paymentRoutes);
+app.use("/api/vehicle", filterRoutes)
 
 // Root route
 app.get("/", (req, res) => {

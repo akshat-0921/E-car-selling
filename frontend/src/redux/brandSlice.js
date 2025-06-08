@@ -1,6 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { getAllBrands } from "../api/brandApi";
-import { fetchVehiclesByBrand } from "../api/brandApi";
 
 export const getAllBrandsThunk = createAsyncThunk(
    'brand/getAll',
@@ -14,17 +13,7 @@ export const getAllBrandsThunk = createAsyncThunk(
    }
 )
 
-export const fetchVehiclesByBrandThunk = createAsyncThunk(
-   'brand/vehicles',
-   async (id, thunkAPI) => {
-      try {
-         const response = await fetchVehiclesByBrand(id)
-         return response
-      } catch (error) {
-         return thunkAPI.rejectWithValue(error.response?.data?.message || "Failed to load brands")
-      }
-   }
-)
+
 
 const initialState = {
    brands: [],
@@ -55,12 +44,6 @@ const brandSlice = createSlice({
          .addCase(getAllBrandsThunk.rejected, (state, action) => {
             state.error = action.payload;
             state.loading = false;
-         })
-
-         //fetch vehicles by brand
-         .addCase(fetchVehiclesByBrandThunk.pending, (state) => {
-            state.loading = true;
-            state.error = null;
          })
    }
 }
