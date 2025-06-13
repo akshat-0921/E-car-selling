@@ -45,7 +45,7 @@ export const brandAPI = {
 export const showroomAPI = {
     getAllShowrooms: (filters) => API.get("/showroom/get-all", { params: filters }),
     getShowroomById: (id) => API.get(`/showroom/${id}`),
-    getNearbyShowrooms: (location) => API.get("/showroom/nearby", { params: location }),
+    getNearbyShowrooms: ({ lat, lon, radius }) =>API.get("/showroom/nearby", { params: { lat, lon, radius } }),
 }
 
 export const serviceAPI = {

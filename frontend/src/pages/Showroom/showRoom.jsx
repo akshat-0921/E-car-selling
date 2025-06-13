@@ -1,78 +1,75 @@
-
-import { useState, useEffect } from "react"
-import { Phone, MapPin, Star, Calendar } from "lucide-react"
-import { showroomAPI } from "../../api"
-import { toast } from "react-toastify"
-import { useNavigate } from "react-router-dom"
+import { useState, useEffect } from "react";
+import { Phone, MapPin, Star, Calendar } from "lucide-react";
+import { showroomAPI } from "../../api";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
+import NearbyShowrooms from "../../components/NearbyShowrooms/NearbyShowrooms";
 
 const ShowroomPage = () => {
-    const navigate = useNavigate()
-    const [showrooms, setShowrooms] = useState([])
-    const [filterBrand, setFilterBrand] = useState("all")
-    const [sort, setSort] = useState("top")
-    const [loading, setLoading] = useState(true)
-    const [brands, setBrands] = useState([])
+    const navigate = useNavigate();
+    const [showrooms, setShowrooms] = useState([]);
+    const [brands, setBrands] = useState([]);
+    const [filterBrand, setFilterBrand] = useState("all");
+    const [sort, setSort] = useState("top");
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const fetchShowrooms = async () => {
             try {
-                setLoading(true)
-                const response = await showroomAPI.getAllShowrooms()
-                if (response.data.success) {
-                    setShowrooms(response.data.showrooms || [])
+                setLoading(true);
+                const { data } = await showroomAPI.getAllShowrooms();
 
-                    // Extract unique brands from showrooms
+                if (data.success) {
+                    setShowrooms(data.showrooms || []);
+
                     const uniqueBrands = [
                         ...new Set(
-                            response.data.showrooms.map((s) => {
-                                const brandName = s.brand?.name || s.brand || "Unknown"
-                                return brandName
-                            }),
+                            data.showrooms.map((s) => s.brand?.name || s.brand || "Unknown")
                         ),
-                    ]
+                    ];
 
-                    setBrands(uniqueBrands)
+                    setBrands(uniqueBrands);
                 } else {
-                    toast.error(response.data.message || "Failed to fetch showrooms")
+                    toast.error(data.message || "Failed to fetch showrooms");
                 }
             } catch (error) {
-                console.error("Error fetching showrooms:", error)
-                toast.error(error.response?.data?.message || "Failed to fetch showrooms")
+                console.error("Error fetching showrooms:", error);
+                toast.error(error.response?.data?.message || "Failed to fetch showrooms");
             } finally {
-                setLoading(false)
+                setLoading(false);
             }
-        }
+        };
 
-        fetchShowrooms()
-    }, [])
+        fetchShowrooms();
+    }, []);
 
     const filteredShowrooms = showrooms
         .filter((s) => {
-            if (filterBrand === "all") return true
-            const brandName = s.brand?.name || s.brand || ""
-            return brandName.toLowerCase().includes(filterBrand.toLowerCase())
+            if (filterBrand === "all") return true;
+            const brandName = s.brand?.name || s.brand || "";
+            return brandName.toLowerCase().includes(filterBrand.toLowerCase());
         })
         .sort((a, b) => {
             if (sort === "top") {
-                return (b.rating || 0) - (a.rating || 0)
+                return (b.rating || 0) - (a.rating || 0);
             } else {
-                const nameA = a.name || ""
-                const nameB = b.name || ""
-                return nameA.localeCompare(nameB)
+                return (a.name || "").localeCompare(b.name || "");
             }
-        })
+        });
 
     const handleBookTestDrive = (showroomId) => {
-        navigate(`/Test-Drive?showroom=${showroomId}`)
-    }
+        navigate(`/Test-Drive?showroom=${showroomId}`);
+    };
 
     return (
         <div className="bg-slate-50 min-h-screen">
             <div className="max-w-6xl mx-auto p-6 pt-16">
+                {/* Header + Filters */}
                 <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
                     <div>
                         <h1 className="text-3xl font-bold text-slate-800">Car Dealers Near You</h1>
                         <p className="text-slate-500 mt-1">Find the best car showrooms in your area</p>
+                        <NearbyShowrooms/>
                     </div>
 
                     <div className="flex flex-wrap gap-3">
@@ -82,8 +79,8 @@ const ShowroomPage = () => {
                             className="border border-gray-300 rounded px-4 py-2 bg-white text-sm"
                         >
                             <option value="all">All Brands</option>
-                            {brands.map((brand, index) => (
-                                <option key={index} value={brand.toLowerCase()}>
+                            {brands.map((brand, i) => (
+                                <option key={i} value={brand.toLowerCase()}>
                                     {brand}
                                 </option>
                             ))}
@@ -100,6 +97,7 @@ const ShowroomPage = () => {
                     </div>
                 </div>
 
+                {/* Loading / No Results */}
                 {loading ? (
                     <div className="flex justify-center items-center h-64">
                         <p className="text-gray-500">Loading showrooms...</p>
@@ -109,6 +107,7 @@ const ShowroomPage = () => {
                         <p className="text-gray-500">No showrooms found matching your criteria</p>
                     </div>
                 ) : (
+                    // Showroom Grid
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                         {filteredShowrooms.map((showroom) => (
                             <div
@@ -157,7 +156,7 @@ const ShowroomPage = () => {
                 )}
             </div>
         </div>
-    )
-}
+    );
+};
 
-export default ShowroomPage
+export default ShowroomPage;
