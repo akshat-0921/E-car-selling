@@ -3,6 +3,11 @@ import { User } from "../../models/user.models.js"
 import { Showroom } from "../../models/showroom.models.js"
 import { Vehicle } from "../../models/vehicle.models.js"
 import { ShowroomVehicle } from "../../models/showroomVehicle.models.js";
+import stripe from "stripe";
+import dotenv from "dotenv";
+dotenv.config();
+
+const stripeInstance = stripe(process.env.STRIPE_SECRET_KEY);
 
 const checkVehicleAvailability = async (req, res) => {
    try {
@@ -86,50 +91,63 @@ const checkVehicleAvailability = async (req, res) => {
 
 const createBooking = async (req, res) => {
    try {
-      const userId = req.user._id
-      const { showroomId, vehicleId } = req.params
-      const { date, amount, paymentIntentId } = req.body;
+      const userId = req.user._id;
+      const { showroomId, vehicleId } = req.params;
+      const {
+         bookingDate,
+         deliveryDate,
+         amount,
+         paymentIntentId,
+         purpose,
+      } = req.body;
 
-      if (!userId || !vehicleId || !date || !amount || !paymentIntentId) {
-         return errorHandler(res, 400, "All fields are required");
+      if (!userId || !vehicleId || !bookingDate || !deliveryDate || !amount || !paymentIntentId || !purpose) {
+         return res.status(400).json({ success: false, msg: "All fields are required" });
       }
 
-      const paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId);
-      let paymentStatus;
+      if (!["service", "test-drive", "purchase"].includes(purpose)) {
+         return res.status(400).json({ success: false, msg: "Invalid booking purpose" });
+      }
 
+      const paymentIntent = await stripeInstance.paymentIntents.retrieve(paymentIntentId);
+
+      let paymentStatus = "Pending";
       switch (paymentIntent.status) {
          case "succeeded":
-            paymentStatus = "completed";
+            paymentStatus = "Completed";
             break;
          case "requires_confirmation":
          case "processing":
-            paymentStatus = "pending";
+            paymentStatus = "Pending";
             break;
          case "canceled":
-            paymentStatus = "cancelled";
+            paymentStatus = "Cancelled";
             break;
          default:
-            return errorHandler(res, 400, "Invalid payment status");
+            return res.status(400).json({ success: false, msg: "Invalid payment status" });
       }
 
       const booking = await Booking.create({
          userId,
-         vehicleId,
          showroomId,
-         date,
-         paymentStatus,
+         vehicleId,
+         bookingDate,
+         deliveryDate,
          amount,
+         paymentStatus,
+         purpose,
       });
 
       return res.status(201).json({
          success: true,
+         msg: "Booking created successfully",
          booking,
-         message: "Booking created successfully",
       });
+
    } catch (error) {
-      console.error("Error creating booking:", error.message);
-      return errorHandler(res, 500, "Error occurred while creating the booking.");
+      console.error("Error creating booking:", error);
+      return res.status(500).json({ success: false, msg: "Error occurred while creating the booking." });
    }
 };
 
-export { checkVehicleAvailability, createBooking }
+export { createBooking };

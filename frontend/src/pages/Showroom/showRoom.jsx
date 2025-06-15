@@ -69,7 +69,7 @@ const ShowroomPage = () => {
                     <div>
                         <h1 className="text-3xl font-bold text-slate-800">Car Dealers Near You</h1>
                         <p className="text-slate-500 mt-1">Find the best car showrooms in your area</p>
-                        <NearbyShowrooms/>
+                        <NearbyShowrooms />
                     </div>
 
                     <div className="flex flex-wrap gap-3">
@@ -133,6 +133,17 @@ const ShowroomPage = () => {
                                         {showroom.address}
                                     </p>
                                 </div>
+                                {showroom.vehicles?.length > 0 && (
+                                    <div className="mt-2">
+                                        <h4 className="text-sm font-semibold text-gray-700">Available Vehicles:</h4>
+                                        <ul className="text-sm text-gray-600 list-disc ml-4">
+                                            {showroom.vehicles.map((v) => (
+                                                <li key={v._id}>{v.name}</li>
+                                            ))}
+                                        </ul>
+                                    </div>
+                                )}
+
 
                                 <div className="px-4 pb-4 flex gap-2">
                                     <a
