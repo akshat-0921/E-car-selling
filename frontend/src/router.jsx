@@ -20,6 +20,7 @@ import SettingsPage from "./pages/Settings/Settings";
 import ShowBrands from "./pages/Brands/Brands";
 import BrandDetails from "./pages/Brands/BrandDetails";
 import BrandCard from "./components/brandCard/Brandcard";
+import Favorites from "./pages/Favorites/Favorites";
 
 const router = createBrowserRouter([
    {
@@ -44,6 +45,7 @@ const router = createBrowserRouter([
          { path: "Test-Drive", element: <TestDriveBookingPage /> },
          { path: "profile", element: <Profile /> },
          { path: "settings", element: <SettingsPage /> },
+         { path: "favorites", element: <Favorites />, },
       ],
    },
 ])
