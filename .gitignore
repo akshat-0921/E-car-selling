@@ -2,3 +2,5 @@ backend/node_modules/
 backend/.env
 frontend/.env
 frontend/node_modules/
+admmin-frontend/.env
+admmin-frontend/.env

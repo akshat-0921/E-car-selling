@@ -1,14 +1,43 @@
 import { Routes, Route } from "react-router-dom";
+import { useEffect } from "react";
+import { useDispatch } from "react-redux";
+import { setAdminLogin, setAdminLogout } from "./slices/adminSlice";
+import axiosInstance from "./api/axiosInstance";
+
+
 import AdminSignUp from "./components/AdminSignUp";
 import { ToastContainer } from "react-toastify";
 import AdminLogin from "./components/AdminLogin";
 import AdminHome from "./pages/AdminHome";
 import AdminNavbar from "./components/AdminNavbar";
+import BrandList from "./pages/Brand/BrandList";
+import AddBrand from "./pages/Brand/BrandForm";
+import VehicleList from "./pages/Vehicle/LoadVehicle";
+import AddVehicle from "./pages/Vehicle/AddVehicle";
 
 const App = () => {
    // const isAdmin = !!document.cookie.includes('accessToken');
 
+   const dispatch = useDispatch();
+
+   useEffect(() => {
+      // Try to refresh token (if cookies are valid)
+      const tryRefresh = async () => {
+         try {
+            const res = await axiosInstance.post("/admin/refresh-token");
+            dispatch(setAdminLogin({
+               admin: res.data.admin,
+               accessToken: res.data.accessToken,
+            }));
+         } catch (err) {
+            dispatch(setAdminLogout());
+         }
+      };
+      tryRefresh();
+   }, [dispatch]);
+
    return (
+
       <>
          <ToastContainer position="top-right" autoClose={2500} />
          <AdminNavbar />
@@ -16,6 +45,10 @@ const App = () => {
             <Route path="/" element={<AdminHome />} />
             <Route path="/admin/sign-up" element={<AdminSignUp />} />
             <Route path="/admin/login" element={<AdminLogin />} />
+            <Route path="/admin/brands" element={<BrandList />} />
+            <Route path="/admin/brand/add" element={<AddBrand />} />
+            <Route path="/admin/brand/:brandId/vehicles" element={<VehicleList />} />
+            <Route path="/admin/brand/:brandId/add-vehicle" element={<AddVehicle />} />
          </Routes>
       </>
    )

@@ -3,7 +3,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useDispatch } from "react-redux";
-
+import axiosInstance from "../api/axiosInstance";
 import { setAdminLogin } from "../slices/adminSlice";
 
 const AdminLogin = () => {
@@ -24,7 +24,7 @@ const AdminLogin = () => {
       e.preventDefault();
       setLoading(true);
       try {
-         const res = await axios.post(`${API}/admin/login`, form, { withCredentials: true });
+         const res = await axiosInstance.post("/admin/login", form);
          toast.success("Login successful")
 
          dispatch(setAdminLogin({

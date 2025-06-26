@@ -3,6 +3,7 @@ import { setAdminLogout } from "../slices/adminSlice";
 import { useNavigate, Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import axios from "axios";
+import axiosInstance from "../api/axiosInstance";
 
 const AdminNavbar = () => {
    const { isLoggedIn, admin } = useSelector((state) => state.admin);
@@ -14,7 +15,9 @@ const AdminNavbar = () => {
 
    const handleLogout = async () => {
       // Optionally call logout API here
-      await axios.post(`${API}/admin/logout`)
+
+      await axiosInstance.post("/admin/logout");
+      // await axios.post(`${API}/admin/logout`)
       dispatch(setAdminLogout());
       toast.success("Logged out!");
       navigate("/admin/login");

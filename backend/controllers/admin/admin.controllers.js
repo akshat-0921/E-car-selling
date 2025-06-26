@@ -10,7 +10,7 @@ const generateTokens = async (admin) => {
    const accessToken = jwt.sign(
       { adminId: admin._id },
       process.env.ACCESS_TOKEN_SECRET,
-      { expiresIn: "15m" } // Short-lived token
+      { expiresIn: "60m" } // Short-lived token
    );
    const refreshToken = jwt.sign(
       { adminId: admin._id },
@@ -26,27 +26,17 @@ const generateTokens = async (admin) => {
 
 const adminSignUp = async (req, res) => {
    try {
-      const { firstName, lastName, email, phoneNumber, secret, password, otp } = req.body;
+      const { firstName, lastName, email, phoneNumber, secret, password } = req.body;
 
       const adminExists = await Admin.exists({ email });
       if (adminExists) {
          return errorHandler(res, 400, "Admin already exists");
       }
 
-      const existingOtp = await OTP.findOne({ otp }).sort({ createdAt: -1 });
-      if (!existingOtp) {
-         return errorHandler(res, 400, "Invalid or expired OTP");
-      }
 
       if (secret !== process.env.ADMIN_PASSWORD) {
          return errorHandler(res, 400, "Invalid secret");
       }
-
-      if (otp !== existingOtp.otp) {
-         return errorHandler(res, 400, "Incorrect OTP");
-      }
-
-      await OTP.deleteOne({ _id: existingOtp._id });
 
       const hashedPassword = await bcrypt.hash(password, 10);
       const admin = await Admin.create({
@@ -86,12 +76,17 @@ const adminLogin = async (req, res) => {
 
       const { accessToken, refreshToken } = await generateTokens(admin);
 
-      res.cookie("accessToken", accessToken, { httpOnly: true, maxAge: 15 * 60 * 1000 });
+      res.cookie("accessToken", accessToken, { httpOnly: true, maxAge: 60 * 60 * 1000 });
       res.cookie("refreshToken", refreshToken, { httpOnly: true, maxAge: 7 * 24 * 60 * 60 * 1000 });
 
       return res.status(200).json({
          success: true,
-         message: "Login successful",
+         message: "Login successful", admin: {
+            firstName: admin.firstName,
+            lastName: admin.lastName,
+            email: admin.email,
+            phoneNumber: admin.phoneNumber,
+         },
          tokens: { accessToken, refreshToken },
       });
    } catch (error) {
@@ -215,37 +210,42 @@ const adminLogout = async (req, res) => {
       return res.status(500).json({ success: false, msg: "An error occurred while logging out. Please try again later" })
    }
 }
-
 const refreshAccessToken = async (req, res) => {
    try {
       const incomingRefreshToken = req.cookies?.refreshToken || req.header("Authorization")?.replace("Bearer", "");
-
       if (!incomingRefreshToken) {
          return res.status(401).json({ success: false, msg: "Unauthorized request" })
       }
 
       const decodedToken = jwt.verify(incomingRefreshToken, process.env.REFRESH_TOKEN_SECRET);
-      const admin = await User.findById(decodedToken?._id)
+      const admin = await Admin.findById(decodedToken?.adminId);
 
       if (!admin) {
          return res.status(404).json({ success: false, msg: "Invalid or expired refresh token" })
       }
 
-      const { accessToken, refreshToken } = await generateTokens(admin)
+      const { accessToken, refreshToken } = await generateTokens(admin);
 
       return res.status(200)
          .cookie("accessToken", accessToken, { httpOnly: true })
          .cookie("refreshToken", refreshToken, { httpOnly: true })
          .json({
             success: true,
+            admin: {
+               firstName: admin.firstName,
+               lastName: admin.lastName,
+               email: admin.email,
+               phoneNumber: admin.phoneNumber,
+            },
             accessToken,
             refreshToken,
             msg: "Tokens refreshed successfully"
-         })
+         });
    } catch (error) {
       return res.status(500).json({ success: false, msg: "Failed to refresh tokens." })
    }
-}
+};
+
 
 export {
    adminSignUp,

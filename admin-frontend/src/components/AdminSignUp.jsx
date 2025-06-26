@@ -2,6 +2,7 @@ import { useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import axiosInstance from "../api/axiosInstance";
 
 const AdminSignUp = () => {
    const navigate = useNavigate();
@@ -31,7 +32,7 @@ const AdminSignUp = () => {
       e.preventDefault();
       setLoading(true);
       try {
-         await axios.post(`${API}/admin/register`, form, { withCredentials: true });
+         await axiosInstance.post("/admin/register", form);
          toast.success("Admin account created! Please login.");
          navigate("/admin/login");
       } catch (err) {

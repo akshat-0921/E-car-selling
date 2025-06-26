@@ -1,5 +1,6 @@
 import express from "express";
 import {
+   adminSignUp,
    adminLogin,
    refreshAccessToken,
    adminLogout,
@@ -12,6 +13,7 @@ import {
 
 const router = express.Router();
 
+router.post("/register", adminSignUp)
 router.post("/login", adminLogin);
 router.post("/refresh-token", refreshAccessToken);
 router.post("/logout", verifyAccessToken, adminLogout);

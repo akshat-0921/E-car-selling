@@ -1,19 +1,27 @@
 import { Brand } from "../../models/brand.models.js";
 import { Showroom } from "../../models/showroom.models.js";
 import { Vehicle } from "../../models/vehicle.models.js";
+import { uploadOnCloudinary } from "../../config/cloudinary.js";
 
 const addBrand = async (req, res) => {
    try {
-      const { name, logo, description } = req.body
-      const newBrand = await Brand.create({ name, logo, description })
+      const { name, description } = req.body;
+      let logoUrl = "";
 
-      return res.status(201).json({ success: true, msg: "Brand added", brand: newBrand })
+      if (req.file) {
+         // req.file.buffer now contains your image data
+         const cloudRes = await uploadOnCloudinary(req.file.buffer);
+         logoUrl = cloudRes.secure_url;
+      }
+
+      const newBrand = await Brand.create({ name, logo: logoUrl, description });
+
+      return res.status(201).json({ success: true, msg: "Brand added", brand: newBrand });
    } catch (error) {
-      console.log(error)
-      return res.status(500).json({ success: false, msg: "An error occured while adding brand. Please try again" })
+      console.log(error);
+      return res.status(500).json({ success: false, msg: "An error occured while adding brand. Please try again" });
    }
-}
-
+};
 const getAllBrands = async (req, res) => {
    try {
       const brands = await Brand.find()
@@ -28,11 +36,10 @@ const getAllBrands = async (req, res) => {
 const updateBrand = async (req, res) => {
    try {
       const brandId = req.params?._id
-      const { name, logo, description } = req.body
+      const { name, description } = req.body
 
       const updates = {}
       if (name) updates.name = name
-      if (logo) updates.logo = logo
       if (description) updates.description = description
 
       const brand = await Brand.findByIdAndUpdate(

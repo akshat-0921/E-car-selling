@@ -11,6 +11,9 @@ const AdminSchema = new mongoose.Schema(
          unique: true,
          match: [/.+\@.+\..+/, "Invalid email format"],
       },
+      role: {
+         type: String, enum: ["admin"], default: "admin"
+      },
       phoneNumber: {
          type: String,
          required: true,

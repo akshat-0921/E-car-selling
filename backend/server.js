@@ -10,10 +10,27 @@ const port = 4000;
 // Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+const allowedOrigins = [
+   "http://localhost:5173", // main app
+   "http://localhost:5001"  // admin app
+];
+
 app.use(cors({
-   origin: process.env.CLIENT_URL || "http://localhost:3000", // Allow the client URL
-   credentials: true, // Enable cookies to be sent with cross-origin requests
+   origin: function (origin, callback) {
+      // For non-browser requests (like Postman)
+      if (!origin) return callback(null, true);
+      if (allowedOrigins.includes(origin)) {
+         return callback(null, true);
+      } else {
+         // Reject other origins
+         return callback(new Error("Not allowed by CORS"));
+      }
+   },
+   credentials: true,
 }));
+
+
 app.use(cookieParser());
 
 // Database connection
