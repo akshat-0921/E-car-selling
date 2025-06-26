@@ -12,8 +12,9 @@ const VehicleList = () => {
    const loadVehicles = async () => {
       setLoading(true);
       try {
-         const res = await axiosInstance.get(`/vehicle/brand/${brandId}`);
+         const res = await axiosInstance.get(`/brand/get-vehicles/${brandId}`);
          setVehicles(res.data.vehicles);
+         toast.success("Vehicles fetched")
       } catch (error) {
          toast.error(error?.response?.data?.message || "Failed to fetch vehicles");
       }
@@ -43,23 +44,42 @@ const VehicleList = () => {
             ) : (
                <ul>
                   {vehicles.map((v) => (
-                     <li key={v._id}
-                        className="flex items-center justify-between px-6 py-4 border-b last:border-b-0 hover:bg-gray-50 transition">
-                        <div>
-                           <div className="font-semibold text-lg">
-                              {v.name} <span className="text-gray-400">|</span> {v.model}
+                     <li
+                        key={v._id}
+                        className="flex items-center gap-6 px-6 py-4 border-b last:border-b-0 hover:bg-gray-50 transition"
+                     >
+                        {/* Vehicle image */}
+                        <div className="flex-shrink-0 w-28 h-20 rounded-xl bg-gray-100 flex items-center justify-center overflow-hidden shadow">
+                           {v.image ? (
+                              <img
+                                 src={v.image}
+                                 alt={v.name}
+                                 className="object-cover w-full h-full"
+                              />
+                           ) : (
+                              <span className="text-4xl text-gray-300">🚗</span>
+                           )}
+                        </div>
+                        {/* Vehicle info */}
+                        <div className="flex-1 min-w-0">
+                           <div className="font-semibold text-lg truncate">
+                              {v.name}
+                              {v.model ? <span className="text-gray-400"> | {v.model}</span> : null}
                            </div>
-                           <div className="text-gray-500 text-sm">
-                              Model: {v.model} • Price: ₹{v.price}
+                           <div className="text-gray-500 text-sm truncate">
+                              Category: {v.category} • Price: <span className="font-semibold text-black">₹{v.price}</span>
                            </div>
                         </div>
+                        {/* Actions */}
                         <div className="flex gap-2">
-                           <button onClick={() => toast("Edit coming soon")}
+                           <button
+                              onClick={() => toast("Edit coming soon")}
                               className="text-blue-600 hover:underline text-sm"
                            >
                               Edit
                            </button>
-                           <button onClick={() => toast("Delete coming soon")}
+                           <button
+                              onClick={() => toast("Delete coming soon")}
                               className="text-red-600 hover:underline text-sm"
                            >
                               Delete
@@ -68,6 +88,7 @@ const VehicleList = () => {
                      </li>
                   ))}
                </ul>
+
             )}
          </div>
       </div>

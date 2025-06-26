@@ -3,31 +3,33 @@ import { Brand } from "../../models/brand.models.js";
 import { Showroom } from "../../models/showroom.models.js";
 import { ShowroomVehicle } from "../../models/showroomVehicle.models.js";
 import { User } from "../../models/user.models.js";
+import { uploadOnCloudinary } from "../../config/cloudinary.js"
 
 const addVehicle = async (req, res) => {
    try {
       const brandId = req.params._id;
-      const { name, category, price, year, bodyType } = req.body;
-      const { engine, performance, transmission, dimensions, safetyFeatures, connectivity, warranty, customisation } = req.body;
+      const { name, category, price } = req.body;
+
+      if (!name || !category || !price) {
+         return res.status(400).json({ success: false, msg: "Missing required fields" });
+      }
       const brand = await Brand.findById(brandId);
-      if (!brand) { return res.status(404).json({ success: false, msg: "Brand does not exist" }); }
+      if (!brand) {
+         return res.status(404).json({ success: false, msg: "Brand does not exist" });
+      }
+
+      let imageUrl = "";
+      if (req.file) {
+         const cloudRes = await uploadOnCloudinary(req.file.buffer);
+         imageUrl = cloudRes.secure_url;
+      }
+
       const vehicle = await Vehicle.create({
          name,
          category,
-         bodyType,
-         year,
          price,
          brandId,
-         engine,
-         performance,
-         transmission,
-         dimensions,
-         safetyFeatures,
-         connectivity,
-         warranty,
-         customisation,
-         buyers: [],
-         showrooms: []
+         image: imageUrl
       });
 
       return res.status(201).json({ success: true, msg: "Vehicle added to database", vehicle });
@@ -36,6 +38,39 @@ const addVehicle = async (req, res) => {
       return res.status(500).json({ success: false, msg: "An error occurred while adding the vehicle. Please try again" });
    }
 };
+
+// const addVehicle = async (req, res) => {
+//    try {
+//       const brandId = req.params._id;
+//       const { name, category, price, year, bodyType } = req.body;
+//       const { engine, performance, transmission, dimensions, safetyFeatures, connectivity, warranty, customisation } = req.body;
+//       const brand = await Brand.findById(brandId);
+//       if (!brand) { return res.status(404).json({ success: false, msg: "Brand does not exist" }); }
+//       const vehicle = await Vehicle.create({
+//          name,
+//          category,
+//          bodyType,
+//          year,
+//          price,
+//          brandId,
+//          engine,
+//          performance,
+//          transmission,
+//          dimensions,
+//          safetyFeatures,
+//          connectivity,
+//          warranty,
+//          customisation,
+//          buyers: [],
+//          showrooms: []
+//       });
+
+//       return res.status(201).json({ success: true, msg: "Vehicle added to database", vehicle });
+//    } catch (error) {
+//       console.log(error);
+//       return res.status(500).json({ success: false, msg: "An error occurred while adding the vehicle. Please try again" });
+//    }
+// };
 
 const getAllVehicles = async (req, res) => {
    try {

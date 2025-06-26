@@ -63,13 +63,18 @@ const customisationSchema = new Schema({
 const VehicleSchema = new Schema(
    {
       brandId: { type: Schema.Types.ObjectId, ref: "Brand" },
-      name: { type: String, required: true },
+      name: {
+         type: String,
+         // required: true
+      },
       category: {
-         type: String, required: true,
+         type: String,
+         // required: true,
          enum: ["Petrol", "Diesel", "CNG", "Electric", "Hybrid", "Hydrogen", "LPG", "Plug-in Hybrid", "Ethanol", "Biodiesel"]
       }, bodyType: {
          type: String,
-         required: true,
+
+         // required: true,
          enum: [
             "Hatchback",
             "Sedan",
@@ -89,6 +94,8 @@ const VehicleSchema = new Schema(
             "Electric SUV"
          ]
       },
+
+      image: { type: String, default: "" },
       showrooms: [{ type: Schema.Types.ObjectId, ref: "Showroom" }],
       engine: engineSchema,
       performance: performanceSchema,
@@ -98,8 +105,14 @@ const VehicleSchema = new Schema(
       connectivity: connectivitySchema,
       warranty: warrantySchema,
       customisation: customisationSchema,
-      year: { type: String, required: true },
-      price: { type: Number, required: true },
+      year: {
+         type: String,
+         // required: true
+      },
+      price: {
+         type: Number,
+         // required: true
+      },
       ratingAndReviews: [{ type: Schema.Types.ObjectId, ref: "Review" }],
       buyers: [{ type: Schema.Types.ObjectId, ref: "User" }]
    },
