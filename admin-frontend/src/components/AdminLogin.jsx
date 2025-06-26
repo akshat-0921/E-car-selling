@@ -2,13 +2,20 @@ import { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { useDispatch } from "react-redux";
+
+import { setAdminLogin } from "../slices/adminSlice";
 
 const AdminLogin = () => {
+
+   const dispatch = useDispatch();
+
    const [form, setForm] = useState({
       email: "",
       password: "",
       // secret: "" // uncomment if required on login as well
    });
+
    const [loading, setLoading] = useState(false);
    const navigate = useNavigate();
    const API = import.meta.env.VITE_BACKEND_URL;
@@ -19,7 +26,13 @@ const AdminLogin = () => {
       try {
          const res = await axios.post(`${API}/admin/login`, form, { withCredentials: true });
          toast.success("Login successful")
-         // Redirect to brands management
+
+         dispatch(setAdminLogin({
+            admin: res.data.admin,
+            accessToken: res.data.tokens?.accessToken,
+         }));
+         navigate("/"); // or wherever your admin dashboard is
+
          // navigate("/admin/brands");
       } catch (err) {
          toast.error(err.response?.data?.message || "Login failed");

@@ -33,7 +33,7 @@ const AdminSignUp = () => {
       try {
          await axios.post(`${API}/admin/register`, form, { withCredentials: true });
          toast.success("Admin account created! Please login.");
-         // navigate("/admin/login");
+         navigate("/admin/login");
       } catch (err) {
          toast.error(err?.response?.data?.message || "Signup failed. Try again.");
       }
