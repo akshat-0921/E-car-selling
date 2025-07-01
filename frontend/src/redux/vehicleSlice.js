@@ -4,9 +4,9 @@ import { fetchVehiclesByBrand } from "../api/brandApi";
 
 export const fetchVehicles = createAsyncThunk(
    'vehicle/fetchVehicles',
-   async (_, thunkAPI) => {
+   async (filters = {}, thunkAPI) => {
       try {
-         const response = await getAllVehicles();
+         const response = await getAllVehicles(filters);
          return response;
       } catch (error) {
          return thunkAPI.rejectWithValue(error.response?.data?.message || "Failed to fetch vehicles");

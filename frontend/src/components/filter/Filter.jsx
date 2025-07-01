@@ -1,11 +1,10 @@
-
 import { useState, useEffect } from "react"
 import { FaFilter } from "react-icons/fa"
 import Select from "react-select"
 import { brandAPI } from "../../api"
 import { toast } from "react-toastify"
 
-// Import SVG images.  Adjust paths if needed.
+// Import SVG images for body types
 import suv from "../../assets/bodyType/suv_clr.svg"
 import sedan from "../../assets/bodyType/sedan_clr.svg"
 import hatchback from "../../assets/bodyType/hatchback_clr.svg"
@@ -30,13 +29,16 @@ const fuelTypeOptions = [
    { value: "Electric", label: "Electric" },
 ]
 
+// (Optional) Category options, or you can just use a text input for category
+
 const Filter = ({ onFilterChange }) => {
    const [filters, setFilters] = useState({
       minPrice: 100000,
-      maxPrice: 5000000,
-      bodyType: [],
+      maxPrice: 5000000000,
+      bodyType: "",     // single value for backend
       brand: "",
-      fuelType: [],
+      fuelType: "",     // single value for backend
+      category: ""
    })
 
    const [brandOptions, setBrandOptions] = useState([])
@@ -50,7 +52,7 @@ const Filter = ({ onFilterChange }) => {
             const response = await brandAPI.getAllBrands()
             if (response.data.success) {
                const brands = response.data.brands.map((brand) => ({
-                  value: brand._id || brand.name,
+                  value: brand.name, // Use brand name to match backend
                   label: brand.name,
                }))
                setBrandOptions(brands)
@@ -58,23 +60,23 @@ const Filter = ({ onFilterChange }) => {
                toast.error(response.data.message || "Failed to fetch brands")
             }
          } catch (error) {
-            console.error("Error fetching brands:", error)
             toast.error(error.response?.data?.message || "Failed to fetch brands")
          } finally {
             setLoading(false)
          }
       }
-
       fetchBrands()
    }, [])
 
-   const handleMultipleChange = (selected, name) => {
+   // For selects with single value
+   const handleSelectChange = (selected, name) => {
       setFilters({
          ...filters,
-         [name]: selected ? selected.map((item) => item.value) : [],
+         [name]: selected ? selected.value : "",
       })
    }
 
+   // For input fields
    const handleChange = (e) => {
       const { name, value } = e.target
       setFilters({
@@ -83,13 +85,13 @@ const Filter = ({ onFilterChange }) => {
       })
    }
 
+   // Price sliders
    const handleMinPriceChange = (e) => {
       const minPrice = Number.parseInt(e.target.value, 10)
       if (minPrice <= filters.maxPrice) {
          setFilters({ ...filters, minPrice })
       }
    }
-
    const handleMaxPriceChange = (e) => {
       const maxPrice = Number.parseInt(e.target.value, 10)
       if (maxPrice >= filters.minPrice) {
@@ -99,12 +101,18 @@ const Filter = ({ onFilterChange }) => {
 
    const handleSubmit = (e) => {
       e.preventDefault()
-      onFilterChange(filters)
+      // Only send non-empty fields
+      const cleanFilters = Object.entries(filters).reduce((acc, [k, v]) => {
+         if (v !== "" && v !== null && v !== undefined) acc[k] = v
+         return acc
+      }, {})
+      onFilterChange(cleanFilters)
    }
 
+   // Custom option label with image
    const formatOptionLabel = ({ label, image }) => (
       <div className="flex items-center">
-         {image && <img src={image || "/placeholder.svg"} alt={label} className="w-6 h-6 mr-2" />}
+         {image && <img src={image} alt={label} className="w-6 h-6 mr-2" />}
          <span>{label}</span>
       </div>
    )
@@ -119,9 +127,7 @@ const Filter = ({ onFilterChange }) => {
          <label className="w-full text-sm text-gray-600">Price Range</label>
          <div className="flex flex-col space-y-2 mt-1">
             <div className="flex items-center">
-               <label htmlFor="minPrice" className="mr-2">
-                  Min:
-               </label>
+               <label htmlFor="minPrice" className="mr-2">Min:</label>
                <input
                   type="range"
                   id="minPrice"
@@ -135,9 +141,7 @@ const Filter = ({ onFilterChange }) => {
                <span className="ml-2">₹{filters.minPrice.toLocaleString()}</span>
             </div>
             <div className="flex items-center mt-2">
-               <label htmlFor="maxPrice" className="mr-2">
-                  Max:
-               </label>
+               <label htmlFor="maxPrice" className="mr-2">Max:</label>
                <input
                   type="range"
                   id="maxPrice"
@@ -155,36 +159,45 @@ const Filter = ({ onFilterChange }) => {
          <label className="w-full text-sm text-gray-600 mt-3">Body Type</label>
          <Select
             name="bodyType"
-            isMulti
             options={bodyTypeOptions}
-            value={bodyTypeOptions.filter((option) => filters.bodyType.includes(option.value))}
-            onChange={(selected) => handleMultipleChange(selected, "bodyType")}
+            value={bodyTypeOptions.find(option => option.value === filters.bodyType) || null}
+            onChange={(selected) => handleSelectChange(selected, "bodyType")}
             className="w-full mt-1"
             placeholder="Select body type"
             formatOptionLabel={formatOptionLabel}
-            formatGroupLabel={formatOptionLabel} // For grouped options (if any)
+            isClearable
          />
 
          <label className="w-full text-sm text-gray-600 mt-3">Brand</label>
          <Select
             name="brand"
             options={brandOptions}
-            value={brandOptions.find((option) => option.value === filters.brand) || null}
-            onChange={(selected) => handleChange({ target: { name: "brand", value: selected ? selected.value : "" } })}
+            value={brandOptions.find(option => option.value === filters.brand) || null}
+            onChange={(selected) => handleSelectChange(selected, "brand")}
             className="w-full mt-1"
             placeholder={loading ? "Loading brands..." : "Select brand"}
             isLoading={loading}
+            isClearable
          />
 
          <label className="w-full text-sm text-gray-600 mt-3">Fuel Type</label>
          <Select
             name="fuelType"
-            isMulti
             options={fuelTypeOptions}
-            value={fuelTypeOptions.filter((option) => filters.fuelType.includes(option.value))}
-            onChange={(selected) => handleMultipleChange(selected, "fuelType")}
+            value={fuelTypeOptions.find(option => option.value === filters.fuelType) || null}
+            onChange={(selected) => handleSelectChange(selected, "fuelType")}
             className="w-full mt-1"
             placeholder="Select fuel type"
+            isClearable
+         />
+
+         <label className="w-full text-sm text-gray-600 mt-3">Category</label>
+         <input
+            name="category"
+            value={filters.category}
+            onChange={handleChange}
+            placeholder="Enter category"
+            className="w-full mt-1 border rounded px-2 py-1"
          />
 
          <button type="submit" className="w-full mt-4 bg-blue-600 text-white p-2 rounded hover:bg-blue-700">

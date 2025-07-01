@@ -52,7 +52,7 @@ app.use("/api/user", userRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/vehicle", vehicleRouter);
 app.use("/api/payment", paymentRoutes);
-app.use("/api/vehicle", filterRoutes)
+app.use("/api/filter", filterRoutes)
 
 // Root route
 app.get("/", (req, res) => {

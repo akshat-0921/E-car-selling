@@ -7,9 +7,9 @@ const API = axios.create({
    },
 });
 
-export const getAllVehicles = async () => {
+export const getAllVehicles = async (filters = {}) => {
    try {
-      const response = await API.get('/vehicle/get-all');
+      const response = await API.get('/filter', { params: filters });
       console.log(response.data)
       return response.data.vehicles;
    } catch (error) {
@@ -17,6 +17,8 @@ export const getAllVehicles = async () => {
       throw error;
    }
 };
+
+
 
 export const getVehicleById = async (vehicleId) => {
    try {
@@ -28,3 +30,14 @@ export const getVehicleById = async (vehicleId) => {
       throw error;
    }
 };
+
+// export const getAllVehicles = async () => {
+//    try {
+//       const response = await API.get('/vehicle/get-all');
+//       console.log(response.data)
+//       return response.data.vehicles;
+//    } catch (error) {
+//       console.error('Error fetching vehicles:', error);
+//       throw error;
+//    }
+// };

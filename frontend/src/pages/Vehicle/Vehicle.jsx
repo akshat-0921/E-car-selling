@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchVehicles } from "../../redux/vehicleSlice";
 import { fetchVehiclesByBrandThunk } from "../../redux/vehicleSlice";
-import Filter from "../../components/serviceCard/ServiceCard";
+import Filter from "../../components/filter/Filter";
 import VehicleCard from "../../components/VehicleCard/VehicleCard";
 
 const Vehicle = ({ brandId }) => {
@@ -20,11 +20,16 @@ const Vehicle = ({ brandId }) => {
    const isLoading = brandId ? brandLoading : allLoading;
    const error = brandId ? brandError : allError;
 
+   const handleFilterChange = (filters) => {
+      console.log("Sending filters to backend:", filters);
+      dispatch(fetchVehicles(filters))
+   }
+
    return (
       <div className="flex flex-col lg:flex-row p-6 gap-6">
          {!brandId && (
             <div className="w-full lg:w-1/4">
-               <Filter onFilterChange={(filters) => console.log("Filter applied", filters)} />
+               <Filter onFilterChange={handleFilterChange} />
             </div>
          )}
 

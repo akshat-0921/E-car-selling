@@ -3,6 +3,6 @@ import { filterVehicles } from "../controllers/filter/filterVehicle.controllers.
 
 const router = Router();
 
-router.get("/filter", filterVehicles)
+router.get("/", filterVehicles)
 
 export default router
