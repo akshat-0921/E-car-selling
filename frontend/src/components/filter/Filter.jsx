@@ -23,7 +23,7 @@ const bodyTypeOptions = [
    { value: "Truck", label: "Truck", image: truck },
 ]
 
-const fuelTypeOptions = [
+const categoryOptions = [
    { value: "Petrol", label: "Petrol" },
    { value: "Diesel", label: "Diesel" },
    { value: "Electric", label: "Electric" },
@@ -34,10 +34,10 @@ const fuelTypeOptions = [
 const Filter = ({ onFilterChange }) => {
    const [filters, setFilters] = useState({
       minPrice: 100000,
-      maxPrice: 5000000000,
+      maxPrice: 50000000,
       bodyType: "",     // single value for backend
       brand: "",
-      fuelType: "",     // single value for backend
+      // fuelType: "",     // single value for backend
       category: ""
    })
 
@@ -133,7 +133,7 @@ const Filter = ({ onFilterChange }) => {
                   id="minPrice"
                   name="minPrice"
                   min="100000"
-                  max="5000000"
+                  max="50000000"
                   value={filters.minPrice}
                   onChange={handleMinPriceChange}
                   className="w-full"
@@ -147,7 +147,7 @@ const Filter = ({ onFilterChange }) => {
                   id="maxPrice"
                   name="maxPrice"
                   min="100000"
-                  max="5000000"
+                  max="50000000"
                   value={filters.maxPrice}
                   onChange={handleMaxPriceChange}
                   className="w-full"
@@ -180,25 +180,25 @@ const Filter = ({ onFilterChange }) => {
             isClearable
          />
 
-         <label className="w-full text-sm text-gray-600 mt-3">Fuel Type</label>
+         <label className="w-full text-sm text-gray-600 mt-3">Category</label>
          <Select
-            name="fuelType"
-            options={fuelTypeOptions}
-            value={fuelTypeOptions.find(option => option.value === filters.fuelType) || null}
-            onChange={(selected) => handleSelectChange(selected, "fuelType")}
+            name="category"
+            options={categoryOptions}
+            value={categoryOptions.find(option => option.value === filters.category) || null}
+            onChange={(selected) => handleSelectChange(selected, "category")}
             className="w-full mt-1"
             placeholder="Select fuel type"
             isClearable
          />
 
-         <label className="w-full text-sm text-gray-600 mt-3">Category</label>
+         {/* <label className="w-full text-sm text-gray-600 mt-3">Category</label>
          <input
             name="category"
             value={filters.category}
             onChange={handleChange}
             placeholder="Enter category"
             className="w-full mt-1 border rounded px-2 py-1"
-         />
+         /> */}
 
          <button type="submit" className="w-full mt-4 bg-blue-600 text-white p-2 rounded hover:bg-blue-700">
             Apply Filters
