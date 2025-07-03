@@ -6,6 +6,14 @@ import { toast } from "react-toastify"
 import { ArrowLeft, Upload, X, Car } from "lucide-react"
 import axiosInstance from "../../api/axiosInstance"
 
+import suv from "../../assets/bodyType/suv_clr.svg"
+import sedan from "../../assets/bodyType/sedan_clr.svg"
+import hatchback from "../../assets/bodyType/hatchback_clr.svg"
+import coupe from "../../assets/bodyType/coupe_clr.svg"
+import convertible from "../../assets/bodyType/convertible_clr.svg"
+import van from "../../assets/bodyType/van_clr.svg"
+import truck from "../../assets/bodyType/truck_clr.svg"
+
 const CATEGORIES = [
    "Petrol",
    "Diesel",
@@ -19,11 +27,24 @@ const CATEGORIES = [
    "Biodiesel",
 ]
 
+const bodyTypeOptions = [
+   { value: "SUV", label: "SUV", image: suv },
+   { value: "Sedan", label: "Sedan", image: sedan },
+   { value: "Hatchback", label: "Hatchback", image: hatchback },
+   { value: "Coupe", label: "Coupe", image: coupe },
+   { value: "Convertible", label: "Convertible", image: convertible },
+   { value: "Van", label: "Van", image: van },
+   { value: "Truck", label: "Truck", image: truck },
+]
+
+
 const AddVehicle = () => {
    const { brandId } = useParams()
    const [form, setForm] = useState({
       name: "",
       category: "",
+      fuelType: "",
+      bodyType: "",
       price: "",
    })
    const [image, setImage] = useState(null)
@@ -58,6 +79,7 @@ const AddVehicle = () => {
          data.append("name", form.name)
          data.append("category", form.category)
          data.append("price", form.price)
+         data.append("bodyType", form.bodyType)
          if (image) data.append("image", image)
 
          await axiosInstance.post(`/vehicle/add/${brandId}`, data, {
@@ -101,6 +123,28 @@ const AddVehicle = () => {
                         required
                         className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
                      />
+                  </div>
+
+                  {/* Body Type */}
+                  <div>
+                     <label className="block text-sm font-medium text-gray-700 mb-2">Body Type *</label>
+                     <select
+                        name="bodyType"
+                        value={form.bodyType}
+                        onChange={onChange}
+                        required
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus-ring-blue-500 focus:border-blue-500 transition-colors"
+                     >
+                        <option value="">Select a category</option>
+                        {
+                           bodyTypeOptions.map((type) => (
+                              <option key={type.value} value={type.value}>
+                                 {type.value}
+                              </option>
+                           ))
+                        }
+
+                     </select>
                   </div>
 
                   {/* Category */}

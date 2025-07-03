@@ -116,7 +116,7 @@ const AddShowroom = () => {
 
          await axiosInstance.post(`/showroom/add/${formData.brandId}`, submitData)
          toast.success("Showroom added successfully")
-         navigate("/showrooms")
+         navigate("/admin/showrooms")
       } catch (error) {
          toast.error(error?.response?.data?.message || "Failed to add showroom")
       }
@@ -130,7 +130,7 @@ const AddShowroom = () => {
             <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
                <div className="flex items-center gap-4 mb-4">
                   <button
-                     onClick={() => navigate("/showrooms")}
+                     onClick={() => navigate("/admin/showrooms")}
                      className="p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
                   >
                      <ArrowLeft size={20} />

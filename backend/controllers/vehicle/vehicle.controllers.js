@@ -8,9 +8,9 @@ import { uploadOnCloudinary } from "../../config/cloudinary.js"
 const addVehicle = async (req, res) => {
    try {
       const brandId = req.params._id;
-      const { name, category, price } = req.body;
+      const { name, category, price, bodyType } = req.body;
 
-      if (!name || !category || !price) {
+      if (!name || !category || !price || !bodyType) {
          return res.status(400).json({ success: false, msg: "Missing required fields" });
       }
       const brand = await Brand.findById(brandId);
@@ -29,6 +29,7 @@ const addVehicle = async (req, res) => {
          category,
          price,
          brandId,
+         bodyType,
          image: imageUrl
       });
 

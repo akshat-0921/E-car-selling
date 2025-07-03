@@ -111,7 +111,7 @@ const AdminHome = () => {
                      Add Brand
                   </button>
                   <button
-                     onClick={() => navigate("/showrooms")}
+                     onClick={() => navigate("/admin/showrooms")}
                      className="inline-flex items-center px-4 py-2 bg-orange-100 hover:bg-orange-200 text-orange-700 rounded-lg transition-colors duration-200 text-sm font-medium"
                   >
                      <Building2 size={16} className="mr-2" />

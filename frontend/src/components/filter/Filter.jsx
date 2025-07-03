@@ -27,6 +27,13 @@ const categoryOptions = [
    { value: "Petrol", label: "Petrol" },
    { value: "Diesel", label: "Diesel" },
    { value: "Electric", label: "Electric" },
+   { value: "CNG", label: "CNG" },
+   { value: "Hybrid", label: "Hybrid" },
+   { value: "Hydrogen", label: "Hydrogen" },
+   { value: "LPG", label: "LPG" },
+   { value: "Plug-in Hybrid", label: "Plug-in Hybrid" },
+   { value: "Ethanol", label: "Ethanol" },
+   { value: "Biodiesel", label: "Biodiesel" },
 ]
 
 // (Optional) Category options, or you can just use a text input for category
