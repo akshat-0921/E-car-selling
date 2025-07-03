@@ -47,6 +47,7 @@ const getShowroom = async (req, res) => {
 const getAllShowrooms = async (req, res) => {
    try {
       const showrooms = await Showroom.find()
+      // console.log(showrooms.length)
       if (showrooms.length === 0) return res.status(200).json({ success: true, msg: "No showroom found", showrooms: [] })
       return res.status(200).json({ success: true, msg: "All showrooms fetched", showrooms })
    } catch (error) {
@@ -112,5 +113,3 @@ const deleteShowroom = async (req, res) => {
 
 export { addShowroom, getShowroom, getAllShowrooms, findNearbyShowrooms, deleteShowroom };
 
-
-// jungle build for lukas- war axe, tough boots, hunter strike, sea hellberd, queen wings and rose gold meteor.

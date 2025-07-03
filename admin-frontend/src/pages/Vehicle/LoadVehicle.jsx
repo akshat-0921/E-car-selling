@@ -1,4 +1,4 @@
-"use client"
+
 
 import { useEffect, useState } from "react"
 import { useParams, useNavigate } from "react-router-dom"
@@ -118,7 +118,7 @@ const VehicleList = () => {
 
                               {/* Actions */}
                               <div className="flex items-center space-x-2">
-                                   <button
+                                 <button
                                     onClick={() => toast("Edit functionality coming soon")}
                                     className="inline-flex items-center px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
                                  >

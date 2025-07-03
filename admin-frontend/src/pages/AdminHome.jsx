@@ -1,6 +1,7 @@
+"use client"
 
 import { useNavigate } from "react-router-dom"
-import { Tag, Plus, Car, Truck, ArrowRight } from "lucide-react"
+import { Tag, Plus, Car, Truck, ArrowRight, Building2, MapPin } from "lucide-react"
 
 const AdminHome = () => {
    const navigate = useNavigate()
@@ -21,6 +22,22 @@ const AdminHome = () => {
          onClick: () => navigate("/admin/brand/add"),
          color: "bg-emerald-50 hover:bg-emerald-100 border-emerald-200",
          iconColor: "text-emerald-600",
+      },
+      {
+         title: "View All Showrooms",
+         description: "Manage and view all showroom locations",
+         icon: Building2,
+         onClick: () => navigate("/admin/showrooms"),
+         color: "bg-orange-50 hover:bg-orange-100 border-orange-200",
+         iconColor: "text-orange-600",
+      },
+      {
+         title: "Add New Showroom",
+         description: "Create a new showroom location",
+         icon: MapPin,
+         onClick: () => navigate("/admin/showrooms/add"),
+         color: "bg-cyan-50 hover:bg-cyan-100 border-cyan-200",
+         iconColor: "text-cyan-600",
       },
       {
          title: "View Vehicles by Brand",
@@ -46,11 +63,11 @@ const AdminHome = () => {
             {/* Header */}
             <div className="mb-8">
                <h1 className="text-4xl font-bold text-gray-900 mb-2">Admin Dashboard</h1>
-               <p className="text-gray-600">Manage your vehicle brands and inventory</p>
+               <p className="text-gray-600">Manage your vehicle brands, showrooms, and inventory</p>
             </div>
 
             {/* Dashboard Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6 mb-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
                {dashboardItems.map((item, index) => {
                   const IconComponent = item.icon
                   return (
@@ -93,11 +110,25 @@ const AdminHome = () => {
                      <Plus size={16} className="mr-2" />
                      Add Brand
                   </button>
+                  <button
+                     onClick={() => navigate("/showrooms")}
+                     className="inline-flex items-center px-4 py-2 bg-orange-100 hover:bg-orange-200 text-orange-700 rounded-lg transition-colors duration-200 text-sm font-medium"
+                  >
+                     <Building2 size={16} className="mr-2" />
+                     View Showrooms
+                  </button>
+                  <button
+                     onClick={() => navigate("/showrooms/add")}
+                     className="inline-flex items-center px-4 py-2 bg-cyan-100 hover:bg-cyan-200 text-cyan-700 rounded-lg transition-colors duration-200 text-sm font-medium"
+                  >
+                     <MapPin size={16} className="mr-2" />
+                     Add Showroom
+                  </button>
                </div>
             </div>
 
             {/* Stats Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mt-8">
                <div className="bg-white rounded-xl border border-gray-200 p-6">
                   <div className="flex items-center justify-between">
                      <div>
@@ -109,7 +140,17 @@ const AdminHome = () => {
                      </div>
                   </div>
                </div>
-
+               <div className="bg-white rounded-xl border border-gray-200 p-6">
+                  <div className="flex items-center justify-between">
+                     <div>
+                        <p className="text-sm font-medium text-gray-600">Total Showrooms</p>
+                        <p className="text-2xl font-bold text-gray-900">--</p>
+                     </div>
+                     <div className="p-3 bg-orange-50 rounded-lg">
+                        <Building2 className="text-orange-600" size={20} />
+                     </div>
+                  </div>
+               </div>
                <div className="bg-white rounded-xl border border-gray-200 p-6">
                   <div className="flex items-center justify-between">
                      <div>
@@ -121,7 +162,6 @@ const AdminHome = () => {
                      </div>
                   </div>
                </div>
-
                <div className="bg-white rounded-xl border border-gray-200 p-6">
                   <div className="flex items-center justify-between">
                      <div>
@@ -130,6 +170,37 @@ const AdminHome = () => {
                      </div>
                      <div className="p-3 bg-purple-50 rounded-lg">
                         <Truck className="text-purple-600" size={20} />
+                     </div>
+                  </div>
+               </div>
+            </div>
+
+            {/* Recent Activity Section */}
+            <div className="mt-8 grid grid-cols-1 lg:grid-cols-2 gap-6">
+               <div className="bg-white rounded-xl border border-gray-200 p-6">
+                  <h2 className="text-lg font-semibold text-gray-900 mb-4">Recent Brands</h2>
+                  <div className="space-y-3">
+                     <div className="flex items-center justify-between py-2 border-b border-gray-100 last:border-b-0">
+                        <div className="flex items-center gap-3">
+                           <div className="p-2 bg-blue-50 rounded-lg">
+                              <Tag className="text-blue-600" size={16} />
+                           </div>
+                           <span className="text-gray-600 text-sm">No recent brands</span>
+                        </div>
+                     </div>
+                  </div>
+               </div>
+
+               <div className="bg-white rounded-xl border border-gray-200 p-6">
+                  <h2 className="text-lg font-semibold text-gray-900 mb-4">Recent Showrooms</h2>
+                  <div className="space-y-3">
+                     <div className="flex items-center justify-between py-2 border-b border-gray-100 last:border-b-0">
+                        <div className="flex items-center gap-3">
+                           <div className="p-2 bg-orange-50 rounded-lg">
+                              <Building2 className="text-orange-600" size={16} />
+                           </div>
+                           <span className="text-gray-600 text-sm">No recent showrooms</span>
+                        </div>
                      </div>
                   </div>
                </div>

@@ -14,6 +14,9 @@ import BrandList from "./pages/Brand/BrandList";
 import AddBrand from "./pages/Brand/BrandForm";
 import VehicleList from "./pages/Vehicle/LoadVehicle";
 import AddVehicle from "./pages/Vehicle/AddVehicle";
+import ShowroomList from "./pages/Showroom/ShowroomList";
+import AddShowroom from "./pages/Showroom/AddShowroom";
+import ShowroomDetail from "./pages/Showroom/ShowroomDetail";
 
 const App = () => {
    // const isAdmin = !!document.cookie.includes('accessToken');
@@ -49,6 +52,9 @@ const App = () => {
             <Route path="/admin/brand/add" element={<AddBrand />} />
             <Route path="/admin/brand/:brandId/vehicles" element={<VehicleList />} />
             <Route path="/admin/brand/:brandId/add-vehicle" element={<AddVehicle />} />
+            <Route path="admin/showrooms" element={<ShowroomList />} />
+            <Route path="admin/showrooms/add" element={<AddShowroom />} />
+            <Route path="admin/showrooms/:showroomId" element={<ShowroomDetail />} />
          </Routes>
       </>
    )
