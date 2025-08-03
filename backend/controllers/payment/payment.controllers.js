@@ -1,28 +1,56 @@
-import stripe from "../../config/payment.js";
-import { errorHandler } from "../../utils/errorHandler.utils.js";
+// payment.controllers.js
+import razorpay from "../../config/razorpay.js";
+import crypto from "crypto";
 
+// Create Razorpay Order
 const createPaymentIntent = async (req, res) => {
    try {
-      const { amount, currency = "inr" } = req.body;
+      const { amount } = req.body;
       if (!amount) {
-         return errorHandler(res, 400, "Amount is required");
+         return res.status(400).json({ success: false, msg: "Amount is required" });
       }
 
-      const paymentIntent = await stripe.paymentIntents.create({
-         amount: amount * 100,
-         currency,
-         payment_method_types: ["card"],
-      });
+      const options = {
+         amount: amount * 100, // Razorpay uses paise
+         currency: "INR",
+         receipt: `receipt_order_${Date.now()}`,
+      };
 
+      const order = await razorpay.orders.create(options);
       return res.status(200).json({
          success: true,
-         clientSecret: paymentIntent.client_secret,
-         paymentIntentId: paymentIntent.id,
+         order,
       });
    } catch (error) {
-      console.error("Error creating payment intent:", error.message);
-      return errorHandler(res, 500, "Error occurred while creating the payment intent.");
+      console.error("Error creating Razorpay order:", error.message);
+      return res.status(500).json({ success: false, msg: "Razorpay order creation failed" });
    }
 };
 
-export { createPaymentIntent }
+// Verify Razorpay Signature After Payment
+const verifyRazorpaySignature = async (req, res) => {
+   try {
+      const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = req.body;
+
+      if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature) {
+         return res.status(400).json({ success: false, msg: "Missing payment verification data" });
+      }
+
+      const body = `${razorpay_order_id}|${razorpay_payment_id}`;
+      const expectedSignature = crypto
+         .createHmac("sha256", process.env.RAZORPAY_SECRET)
+         .update(body)
+         .digest("hex");
+
+      if (expectedSignature === razorpay_signature) {
+         return res.status(200).json({ success: true, msg: "Payment verified successfully" });
+      } else {
+         return res.status(400).json({ success: false, msg: "Invalid signature" });
+      }
+   } catch (error) {
+      console.error("Signature verification failed:", error.message);
+      return res.status(500).json({ success: false, msg: "Internal server error" });
+   }
+};
+
+export { createPaymentIntent, verifyRazorpaySignature };

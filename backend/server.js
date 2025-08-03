@@ -18,18 +18,16 @@ const allowedOrigins = [
 
 app.use(cors({
    origin: function (origin, callback) {
-      // For non-browser requests (like Postman)
-      if (!origin) return callback(null, true);
+      if (!origin) return callback(null, true); // Allow Postman or curl
+
       if (allowedOrigins.includes(origin)) {
-         return callback(null, true);
+         return callback(null, origin);  // ✅ return the exact origin, not "true"
       } else {
-         // Reject other origins
          return callback(new Error("Not allowed by CORS"));
       }
    },
    credentials: true,
 }));
-
 
 app.use(cookieParser());
 

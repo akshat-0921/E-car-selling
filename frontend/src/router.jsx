@@ -19,35 +19,37 @@ import Profile from "./pages/Profile/Profile";
 import SettingsPage from "./pages/Settings/Settings";
 import ShowBrands from "./pages/Brands/Brands";
 import BrandDetails from "./pages/Brands/BrandDetails";
-import BrandCard from "./components/brandCard/Brandcard";
+// import BrandCard from "./components/brandCard/Brandcard";
 import Favorites from "./pages/Favorites/Favorites";
 
+import PaymentPage from "./pages/payment/PaymentPage";
+
 const router = createBrowserRouter([
-   {
-      path: "/",
-      element: (
-         <AppLayout />
-      ),
-      children: [
-         { index: true, element: <Home /> },
-         { path: "auth", element: <Auth /> },
-         { path: "login", element: <LoginForm /> },
-         { path: "signup", element: <SignUpForm /> },
-         { path: "vehicles", element: <Vehicle /> },
-         { path: "vehicles/:vehicleId", element: <VehicleDetails /> },
-         { path: "brands/:brandId", element: <BrandDetails /> },
-         { path: "car-model", element: <CarDetailPage /> },
-         { path: "search", element: <SearchPage /> },
-         { path: "brand-search", element: <BrandSearchPage /> },
-         { path: "brands", element: <ShowBrands /> },
-         { path: "showrooms", element: <ShowroomPage /> },
-         { path: "Car-Model-Selection", element: <CarModelSelectionPage /> },
-         { path: "Test-Drive", element: <TestDriveBookingPage /> },
-         { path: "profile", element: <Profile /> },
-         { path: "settings", element: <SettingsPage /> },
-         { path: "favorites", element: <Favorites />, },
-      ],
-   },
-])
+  {
+    path: "/",
+    element: <AppLayout />,
+    children: [
+      { index: true, element: <Home /> },
+      { path: "auth", element: <Auth /> },
+      { path: "login", element: <LoginForm /> },
+      { path: "signup", element: <SignUpForm /> },
+      { path: "vehicles", element: <Vehicle /> },
+      { path: "vehicles/:vehicleId", element: <VehicleDetails /> },
+      { path: "brands/:brandId", element: <BrandDetails /> },
+      { path: "car-model", element: <CarDetailPage /> },
+      { path: "search", element: <SearchPage /> },
+      { path: "brand-search", element: <BrandSearchPage /> },
+      { path: "brands", element: <ShowBrands /> },
+      { path: "showrooms", element: <ShowroomPage /> },
+      { path: "Car-Model-Selection", element: <CarModelSelectionPage /> },
+      { path: "Test-Drive", element: <TestDriveBookingPage /> },
+      { path: "profile", element: <Profile /> },
+      { path: "settings", element: <SettingsPage /> },
+      { path: "favorites", element: <Favorites /> },
+      { path: "payment", element: <PaymentPage /> }, 
+    ],
+  },
+]);
+
 
 export default router
