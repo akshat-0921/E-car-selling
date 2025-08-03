@@ -1,9 +1,12 @@
-import express from "express"
-import { createPaymentIntent } from "../controllers/payment/payment.controllers.js"
-// const { createPaymentIntent } = require("../controllers/user.controllers.js");
+import express from "express";
+import {
+    createPaymentIntent,
+    verifyRazorpaySignature,
+} from "../controllers/payment/payment.controllers.js";
 
 const router = express.Router();
 
 router.post("/create-payment", createPaymentIntent);
+router.post("/verify-razorpay", verifyRazorpaySignature);
 
-export default router
+export default router;
