@@ -3,8 +3,11 @@ import { FaEye, FaEyeSlash } from "react-icons/fa";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import { login, setLoading, setError, fetchCurrentUser } from "../../redux/authSlice";
+import { useNavigate } from "react-router-dom";
+
 
 const LoginForm = () => {
+   const navigate = useNavigate();
    const dispatch = useDispatch();
    const { loading, error, user } = useSelector((state) => state.auth);
 
@@ -23,6 +26,8 @@ const LoginForm = () => {
          const res = await axios.post(`${API}/user/login`, { email, password }, { withCredentials: true });
          dispatch(login(res.data.user));
          alert(res.data.message || "Logged In successfully");
+         navigate("/");
+
       } catch (error) {
          dispatch(setError(error.response?.data?.message || "Login failed"));
          alert(error.response?.data?.message || "Failed to login");
