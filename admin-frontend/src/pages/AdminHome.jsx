@@ -1,10 +1,35 @@
-"use client"
+"use client";
 
-import { useNavigate } from "react-router-dom"
-import { Tag, Plus, Car, Truck, ArrowRight, Building2, MapPin } from "lucide-react"
+import { useNavigate } from "react-router-dom";
+import {
+   Tag,
+   Plus,
+   Car,
+   Truck,
+   ArrowRight,
+   Building2,
+   MapPin
+} from "lucide-react";
+import { useSelector } from "react-redux";
 
 const AdminHome = () => {
-   const navigate = useNavigate()
+   const navigate = useNavigate();
+   const isLoggedIn = useSelector((state) => state.admin.isLoggedIn);
+
+   if (!isLoggedIn) {
+      return (
+         <div className="min-h-screen flex items-center justify-center bg-gray-100">
+            <div className="bg-white p-6 rounded-lg shadow-md">
+               <h2 className="text-2xl font-bold mb-2 text-gray-800">
+                  You're not logged in
+               </h2>
+               <p className="text-gray-600">
+                  Please log in to access the admin dashboard.
+               </p>
+            </div>
+         </div>
+      );
+   }
 
    const dashboardItems = [
       {
@@ -35,7 +60,7 @@ const AdminHome = () => {
          title: "Add New Showroom",
          description: "Create a new showroom location",
          icon: MapPin,
-         onClick: () => navigate("/admin/showrooms/add"),
+         onClick: () => navigate("/admin/showrooms/add"), // ✅ FIXED route
          color: "bg-cyan-50 hover:bg-cyan-100 border-cyan-200",
          iconColor: "text-cyan-600",
       },
@@ -55,7 +80,7 @@ const AdminHome = () => {
          color: "bg-purple-50 hover:bg-purple-100 border-purple-200",
          iconColor: "text-purple-600",
       },
-   ]
+   ];
 
    return (
       <div className="min-h-screen bg-gray-50 py-8 px-4">
@@ -63,13 +88,15 @@ const AdminHome = () => {
             {/* Header */}
             <div className="mb-8">
                <h1 className="text-4xl font-bold text-gray-900 mb-2">Admin Dashboard</h1>
-               <p className="text-gray-600">Manage your vehicle brands, showrooms, and inventory</p>
+               <p className="text-gray-600">
+                  Manage your vehicle brands, showrooms, and inventory
+               </p>
             </div>
 
             {/* Dashboard Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
                {dashboardItems.map((item, index) => {
-                  const IconComponent = item.icon
+                  const IconComponent = item.icon;
                   return (
                      <div
                         key={index}
@@ -88,7 +115,7 @@ const AdminHome = () => {
                         <h3 className="text-xl font-semibold text-gray-900 mb-2">{item.title}</h3>
                         <p className="text-gray-600 text-sm leading-relaxed">{item.description}</p>
                      </div>
-                  )
+                  );
                })}
             </div>
 
@@ -118,7 +145,7 @@ const AdminHome = () => {
                      View Showrooms
                   </button>
                   <button
-                     onClick={() => navigate("/showrooms/add")}
+                     onClick={() => navigate("/admin/showrooms/add")} // ✅ FIXED route
                      className="inline-flex items-center px-4 py-2 bg-cyan-100 hover:bg-cyan-200 text-cyan-700 rounded-lg transition-colors duration-200 text-sm font-medium"
                   >
                      <MapPin size={16} className="mr-2" />
@@ -129,50 +156,21 @@ const AdminHome = () => {
 
             {/* Stats Cards */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mt-8">
-               <div className="bg-white rounded-xl border border-gray-200 p-6">
-                  <div className="flex items-center justify-between">
-                     <div>
-                        <p className="text-sm font-medium text-gray-600">Total Brands</p>
-                        <p className="text-2xl font-bold text-gray-900">--</p>
+               {[["Total Brands", Tag, "blue"], ["Total Showrooms", Building2, "orange"], ["Total Vehicles", Car, "green"], ["Recent Updates", Truck, "purple"]].map(
+                  ([label, Icon, color], i) => (
+                     <div key={i} className="bg-white rounded-xl border border-gray-200 p-6">
+                        <div className="flex items-center justify-between">
+                           <div>
+                              <p className="text-sm font-medium text-gray-600">{label}</p>
+                              <p className="text-2xl font-bold text-gray-900">--</p>
+                           </div>
+                           <div className={`p-3 bg-${color}-50 rounded-lg`}>
+                              <Icon className={`text-${color}-600`} size={20} />
+                           </div>
+                        </div>
                      </div>
-                     <div className="p-3 bg-blue-50 rounded-lg">
-                        <Tag className="text-blue-600" size={20} />
-                     </div>
-                  </div>
-               </div>
-               <div className="bg-white rounded-xl border border-gray-200 p-6">
-                  <div className="flex items-center justify-between">
-                     <div>
-                        <p className="text-sm font-medium text-gray-600">Total Showrooms</p>
-                        <p className="text-2xl font-bold text-gray-900">--</p>
-                     </div>
-                     <div className="p-3 bg-orange-50 rounded-lg">
-                        <Building2 className="text-orange-600" size={20} />
-                     </div>
-                  </div>
-               </div>
-               <div className="bg-white rounded-xl border border-gray-200 p-6">
-                  <div className="flex items-center justify-between">
-                     <div>
-                        <p className="text-sm font-medium text-gray-600">Total Vehicles</p>
-                        <p className="text-2xl font-bold text-gray-900">--</p>
-                     </div>
-                     <div className="p-3 bg-green-50 rounded-lg">
-                        <Car className="text-green-600" size={20} />
-                     </div>
-                  </div>
-               </div>
-               <div className="bg-white rounded-xl border border-gray-200 p-6">
-                  <div className="flex items-center justify-between">
-                     <div>
-                        <p className="text-sm font-medium text-gray-600">Recent Updates</p>
-                        <p className="text-2xl font-bold text-gray-900">--</p>
-                     </div>
-                     <div className="p-3 bg-purple-50 rounded-lg">
-                        <Truck className="text-purple-600" size={20} />
-                     </div>
-                  </div>
-               </div>
+                  )
+               )}
             </div>
 
             {/* Recent Activity Section */}
@@ -180,13 +178,11 @@ const AdminHome = () => {
                <div className="bg-white rounded-xl border border-gray-200 p-6">
                   <h2 className="text-lg font-semibold text-gray-900 mb-4">Recent Brands</h2>
                   <div className="space-y-3">
-                     <div className="flex items-center justify-between py-2 border-b border-gray-100 last:border-b-0">
-                        <div className="flex items-center gap-3">
-                           <div className="p-2 bg-blue-50 rounded-lg">
-                              <Tag className="text-blue-600" size={16} />
-                           </div>
-                           <span className="text-gray-600 text-sm">No recent brands</span>
+                     <div className="flex items-center gap-3">
+                        <div className="p-2 bg-blue-50 rounded-lg">
+                           <Tag className="text-blue-600" size={16} />
                         </div>
+                        <span className="text-gray-600 text-sm">No recent brands</span>
                      </div>
                   </div>
                </div>
@@ -194,20 +190,18 @@ const AdminHome = () => {
                <div className="bg-white rounded-xl border border-gray-200 p-6">
                   <h2 className="text-lg font-semibold text-gray-900 mb-4">Recent Showrooms</h2>
                   <div className="space-y-3">
-                     <div className="flex items-center justify-between py-2 border-b border-gray-100 last:border-b-0">
-                        <div className="flex items-center gap-3">
-                           <div className="p-2 bg-orange-50 rounded-lg">
-                              <Building2 className="text-orange-600" size={16} />
-                           </div>
-                           <span className="text-gray-600 text-sm">No recent showrooms</span>
+                     <div className="flex items-center gap-3">
+                        <div className="p-2 bg-orange-50 rounded-lg">
+                           <Building2 className="text-orange-600" size={16} />
                         </div>
+                        <span className="text-gray-600 text-sm">No recent showrooms</span>
                      </div>
                   </div>
                </div>
             </div>
          </div>
       </div>
-   )
-}
+   );
+};
 
-export default AdminHome
+export default AdminHome;
