@@ -22,6 +22,7 @@ const Auth = () => {
                onClick={() => setSearchParams({ mode: "login" })}
                className={`px-6 py-2 rounded-md shadow font-semibold transition duration-300 ${!isSign ? "bg-blue-600 text-white" : "bg-gray-300"
                   }`}
+
             >
                Login
             </button>

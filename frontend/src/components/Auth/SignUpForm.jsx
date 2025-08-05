@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
+
 
 const SignUpForm = () => {
    const [firstName, setFirstName] = useState("");
@@ -11,6 +13,7 @@ const SignUpForm = () => {
    const [otp, setOtp] = useState("");
    const [otpSent, setOtpSent] = useState(false);
    const [phoneNumber, setPhoneNumber] = useState("");
+   const navigate = useNavigate();
 
    const API = import.meta.env.VITE_BACKEND_URL;
 
@@ -50,6 +53,7 @@ const SignUpForm = () => {
          });
 
          alert(res.data.message || "Registered successfully!");
+         navigate("/login");
       } catch (error) {
          alert(error.response?.data?.message || "Registration failed");
       }
