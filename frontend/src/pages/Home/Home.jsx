@@ -1,10 +1,12 @@
 
 import { useNavigate } from "react-router-dom"
 import { useEffect, useState } from "react"
-import BrandCard from "../../components/brandCard/Brandcard"
+import BrandCard from "../../components/BrandGrid/BrandGrid"
+import ShowBrands from "../Brands/Brands"
 import FeatureCard from "../../components/FeatureCard/Featurecard"
 import HeroSlider from "../../components/HeroSlider/slider"
 import { vehicleAPI } from "../../api"
+import BrandGrid from "../../components/BrandGrid/BrandGrid"
 
 const Home = () => {
    const navigate = useNavigate()
@@ -157,7 +159,8 @@ const Home = () => {
                      Choose from our premium collection of trusted automotive brands
                   </p>
                </div>
-               <BrandCard />
+               <BrandGrid />
+               {/* <ShowBrands/> */}
             </div>
          </section>
 

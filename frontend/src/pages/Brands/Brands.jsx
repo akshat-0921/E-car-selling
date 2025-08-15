@@ -34,7 +34,7 @@ const ShowBrands = () => {
             )}
          </div>
       </div>
-   );
+   ); 
 };
 
 export default ShowBrands;

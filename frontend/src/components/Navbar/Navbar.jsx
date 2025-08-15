@@ -4,6 +4,8 @@ import { FaSearch, FaBars, FaHeart, FaUser, FaTimes } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { useSelector, useDispatch } from 'react-redux';
 import { logout, setLoading, setError } from '../../redux/authSlice';
+import SearchBar from "../Search/SearchBar";
+
 
 const Navbar = () => {
    const { isLoggedIn, user, loading, error } = useSelector((state) => state.auth);
@@ -47,7 +49,7 @@ const Navbar = () => {
                </div>
 
                {/* Desktop Search */}
-               <div className="hidden md:flex items-center justify-center flex-1 px-8">
+               {/* <div className="hidden md:flex items-center justify-center flex-1 px-8">
                   <div className="relative w-full max-w-xl">
                      <input
                         type="text"
@@ -60,7 +62,17 @@ const Navbar = () => {
                         <FaSearch className="text-gray-400" />
                      </div>
                   </div>
+               </div> */}
+
+               {/* Desktop Search */}
+               <div className="hidden md:flex items-center justify-center flex-1 px-8">
+                  <SearchBar
+                     className="w-full max-w-xl"
+                     placeholder="Search for cars, brands, or models..."
+                  />
                </div>
+
+
 
                {/* Desktop Links */}
                <div className="hidden md:flex items-center space-x-6">
