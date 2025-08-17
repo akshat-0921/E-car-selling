@@ -1,124 +1,135 @@
-// src/pages/Profile/Profile.jsx (example path)
-
 import { useState, useEffect } from "react";
+import {
+   FaUser,
+   FaEdit,
+   FaCheck,
+   FaEnvelope,
+   FaPhone,
+   FaMapMarkerAlt,
+   FaIdCard,
+} from "react-icons/fa";
 import { useSelector, useDispatch } from "react-redux";
 import { updateUserThunk } from "../../redux/authSlice.js";
 
-// --- STYLING: Icons from lucide-react for theme consistency ---
-import { User, Mail, Phone, MapPin, Pen, Check, Loader, AlertCircle } from "lucide-react";
-
-// --- STYLING: Sub-component for a themed 'not logged in' state ---
-const NotLoggedInState = () => (
-    <div className="flex flex-col items-center justify-center min-h-[60vh] text-center p-4">
-        <AlertCircle className="h-12 w-12 text-red-500" />
-        <p className="mt-4 text-lg font-medium text-slate-800 dark:text-slate-200">
-            Access Denied
-        </p>
-        <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
-            Please log in to view and manage your profile.
-        </p>
-    </div>
-);
-
 const Profile = () => {
-    // --- LOGIC: All state and hooks are preserved ---
-    const dispatch = useDispatch();
-    const userFromStore = useSelector((state) => state.auth.user);
-    const loading = useSelector((state) => state.auth.loading);
-    // const error = useSelector((state) => state.auth.error); // Original error state was unused, preserved here
+   const dispatch = useDispatch();
 
-    const [user, setUserLocal] = useState({
-        firstName: "", lastName: "", email: "", phoneNumber: "", address: "",
-    });
-    const [editField, setEditField] = useState(null);
+   const userFromStore = useSelector((state) => state.auth.user);
+   const loading = useSelector((state) => state.auth.loading);
+   const error = useSelector((state) => state.auth.error);
 
-    useEffect(() => {
-        if (userFromStore) {
-            setUserLocal(userFromStore);
-        }
-    }, [userFromStore]);
+   const [user, setUserLocal] = useState({
+      firstName: "",
+      lastName: "",
+      email: "",
+      phoneNumber: "",
+      address: "",
+   });
 
-    const handleChange = (field, value) => {
-        setUserLocal((prev) => ({ ...prev, [field]: value }));
-    };
+   const [editField, setEditField] = useState(null);
 
-    const handleSave = () => {
-        if (!editField) return;
-        dispatch(updateUserThunk({ [editField]: user[editField] })); // Dispatch only the changed field
-        setEditField(null);
-    };
+   useEffect(() => {
+      if (userFromStore) {
+         setUserLocal(userFromStore);
+      }
+   }, [userFromStore]);
 
-    // --- LOGIC: The renderField function's logic is preserved, but styling is updated ---
-    const renderField = (label, fieldKey, Icon) => (
-        <div className="group relative">
-            <label htmlFor={fieldKey} className="block text-sm font-medium text-slate-600 dark:text-slate-400 mb-1">
-                {label}
-            </label>
-            <div className="relative">
-                 <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                    <Icon className="h-5 w-5 text-slate-400 dark:text-slate-500" />
-                </div>
-                <input
-                    id={fieldKey} type="text" value={user[fieldKey] || ""} readOnly={editField !== fieldKey}
-                    onChange={(e) => handleChange(fieldKey, e.target.value)}
-                    className={`block w-full rounded-md border py-3 pl-10 pr-12 shadow-sm text-slate-900 dark:text-white transition-all duration-300
-                        ${editField === fieldKey
-                            ? "border-blue-500 bg-white dark:bg-slate-900 ring-2 ring-blue-500/50"
-                            : "border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50"
-                        }`}
-                />
-                 <div className="absolute inset-y-0 right-0 flex items-center pr-3">
-                    {editField === fieldKey ? (
-                        <button onClick={handleSave} disabled={loading} className="p-2 rounded-full text-white bg-green-600 hover:bg-green-700 disabled:bg-green-400">
-                            {loading ? <Loader className="h-4 w-4 animate-spin" /> : <Check className="h-4 w-4" />}
-                        </button>
-                    ) : (
-                        <button onClick={() => setEditField(fieldKey)} className="p-2 rounded-full text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 opacity-0 group-hover:opacity-100 transition-opacity">
-                            <Pen className="h-4 w-4" />
-                        </button>
-                    )}
-                 </div>
+   const handleChange = (field, value) => {
+      setUserLocal((prev) => ({ ...prev, [field]: value }));
+   };
+
+   const handleSave = () => {
+      if (!editField) return;
+      dispatch(updateUserThunk(user));
+      setEditField(null);
+   };
+
+   const renderField = (label, fieldKey, icon) => (
+      <div className="mb-6">
+         <label className="text-gray-700 text-sm font-medium block mb-2 flex items-center">
+            {icon}
+            <span className="ml-2">{label}</span>
+         </label>
+         <div className="flex items-center space-x-2 group relative">
+            <input
+               type="text"
+               value={user[fieldKey] || ""}
+               readOnly={editField !== fieldKey}
+               onChange={(e) => handleChange(fieldKey, e.target.value)}
+               className={`w-full border rounded-lg px-4 py-3 text-gray-700 focus:outline-none transition-all duration-200 ${editField === fieldKey
+                     ? "border-indigo-500 shadow-sm focus:ring-2 focus:ring-indigo-200"
+                     : "border-gray-200 bg-gray-50"
+                  }`}
+            />
+            {editField === fieldKey ? (
+               <button
+                  onClick={handleSave}
+                  className="absolute right-3 flex items-center justify-center h-8 w-8 rounded-full text-white bg-green-500 hover:bg-green-600 transition-colors"
+                  aria-label="Save"
+               >
+                  <FaCheck className="text-sm" />
+               </button>
+            ) : (
+               <button
+                  onClick={() => setEditField(fieldKey)}
+                  className="absolute right-3 flex items-center justify-center h-8 w-8 rounded-full text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 opacity-0 group-hover:opacity-100 transition-all duration-200"
+                  aria-label="Edit"
+               >
+                  <FaEdit className="text-sm" />
+               </button>
+            )}
+         </div>
+      </div>
+   );
+
+   if (!userFromStore) {
+      return (
+         <div className="p-4 text-center text-red-600">
+            User not logged in. Please login to view profile.
+         </div>
+      );
+   }
+
+   return (
+      <div className="bg-gradient-to-b from-gray-50 to-gray-100 min-h-screen py-12 px-4">
+         <div className="max-w-xl mx-auto">
+            <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
+               <div className="bg-gradient-to-r from-indigo-600 to-indigo-800 px-6 py-8 text-white">
+                  <div className="flex items-center">
+                     <div className="h-20 w-20 rounded-full bg-white/20 flex items-center justify-center">
+                        <FaUser className="text-3xl" />
+                     </div>
+                     <div className="ml-6">
+                        <h2 className="text-2xl font-bold">
+                           {user.firstName} {user.lastName}
+                        </h2>
+                        <p className="text-indigo-200 mt-1">Premium Member</p>
+                     </div>
+                  </div>
+               </div>
+
+               <div className="px-8 py-8">
+                  <div className="mb-8">
+                     <h3 className="text-lg font-semibold text-gray-800 mb-1">
+                        Profile Information
+                     </h3>
+                     <p className="text-sm text-gray-500">
+                        Click on any field to edit your profile information
+                     </p>
+                  </div>
+
+                  <div className="space-y-2">
+                     {renderField("First Name", "firstName", <FaIdCard className="text-indigo-500" />)}
+                     {renderField("Last Name", "lastName", <FaIdCard className="text-indigo-500" />)}
+                     {renderField("Email", "email", <FaEnvelope className="text-indigo-500" />)}
+                     {renderField("Phone Number", "phoneNumber", <FaPhone className="text-indigo-500" />)}
+                     {renderField("Address", "address", <FaMapMarkerAlt className="text-indigo-500" />)}
+                  </div>
+               </div>
             </div>
-        </div>
-    );
-
-    if (!userFromStore) {
-        return <div className="bg-white dark:bg-slate-900"><NotLoggedInState /></div>;
-    }
-
-    return (
-        // --- STYLING: Themed page container ---
-        <div className="bg-slate-50 dark:bg-slate-900 min-h-screen py-12 px-4 sm:px-6 lg:px-8">
-            <div className="max-w-2xl mx-auto">
-                {/* --- STYLING: Themed profile card --- */}
-                <div className="bg-white dark:bg-slate-800/50 rounded-2xl shadow-xl overflow-hidden">
-                    {/* --- Card Header --- */}
-                    <div className="p-8 bg-slate-100 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700">
-                        <div className="flex items-center space-x-6">
-                            <div className="h-20 w-20 rounded-full bg-blue-100 dark:bg-blue-900/50 flex items-center justify-center text-blue-600 dark:text-blue-400">
-                                <User className="h-10 w-10" />
-                            </div>
-                            <div>
-                                <h2 className="text-2xl font-bold text-slate-900 dark:text-white">
-                                    {user.firstName} {user.lastName}
-                                </h2>
-                                <p className="text-slate-600 dark:text-slate-400 mt-1">{user.email}</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* --- Card Body --- */}
-                    <div className="p-8 space-y-6">
-                         {renderField("First Name", "firstName", User)}
-                         {renderField("Last Name", "lastName", User)}
-                         {renderField("Email", "email", Mail)}
-                         {renderField("Phone Number", "phoneNumber", Phone)}
-                         {renderField("Address", "address", MapPin)}
-                    </div>
-                </div>
-            </div>
-        </div>
-    );
+         </div>
+      </div>
+   );
 };
 
 export default Profile;
