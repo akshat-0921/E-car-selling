@@ -1,5 +1,3 @@
-// src/components/HeroSlider/HeroSlider.jsx
-
 "use client"
 
 import { Swiper, SwiperSlide } from "swiper/react"
@@ -9,34 +7,30 @@ import "swiper/css/navigation"
 import "swiper/css/pagination"
 import "swiper/css/effect-fade"
 
-// Icons for navigation
-import { ChevronLeft, ChevronRight } from "lucide-react"
-
-// Assuming your assets are correctly imported
 import slide1 from "../../assets/tap.png"
 import slide2 from "../../assets/lala.png"
 
 const slides = [
     {
         id: 1,
-        image: slide1.src, // Use .src if using Next.js Image optimization or similar
+        image: slide1,
         title: "Find Your Dream Car",
         subtitle: "Explore our extensive collection of premium vehicles",
+        gradient: "from-rose-600/80 to-orange-600/80",
     },
     {
         id: 2,
-        image: slide2.src,
+        image: slide2,
         title: "Premium Selection",
         subtitle: "Discover the perfect car for your lifestyle",
+        gradient: "from-blue-600/80 to-purple-600/80",
     },
 ]
 
 const HeroSlider = () => {
     return (
-        // Added 'group' for hover effects on nav buttons and 'hero-slider' for custom CSS scoping
-        <div className="group relative w-full h-[60vh] md:h-[70vh] lg:h-[85vh] overflow-hidden">
+        <div className="relative w-full h-[60vh] md:h-[70vh] lg:h-[80vh] overflow-hidden">
             <Swiper
-                // --- LOGIC: Unchanged ---
                 modules={[Autoplay, Navigation, Pagination, EffectFade]}
                 effect="fade"
                 loop={true}
@@ -46,36 +40,62 @@ const HeroSlider = () => {
                     pauseOnMouseEnter: true,
                 }}
                 navigation={{
-                    nextEl: ".hero-swiper-button-next",
-                    prevEl: ".hero-swiper-button-prev",
+                    nextEl: ".swiper-button-next",
+                    prevEl: ".swiper-button-prev",
                 }}
                 pagination={{
                     clickable: true,
-                    el: ".hero-swiper-pagination",
+                    el: ".swiper-pagination",
+                    bulletClass: "swiper-pagination-bullet",
+                    bulletActiveClass: "swiper-pagination-bullet-active",
                 }}
                 className="w-full h-full"
             >
-                {slides.map((slide) => (
+                {slides.map((slide, index) => (
                     <SwiperSlide key={slide.id}>
                         <div className="relative w-full h-full">
-                            {/* --- STYLING: Background Image with Ken Burns effect --- */}
+                            {/* Background Image */}
                             <div
-                                className="absolute inset-0 bg-center bg-cover bg-no-repeat transition-transform duration-[8000ms] ease-in-out group-hover:scale-105"
+                                className="absolute inset-0 bg-center bg-cover bg-no-repeat transform scale-105 transition-transform duration-[10000ms]"
                                 style={{ backgroundImage: `url(${slide.image})` }}
                             ></div>
 
-                            {/* --- STYLING: Simplified, elegant overlay --- */}
-                            <div className="absolute inset-0 bg-black/50"></div>
+                            {/* Gradient Overlay */}
+                            <div className={`absolute inset-0 bg-gradient-to-r ${slide.gradient}`}></div>
 
-                            {/* --- STYLING: Content with consistent typography --- */}
-                            <div className="absolute inset-0 flex flex-col items-center justify-center text-white text-center px-4">
+                            {/* Animated particles background */}
+                            <div className="absolute inset-0 opacity-20">
+                                <div className="absolute top-1/4 left-1/4 w-2 h-2 bg-white rounded-full animate-pulse"></div>
+                                <div
+                                    className="absolute top-1/3 right-1/3 w-1 h-1 bg-white rounded-full animate-ping"
+                                    style={{ animationDelay: "1s" }}
+                                ></div>
+                                <div
+                                    className="absolute bottom-1/4 left-1/3 w-1.5 h-1.5 bg-white rounded-full animate-pulse"
+                                    style={{ animationDelay: "2s" }}
+                                ></div>
+                                <div
+                                    className="absolute top-1/2 right-1/4 w-1 h-1 bg-white rounded-full animate-ping"
+                                    style={{ animationDelay: "3s" }}
+                                ></div>
+                            </div>
+
+                            {/* Content */}
+                            <div className="absolute inset-0 flex flex-col items-center justify-center text-white text-center px-4 md:px-8">
                                 <div className="max-w-4xl mx-auto">
-                                    <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4 animate-slide-in-up">
-                                        {slide.title}
-                                    </h1>
+                                    <h2 className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold mb-4 md:mb-6 transform translate-y-8 opacity-0 animate-slide-up">
+                                        <span className="inline-block">
+                                            {slide.title.split(" ").map((word, i) => (
+                                                <span key={i} className="inline-block mr-3 md:mr-4" style={{ animationDelay: `${i * 200}ms` }}>
+                                                    {word}
+                                                </span>
+                                            ))}
+                                        </span>
+                                    </h2>
+
                                     <p
-                                        className="text-lg md:text-xl max-w-2xl mx-auto animate-slide-in-up"
-                                        style={{ animationDelay: "0.3s" }}
+                                        className="text-lg md:text-xl lg:text-2xl max-w-3xl mx-auto transform translate-y-8 opacity-0 animate-slide-up font-light leading-relaxed"
+                                        style={{ animationDelay: "600ms" }}
                                     >
                                         {slide.subtitle}
                                     </p>
@@ -86,25 +106,48 @@ const HeroSlider = () => {
                 ))}
             </Swiper>
 
-            {/* --- STYLING: Custom Navigation Buttons with theme-aware styling --- */}
-            <div className="hero-swiper-button-prev absolute top-1/2 -translate-y-1/2 left-4 z-10 p-2 rounded-full bg-white/10 backdrop-blur-sm text-white cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity duration-300 hover:bg-white/20">
-                <ChevronLeft className="w-8 h-8" />
+            {/* Custom Navigation Buttons */}
+            <div className="swiper-button-prev !text-white !opacity-70 hover:!opacity-100 transition-all duration-300 !w-14 !h-14 !bg-white/20 backdrop-blur-sm !rounded-full flex items-center justify-center hover:!bg-white/30 hover:scale-110 !left-4 md:!left-8">
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                </svg>
             </div>
-            <div className="hero-swiper-button-next absolute top-1/2 -translate-y-1/2 right-4 z-10 p-2 rounded-full bg-white/10 backdrop-blur-sm text-white cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity duration-300 hover:bg-white/20">
-                <ChevronRight className="w-8 h-8" />
+            <div className="swiper-button-next !text-white !opacity-70 hover:!opacity-100 transition-all duration-300 !w-14 !h-14 !bg-white/20 backdrop-blur-sm !rounded-full flex items-center justify-center hover:!bg-white/30 hover:scale-110 !right-4 md:!right-8">
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
             </div>
 
-            {/* --- STYLING: Custom Pagination container --- */}
-            <div className="hero-swiper-pagination absolute bottom-6 left-1/2 -translate-x-1/2 z-10 flex gap-x-4"></div>
+            {/* Custom Pagination */}
+            <div className="swiper-pagination !bottom-6 md:!bottom-8 !z-20"></div>
 
-            {/* Add the keyframes to your global CSS if they are not already there */}
             <style jsx global>{`
-                @keyframes slide-in-up {
-                    from { transform: translateY(20px); opacity: 0; }
-                    to { transform: translateY(0); opacity: 1; }
+                .swiper-pagination-bullet {
+                    width: 12px !important;
+                    height: 12px !important;
+                    background: rgba(255, 255, 255, 0.5) !important;
+                    opacity: 1 !important;
+                    margin: 0 8px !important;
+                    transition: all 0.3s ease !important;
+                    border: 2px solid transparent !important;
                 }
-                .animate-slide-in-up {
-                    animation: slide-in-up 0.8s forwards cubic-bezier(0.25, 0.46, 0.45, 0.94);
+                .swiper-pagination-bullet-active {
+                    background: white !important;
+                    transform: scale(1.4) !important;
+                    border-color: rgba(255, 255, 255, 0.5) !important;
+                }
+                @keyframes slideUp {
+                    from {
+                        transform: translateY(40px);
+                        opacity: 0;
+                    }
+                    to {
+                        transform: translateY(0);
+                        opacity: 1;
+                    }
+                }
+                .animate-slide-up {
+                    animation: slideUp 1s forwards;
                 }
             `}</style>
         </div>
