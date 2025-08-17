@@ -1,75 +1,74 @@
-// src/components/CarModelCard.jsx
-
 import React from "react";
-// --- LOGIC: Asset import is preserved ---
 import carImage from "../assets/bmw.png";
-// --- STYLING: Icons for visual enhancement ---
-import { Gauge, Zap, Cog, Fuel, ShieldCheck, Tag, CalendarCheck } from "lucide-react";
-
-// Helper component for displaying specs
-const SpecItem = ({ icon: Icon, label, value }) => (
-    <div className="flex items-center gap-3">
-        <Icon className="h-6 w-6 text-blue-500" />
-        <div>
-            <p className="text-sm text-slate-500 dark:text-slate-400">{label}</p>
-            <p className="font-semibold text-slate-800 dark:text-slate-200">{value}</p>
-        </div>
-    </div>
-);
 
 const CarModelCard = () => {
     return (
-        // --- STYLING: Main container with theme-aware background ---
-        <div className="min-h-screen bg-slate-50 dark:bg-slate-900">
-            <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2">
-
-                {/* --- STYLING: Left Section: Car Image --- */}
-                <div className="flex items-center justify-center p-4 lg:p-8 h-[50vh] lg:h-screen">
-                    <img
-                        src={carImage}
-                        alt="Car Model"
-                        className="max-w-full max-h-full object-contain transition-transform duration-500 hover:scale-105"
-                    />
-                </div>
-
-                {/* --- STYLING: Right Section: Car Details with themed elements --- */}
-                <div className="flex flex-col justify-center p-8 lg:p-12">
+        <div className="min-h-screen bg-gradient-to-b from-gray-100 to-white flex flex-col md:flex-row">
+            {/* Left Section: Car Image */}
+            <div className="md:w-1/2 flex items-center justify-center p-4 bg-white">
+                <img
+                    src={carImage}
+                    alt="Car Model"
+                    className="w-4/5 max-h-screen object-contain transition-transform duration-500 hover:scale-105"
+                />
+            </div>
+            {/* Right Section: Car Details */}
+            <div className="md:w-1/2 p-8 flex flex-col justify-center bg-white bg-opacity-90 backdrop-blur-md shadow-inner">
+                <h1 className="text-4xl font-extrabold text-gray-800 mb-4">
+                    Car Model Name {/* e.g., Audi A6 */}
+                </h1>
+                <p className="text-2xl text-gray-600 mb-6">
+                    Price Range: <span className="font-semibold">₹XX,XX,XXX - ₹XX,XX,XXX</span>
+                </p>
+                <div className="grid grid-cols-2 gap-4 text-lg text-gray-700 mb-6">
                     <div>
-                        <p className="font-semibold text-blue-600 dark:text-blue-400">BMW M-Series</p>
-                        <h1 className="mt-1 text-4xl md:text-5xl font-bold tracking-tight text-slate-900 dark:text-white">
-                            Car Model Name {/* e.g., Audi A6 */}
-                        </h1>
-                        <p className="mt-4 text-2xl text-slate-700 dark:text-slate-300">
-                            Price Range: <span className="font-bold">₹XX,XX,XXX - ₹XX,XX,XXX</span>
+                        <p>
+                            <span className="font-bold">Engine:</span> {/* 2.0L TFSI */}
+                        </p>
+                        <p>
+                            <span className="font-bold">Mileage:</span> {/* 15 km/l */}
                         </p>
                     </div>
-
-                    <div className="my-8 grid grid-cols-2 gap-x-6 gap-y-6">
-                        <SpecItem icon={Zap} label="Engine" value="2.0L TFSI" />
-                        <SpecItem icon={Cog} label="Transmission" value="Automatic" />
-                        <SpecItem icon={Gauge} label="Mileage" value="15 km/l" />
-                        <SpecItem icon={Fuel} label="Fuel Type" value="Petrol" />
-                    </div>
-
-                    <div className="flex flex-wrap items-center gap-4">
-                        <button className="px-6 py-3 rounded-md text-base font-semibold text-white bg-blue-600 hover:bg-blue-700 transition-colors shadow-sm">
-                            Book Now
-                        </button>
-                        <button className="px-6 py-3 rounded-md text-base font-semibold text-blue-600 dark:text-blue-400 border border-slate-300 dark:border-slate-600 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
-                            View Offers
-                        </button>
-                    </div>
-
-                    <div className="mt-8 pt-6 border-t border-slate-200 dark:border-slate-800 space-y-3 text-slate-600 dark:text-slate-400">
-                        <p className="flex items-center gap-x-2">
-                            <ShieldCheck className="w-5 h-5 text-green-500" />
-                            <span>Booking Charge: <span className="font-semibold text-slate-800 dark:text-slate-200">₹50,000</span></span>
+                    <div>
+                        <p>
+                            <span className="font-bold">Transmission:</span> {/* Automatic */}
                         </p>
-                        <p className="flex items-center gap-x-2">
-                            <CalendarCheck className="w-5 h-5 text-green-500" />
-                            <span>Nearest Showroom: <span className="font-semibold text-slate-800 dark:text-slate-200">XYZ Showroom, City</span></span>
+                        <p>
+                            <span className="font-bold">Fuel Type:</span> {/* Petrol */}
                         </p>
                     </div>
+                </div>
+                <div className="mb-6 text-lg text-gray-700">
+                    <p>
+                        <span className="font-bold">Top Speed:</span>
+                    </p>
+                    <p>
+                        <span className="font-bold">0-1000 km/h:</span> {/* 6.8 sec */}
+                    </p>
+                </div>
+                <div className="flex flex-wrap gap-4 mb-6">
+                    <button className="bg-blue-500 text-white px-6 py-3 rounded-full hover:bg-blue-600 transition">
+                        View Offers
+                    </button>
+                    <button className="bg-red-500 text-white px-6 py-3 rounded-full hover:bg-red-600 transition">
+                        Add to Wishlist
+                    </button>
+                    <button className="bg-green-500 text-white px-6 py-3 rounded-full hover:bg-green-600 transition">
+                        Book Now
+                    </button>
+                </div>
+                <div className="text-lg text-gray-700">
+                    <p>
+                        <span className="font-bold">Nearest Showroom:</span>{" "}
+                        {/* XYZ Showroom, City */}
+                    </p>
+                    <p>
+                        <span className="font-bold">Booking Charge:</span> ₹{/* 50,000 */}
+                    </p>
+                    <p className="mt-2 italic text-sm text-gray-500">
+                        {/* Feature: Showroom Customer Service available 24/7 */}
+                        Showroom Customer Service: 24/7 assistance available.
+                    </p>
                 </div>
             </div>
         </div>

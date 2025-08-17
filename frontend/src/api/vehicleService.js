@@ -10,7 +10,7 @@ const API = axios.create({
 export const getAllVehicles = async (filters = {}) => {
    try {
       const response = await API.get('/filter', { params: filters });
-      // console.log(response.data)
+      console.log(response.data)
       return response.data.vehicles;
    } catch (error) {
       console.error('Error fetching vehicles:', error);
