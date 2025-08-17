@@ -42,6 +42,7 @@ import adminRoutes from "./routes/admin.routes.js";
 import vehicleRouter from "./routes/vehicle.routes.js";
 import paymentRoutes from "./routes/payment.routes.js"
 import filterRoutes from "./routes/filter.routes.js"
+import inventoryRoutes from "./routes/inventory.routes.js"
 
 // Routes
 app.use("/api/brand", brandRouter);
@@ -51,6 +52,7 @@ app.use("/api/admin", adminRoutes);
 app.use("/api/vehicle", vehicleRouter);
 app.use("/api/payment", paymentRoutes);
 app.use("/api/filter", filterRoutes)
+app.use("/api/inventory", inventoryRoutes)
 
 // Root route
 app.get("/", (req, res) => {

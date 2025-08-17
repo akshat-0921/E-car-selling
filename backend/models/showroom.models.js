@@ -12,7 +12,6 @@ const ShowroomSchema = Schema({
    lat: { type: Number, required: true },
    lon: { type: Number, required: true },
    coordinates: { type: [Number], index: '2dsphere' },
-   vehicles: [{ type: mongoose.Schema.Types.ObjectId, ref: "Vehicle" }],
 }, { timestamps: true })
 
 ShowroomSchema.pre('save', function (next) {

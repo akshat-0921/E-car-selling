@@ -16,6 +16,10 @@ import AddVehicle from "./pages/Vehicle/AddVehicle";
 import ShowroomList from "./pages/Showroom/ShowroomList";
 import AddShowroom from "./pages/Showroom/AddShowroom";
 import ShowroomDetail from "./pages/Showroom/ShowroomDetail";
+import InventoryManagement from "./pages/Inventory/InventoryManagement";
+import ShowroomInventory from "./pages/Inventory/ShowroomInventory";
+import AddVehicleToInventory from "./pages/Inventory/AddVehicleToInventory";
+
 
 const App = () => {
    const dispatch = useDispatch();
@@ -38,7 +42,7 @@ const App = () => {
 
    return (
       <>
-         {/* <ToastContainer position="top-right" autoClose={2500} /> */}
+         <ToastContainer position="top-right" autoClose={2500} />
          <AdminNavbar />
          <Routes>
             {/* Public routes */}
@@ -58,6 +62,11 @@ const App = () => {
                   <Route path="/admin/showrooms" element={<ShowroomList />} />
                   <Route path="/admin/showrooms/add" element={<AddShowroom />} />
                   <Route path="/admin/showrooms/:showroomId" element={<ShowroomDetail />} />
+
+
+                  <Route path="/admin/inventory" element={<InventoryManagement />} />
+                  <Route path="/admin/inventory/:showroomId" element={<ShowroomInventory />} />
+                  <Route path="/admin/inventory/add/:showroomId" element={<AddVehicleToInventory />} />
                </>
             )}
          </Routes>

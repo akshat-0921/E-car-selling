@@ -35,7 +35,7 @@ const VehicleCard = ({ vehicle }) => {
             </p>
             <div className="mt-2 text-sm text-gray-600">
                <p>
-                  {vehicle.fuelType || "N/A"} • {vehicle.transmission || "N/A"}
+                  {vehicle.category || "N/A"} • {vehicle.transmission || "N/A"}
                </p>
             </div>
             <div className="mt-4">
