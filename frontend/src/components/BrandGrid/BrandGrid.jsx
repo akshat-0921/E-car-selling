@@ -1,9 +1,37 @@
+// src/components/BrandGrid/BrandGrid.jsx
+
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { brandAPI } from "../../api";
 import { toast } from "react-toastify";
+// --- STYLING: Icons for loading/empty states ---
+import { Loader, ServerCrash } from "lucide-react";
+
+// --- STYLING: Loading state component ---
+const LoadingState = () => (
+   <div className="flex flex-col items-center justify-center py-20 text-center">
+      <Loader className="h-10 w-10 text-slate-400 dark:text-slate-500 animate-spin" />
+      <p className="mt-4 text-lg font-medium text-slate-700 dark:text-slate-300">
+         Loading Brands...
+      </p>
+   </div>
+);
+
+// --- STYLING: Empty state component ---
+const EmptyState = () => (
+   <div className="flex flex-col items-center justify-center py-20 text-center">
+      <ServerCrash className="h-10 w-10 text-slate-400 dark:text-slate-500" />
+      <p className="mt-4 text-lg font-medium text-slate-700 dark:text-slate-300">
+         No Brands Found
+      </p>
+      <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
+         We couldn't find any brands to display at the moment.
+      </p>
+   </div>
+);
 
 const BrandGrid = () => {
+   // --- LOGIC: All state and hooks are preserved ---
    const [brands, setBrands] = useState([]);
    const [loading, setLoading] = useState(true);
    const navigate = useNavigate();
@@ -13,14 +41,15 @@ const BrandGrid = () => {
          try {
             const res = await brandAPI.getAllBrands();
             if (res.data.success && Array.isArray(res.data.brands)) {
-               const limited = res.data.brands.slice(0, 8); // 🔥 Limit to 8 brands
+               // Limiting to 8 is preserved from your original logic
+               const limited = res.data.brands.slice(0, 8);
                setBrands(limited);
             } else {
                toast.error(res.data.message || "Failed to fetch brands");
             }
          } catch (err) {
             console.error(err);
-            toast.error("Failed to fetch brands");
+            toast.error("An unexpected error occurred while fetching brands");
          } finally {
             setLoading(false);
          }
@@ -33,40 +62,38 @@ const BrandGrid = () => {
       navigate(`/brands/${brandId}`);
    };
 
+   // --- STYLING: Using styled loading and empty states ---
    if (loading) {
-      return (
-         <div className="flex justify-center py-20">
-            <div className="text-gray-600 text-lg">Loading brands...</div>
-         </div>
-      );
+      return <LoadingState />;
    }
 
    if (!brands.length) {
-      return (
-         <div className="text-center text-gray-500 py-20">
-            No brands found.
-         </div>
-      );
+      return <EmptyState />;
    }
 
    return (
+      // --- STYLING: Themed container ---
       <div className="max-w-7xl mx-auto px-4 py-10">
-         <h2 className="text-3xl font-bold mb-6 text-gray-800 text-center">Top Car Brands</h2>
-         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6">
+         <h2 className="text-3xl font-bold mb-6 text-slate-900 dark:text-white text-center">Top Car Brands</h2>
+         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-5">
+            {/* --- LOGIC: Map function is preserved --- */}
             {brands.map((brand) => (
                <div
                   key={brand._id}
                   onClick={() => handleClick(brand._id)}
-                  className="cursor-pointer group p-4 rounded-xl border hover:shadow-md transition duration-200 bg-white"
+                  // --- STYLING: Themed brand card with consistent interactions ---
+                  className="group cursor-pointer flex flex-col items-center justify-center p-6 bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-sm transition-all duration-300 hover:shadow-xl hover:-translate-y-1.5"
                >
-                  <div className="w-full h-24 flex items-center justify-center bg-gray-50 rounded-md overflow-hidden mb-3">
+                  <div className="w-24 h-24 flex items-center justify-center mb-4">
                      <img
                         src={brand.logo || "/placeholder.svg"}
                         alt={brand.name}
-                        className="max-h-full max-w-full object-contain group-hover:scale-105 transition-transform duration-300"
+                        className="max-h-full max-w-full object-contain transition-transform duration-300 group-hover:scale-110"
                      />
                   </div>
-                  <h3 className="text-center font-semibold text-gray-700 group-hover:text-indigo-600 transition">{brand.name}</h3>
+                  <h3 className="text-center font-semibold text-slate-800 dark:text-slate-200 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                     {brand.name}
+                  </h3>
                </div>
             ))}
          </div>
@@ -75,6 +102,7 @@ const BrandGrid = () => {
 };
 
 export default BrandGrid;
+
 
 
 // "use client"
