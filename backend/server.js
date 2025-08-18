@@ -43,6 +43,7 @@ import vehicleRouter from "./routes/vehicle.routes.js";
 import paymentRoutes from "./routes/payment.routes.js"
 import filterRoutes from "./routes/filter.routes.js"
 import inventoryRoutes from "./routes/inventory.routes.js"
+import searchRoutes from "./routes/search.routes.js"
 
 // Routes
 app.use("/api/brand", brandRouter);
@@ -53,6 +54,9 @@ app.use("/api/vehicle", vehicleRouter);
 app.use("/api/payment", paymentRoutes);
 app.use("/api/filter", filterRoutes)
 app.use("/api/inventory", inventoryRoutes)
+app.use("/api/filter", filterRoutes);
+app.use("/api/search", searchRoutes);
+
 
 // Root route
 app.get("/", (req, res) => {
