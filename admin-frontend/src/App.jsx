@@ -52,6 +52,8 @@ const App = () => {
             {/* Always render home (it will show message if not logged in) */}
             <Route path="/" element={<AdminHome />} />
 
+            <Route path="/admin" element={<AdminHome />} />
+
             {/* Protected routes */}
             {isLoggedIn && (
                <>
