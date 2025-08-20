@@ -2,6 +2,22 @@
 @tailwind components;
 @tailwind utilities;
 
+/* In src/index.css */
+@layer components {
+    .range-slider::-webkit-slider-thumb {
+        @apply appearance-none h-4 w-4 bg-blue-600 rounded-full cursor-pointer;
+    }
+    .range-slider::-moz-range-thumb {
+        @apply appearance-none h-4 w-4 bg-blue-600 rounded-full cursor-pointer border-none;
+    }
+    .range-slider::-webkit-slider-runnable-track {
+        @apply w-full h-2 bg-slate-200 dark:bg-slate-700 rounded-lg;
+    }
+    .range-slider::-moz-range-track {
+        @apply w-full h-2 bg-slate-200 dark:bg-slate-700 rounded-lg;
+    }
+}
+
 /* :root {
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;

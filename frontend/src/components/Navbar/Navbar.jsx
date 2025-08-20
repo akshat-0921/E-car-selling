@@ -1,50 +1,42 @@
 // src/components/Navbar/Navbar.jsx
 
 import { useState } from "react";
-import axios from "axios";
 import { Link } from "react-router-dom";
 import { useSelector, useDispatch } from 'react-redux';
-import { logout, setLoading, setError } from '../../redux/authSlice';
+import { logout } from '../../redux/authSlice'; // Simplified imports
 import SearchBar from "../Search/SearchBar";
-// --- STYLING: Replaced react-icons with a consistent, modern icon set ---
-import { Menu, X, Heart, User, Settings, LogOut, Car, LogIn, UserPlus } from 'lucide-react';
+// --- UPDATED: Imported History icon and removed unused ones ---
+import { Menu, X, User, Settings, LogOut, Car, LogIn, UserPlus, History } from 'lucide-react';
+import { toast } from "react-toastify";
+import API from "../../api"; // Using the central API instance
 
 const Navbar = () => {
-   // --- LOGIC: Unchanged ---
-   const { isLoggedIn, user, loading, error } = useSelector((state) => state.auth);
+   const { isLoggedIn, user, loading } = useSelector((state) => state.auth);
    const dispatch = useDispatch();
 
    const [showProfileMenu, setShowProfileMenu] = useState(false);
    const [showMobileMenu, setShowMobileMenu] = useState(false);
-   const [searchFocused, setSearchFocused] = useState(false); // Note: This state is from your original code, but not used in the SearchBar component we styled. It is preserved here.
    const [openedByHover, setOpenedByHover] = useState(false);
    const [openedByClick, setOpenedByClick] = useState(false);
 
-   const API = import.meta.env.VITE_BACKEND_URL;
-
    const handleLogout = async () => {
-      dispatch(setLoading(true));
-      dispatch(setError(null));
       try {
-         const res = await axios.post(`${API}/user/logout`, {}, { withCredentials: true });
+         await API.post('/user/logout'); // Using central API instance
          dispatch(logout());
-         alert(res.data.message || "Logged out successfully");
+         toast.success("Logged out successfully");
+         setShowProfileMenu(false); // Close menu on logout
+         setShowMobileMenu(false);
       } catch (err) {
-         dispatch(setError(err?.response?.data?.message || "Logout failed"));
-         alert(err?.response?.data?.message || "Logout failed");
-      } finally {
-         dispatch(setLoading(false));
+         toast.error(err?.response?.data?.message || "Logout failed");
       }
    };
 
    return (
       <>
-         {/* --- STYLING: Main nav bar with theme-aware, blurred background --- */}
          <nav className="sticky top-0 z-50 w-full bg-white/80 dark:bg-slate-900/80 backdrop-blur-lg border-b border-slate-200 dark:border-slate-800">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                <div className="flex items-center justify-between h-16">
-
-                  {/* --- STYLING: Logo updated with theme colors --- */}
+                  {/* Logo */}
                   <div className="flex-shrink-0 flex items-center">
                      <Link to="/" className="flex items-center gap-2 text-2xl font-bold text-slate-900 dark:text-white">
                         <Car className="h-7 w-7 text-blue-600" />
@@ -52,23 +44,25 @@ const Navbar = () => {
                      </Link>
                   </div>
 
-                  {/* --- STYLING: Central navigation links for desktop --- */}
+                  {/* Central navigation links */}
                   <div className="hidden md:flex items-center gap-x-6">
                      <Link to="/brands" className="font-medium text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Brands</Link>
                      <Link to="/showrooms" className="font-medium text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Showrooms</Link>
                      <Link to="/vehicles" className="font-medium text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">All Cars</Link>
                   </div>
 
-                  {/* --- STYLING: Right-side action icons for desktop --- */}
+                  {/* Right-side action icons */}
                   <div className="hidden md:flex items-center gap-x-5">
                      <SearchBar placeholder="Search by brand..." />
-                     <Link to="/favorites" className="relative group p-2">
-                        <Heart className="h-6 w-6 text-slate-500 dark:text-slate-400 group-hover:text-red-500 dark:group-hover:text-red-400 transition-colors" />
-                        {/* Optional: Add a count badge if you have the data */}
-                        {/* <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full h-4 w-4 flex items-center justify-center">3</span> */}
-                     </Link>
 
-                     {/* --- STYLING: Profile Dropdown (logic is preserved) --- */}
+                     {/* --- CHANGED: Heart icon is removed and replaced with Booking History icon (only when logged in) --- */}
+                     {isLoggedIn && (
+                        <Link to="/booking-history" className="relative group p-2" title="Booking History">
+                           <History className="h-6 w-6 text-slate-500 dark:text-slate-400 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors" />
+                        </Link>
+                     )}
+
+                     {/* Profile Dropdown */}
                      <div className="relative" onMouseLeave={() => { if (openedByHover && !openedByClick) setShowProfileMenu(false); }}>
                         <button
                            className="flex items-center justify-center h-9 w-9 rounded-full bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 transition-colors"
@@ -89,7 +83,8 @@ const Navbar = () => {
                                        </div>
                                        <div className="p-1">
                                           <DropdownLink to="/profile" icon={User} text="My Profile" />
-                                          <DropdownLink to="/favorites" icon={Heart} text="My Favorites" />
+                                          {/* --- CHANGED: Favorites link replaced with Booking History --- */}
+                                          <DropdownLink to="/booking-history" icon={History} text="My Bookings" />
                                           <DropdownLink to="/settings" icon={Settings} text="Account Settings" />
                                        </div>
                                        <div className="p-1 border-t border-slate-200 dark:border-slate-700">
@@ -101,10 +96,10 @@ const Navbar = () => {
                                     </>
                                  ) : (
                                     <div className="p-4 space-y-3">
-                                       <Link to="/auth?mode=login" className="w-full flex items-center justify-center gap-x-2 px-4 py-2 text-white bg-blue-600 hover:bg-blue-700 rounded-md font-medium transition">
+                                       <Link to="/auth?mode=login" onClick={() => setShowProfileMenu(false)} className="w-full flex items-center justify-center gap-x-2 px-4 py-2 text-white bg-blue-600 hover:bg-blue-700 rounded-md font-medium transition">
                                           <LogIn className="w-4 h-4" /> Login
                                        </Link>
-                                       <Link to="/auth?mode=signup" className="w-full flex items-center justify-center gap-x-2 px-4 py-2 text-blue-600 dark:text-blue-400 border border-slate-300 dark:border-slate-600 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-md font-medium transition">
+                                       <Link to="/auth?mode=signup" onClick={() => setShowProfileMenu(false)} className="w-full flex items-center justify-center gap-x-2 px-4 py-2 text-blue-600 dark:text-blue-400 border border-slate-300 dark:border-slate-600 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-md font-medium transition">
                                           <UserPlus className="w-4 h-4" /> Sign Up
                                        </Link>
                                     </div>
@@ -115,7 +110,7 @@ const Navbar = () => {
                      </div>
                   </div>
 
-                  {/* --- STYLING: Mobile hamburger button --- */}
+                  {/* Mobile hamburger button */}
                   <div className="md:hidden flex items-center">
                      <button onClick={() => setShowMobileMenu(!showMobileMenu)} className="p-2 rounded-md text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-800">
                         {showMobileMenu ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
@@ -125,7 +120,7 @@ const Navbar = () => {
             </div>
          </nav>
 
-         {/* --- STYLING: Mobile Menu Panel --- */}
+         {/* Mobile Menu Panel */}
          {showMobileMenu && (
             <div className="md:hidden fixed inset-0 top-16 z-40 bg-white dark:bg-slate-900 p-4 space-y-6">
                <SearchBar />
@@ -134,15 +129,17 @@ const Navbar = () => {
                   <MobileLink to="/brands" text="Brands" onNavigate={() => setShowMobileMenu(false)} />
                   <MobileLink to="/showrooms" text="Showrooms" onNavigate={() => setShowMobileMenu(false)} />
                   <MobileLink to="/vehicles" text="All Cars" onNavigate={() => setShowMobileMenu(false)} />
-                  <MobileLink to="/favorites" text="My Favorites" onNavigate={() => setShowMobileMenu(false)} />
+                  {/* --- CHANGED: Mobile favorites link is removed --- */}
                </nav>
                <div className="border-t border-slate-200 dark:border-slate-700 pt-4">
                   {isLoggedIn ? (
                      <div>
-                        <p className="px-4 text-sm font-medium text-slate-500 dark:text-slate-400">Welcome, {user?.name || "User"}</p>
+                        <p className="px-4 text-sm font-medium text-slate-500 dark:text-slate-400">Welcome, {user?.firstName || "User"}</p>
                         <div className="mt-2 space-y-2">
                            <MobileLink to="/profile" text="My Profile" onNavigate={() => setShowMobileMenu(false)} />
-                           <button onClick={() => { handleLogout(); setShowMobileMenu(false); }} className="w-full text-left px-4 py-2 text-base font-medium text-red-600 dark:text-red-400 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800">Logout</button>
+                           {/* --- ADDED: Mobile link to Booking History --- */}
+                           <MobileLink to="/booking-history" text="My Bookings" onNavigate={() => setShowMobileMenu(false)} />
+                           <button onClick={handleLogout} className="w-full text-left px-4 py-2 text-base font-medium text-red-600 dark:text-red-400 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800">Logout</button>
                         </div>
                      </div>
                   ) : (
@@ -158,7 +155,7 @@ const Navbar = () => {
    );
 };
 
-// --- Helper components for cleaner code ---
+// Helper components
 const DropdownLink = ({ to, icon: Icon, text }) => (
    <Link to={to} className="flex items-center gap-x-2 px-3 py-2 text-sm text-slate-700 dark:text-slate-300 rounded-md hover:bg-slate-100 dark:hover:bg-slate-700/50">
       <Icon className="w-4 h-4" />

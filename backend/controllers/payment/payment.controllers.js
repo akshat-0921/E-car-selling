@@ -5,10 +5,17 @@ import crypto from "crypto";
 // Create Razorpay Order
 const createPaymentIntent = async (req, res) => {
    try {
-      const { amount } = req.body;
+      let { amount } = req.body;
+      // console.log(amount)
       if (!amount) {
          return res.status(400).json({ success: false, msg: "Amount is required" });
       }
+
+      // amount = Number(amount)
+
+      // console.log(typeof (amount))
+      // console.log(amount)
+
 
       const options = {
          amount: amount * 100, // Razorpay uses paise
@@ -22,7 +29,7 @@ const createPaymentIntent = async (req, res) => {
          order,
       });
    } catch (error) {
-      console.error("Error creating Razorpay order:", error.message);
+      console.error("Error creating Razorpay order:", error);
       return res.status(500).json({ success: false, msg: "Razorpay order creation failed" });
    }
 };
