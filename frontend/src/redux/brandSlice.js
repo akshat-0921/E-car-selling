@@ -14,7 +14,6 @@ export const getAllBrandsThunk = createAsyncThunk(
 )
 
 
-
 const initialState = {
    brands: [],
    selectedBrand: null,

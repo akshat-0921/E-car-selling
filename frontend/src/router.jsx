@@ -21,6 +21,7 @@ import ShowBrands from "./pages/Brands/Brands";
 import BrandDetails from "./pages/Brands/BrandDetails";
 // import BrandCard from "./components/brandCard/Brandcard";
 import Favorites from "./pages/Favorites/Favorites";
+import BookingHistoryPage from "./pages/BookingHistory/bookingHistoryPage";
 
 import PaymentPage from "./pages/payment/PaymentPage";
 
@@ -46,7 +47,8 @@ const router = createBrowserRouter([
       { path: "profile", element: <Profile /> },
       { path: "settings", element: <SettingsPage /> },
       { path: "favorites", element: <Favorites /> },
-      { path: "payment", element: <PaymentPage /> }, 
+      { path: "payment", element: <PaymentPage /> },
+      { path: "booking-history", element: <BookingHistoryPage />, },
     ],
   },
 ]);
