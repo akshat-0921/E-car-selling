@@ -1,4 +1,4 @@
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { createBrowserRouter, Navigate, RouterProvider } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -21,34 +21,39 @@ import ShowBrands from "./pages/Brands/Brands";
 import BrandDetails from "./pages/Brands/BrandDetails";
 // import BrandCard from "./components/brandCard/Brandcard";
 import Favorites from "./pages/Favorites/Favorites";
+import BookingHistoryPage from "./pages/BookingHistory/bookingHistoryPage";
 
 import PaymentPage from "./pages/payment/PaymentPage";
 
 const router = createBrowserRouter([
-  {
-    path: "/",
-    element: <AppLayout />,
-    children: [
-      { index: true, element: <Home /> },
-      { path: "auth", element: <Auth /> },
-      { path: "login", element: <LoginForm /> },
-      { path: "signup", element: <SignUpForm /> },
-      { path: "vehicles", element: <Vehicle /> },
-      { path: "vehicles/:vehicleId", element: <VehicleDetails /> },
-      { path: "brands/:brandId", element: <BrandDetails /> },
-      { path: "car-model", element: <CarDetailPage /> },
-      { path: "search", element: <SearchPage /> },
-      { path: "brand-search", element: <BrandSearchPage /> },
-      { path: "brands", element: <ShowBrands /> },
-      { path: "showrooms", element: <ShowroomPage /> },
-      { path: "Car-Model-Selection", element: <CarModelSelectionPage /> },
-      { path: "Test-Drive", element: <TestDriveBookingPage /> },
-      { path: "profile", element: <Profile /> },
-      { path: "settings", element: <SettingsPage /> },
-      { path: "favorites", element: <Favorites /> },
-      { path: "payment", element: <PaymentPage /> }, 
-    ],
-  },
+   {
+      path: "/",
+      element: <AppLayout />,
+      children: [
+         { index: true, element: <Home /> },
+         { path: "auth", element: <Auth /> },
+         { path: "login", element: <LoginForm /> },
+         { path: "signup", element: <SignUpForm /> },
+         { path: "vehicles", element: <Vehicle /> },
+         { path: "vehicles/:vehicleId", element: <VehicleDetails /> },
+         { path: "brands/:brandId", element: <BrandDetails /> },
+         { path: "car-model", element: <CarDetailPage /> },
+         { path: "search", element: <SearchPage /> },
+         { path: "brand-search", element: <BrandSearchPage /> },
+         { path: "brands", element: <ShowBrands /> },
+         { path: "showrooms", element: <ShowroomPage /> },
+         { path: "Car-Model-Selection", element: <CarModelSelectionPage /> },
+         { path: "Test-Drive", element: <TestDriveBookingPage /> },
+         { path: "profile", element: <Profile /> },
+         { path: "settings", element: <SettingsPage /> },
+         { path: "favorites", element: <Favorites /> },
+         { path: "payment", element: <PaymentPage /> },
+         { path: "bookings/history", element: <BookingHistoryPage /> },
+
+         // ♻️ Backward compatibility: redirect old path to new
+         { path: "booking-history", element: <Navigate to="/bookings/history" replace /> },
+      ],
+   },
 ]);
 
 

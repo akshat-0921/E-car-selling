@@ -5,7 +5,7 @@ import 'dotenv/config';
 import connectDB from "./config/mongodb.js";
 
 const app = express();
-const port = 4000;
+const port = process.env.PORT || 4000;
 
 // Middleware
 app.use(express.json());
@@ -47,6 +47,8 @@ import vehicleRouter from "./routes/vehicle.routes.js";
 import paymentRoutes from "./routes/payment.routes.js"
 import filterRoutes from "./routes/filter.routes.js"
 import inventoryRoutes from "./routes/inventory.routes.js"
+import searchRoutes from "./routes/search.routes.js"
+import bookingRouter from "./routes/booking.routes.js";
 
 // Routes
 app.use("/api/brand", brandRouter);
@@ -57,6 +59,9 @@ app.use("/api/vehicle", vehicleRouter);
 app.use("/api/payment", paymentRoutes);
 app.use("/api/filter", filterRoutes)
 app.use("/api/inventory", inventoryRoutes)
+app.use("/api/filter", filterRoutes);
+app.use("/api/search", searchRoutes);
+app.use("/api/booking", bookingRouter);
 
 // Root route
 app.get("/", (req, res) => {

@@ -1,171 +1,172 @@
-import axios from "axios";
+// src/components/Navbar/Navbar.jsx
+
 import { useState } from "react";
-import { FaSearch, FaBars, FaHeart, FaUser, FaTimes } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { useSelector, useDispatch } from 'react-redux';
-import { logout, setLoading, setError } from '../../redux/authSlice';
+import { logout } from '../../redux/authSlice'; // Simplified imports
+import SearchBar from "../Search/SearchBar";
+// --- UPDATED: Imported History icon and removed unused ones ---
+import { Menu, X, User, Settings, LogOut, Car, LogIn, UserPlus, History } from 'lucide-react';
+import { toast } from "react-toastify";
+import API from "../../api"; // Using the central API instance
 
 const Navbar = () => {
-   const { isLoggedIn, user, loading, error } = useSelector((state) => state.auth);
+   const { isLoggedIn, user, loading } = useSelector((state) => state.auth);
    const dispatch = useDispatch();
 
    const [showProfileMenu, setShowProfileMenu] = useState(false);
    const [showMobileMenu, setShowMobileMenu] = useState(false);
-   const [searchFocused, setSearchFocused] = useState(false);
    const [openedByHover, setOpenedByHover] = useState(false);
    const [openedByClick, setOpenedByClick] = useState(false);
 
-   const API = import.meta.env.VITE_BACKEND_URL;
-
    const handleLogout = async () => {
-      dispatch(setLoading(true));
-      dispatch(setError(null));
-
       try {
-         const res = await axios.post(`${API}/user/logout`, {}, { withCredentials: true });
+         await API.post('/user/logout'); // Using central API instance
          dispatch(logout());
-         alert(res.data.message || "Logged out successfully");
+         toast.success("Logged out successfully");
+         setShowProfileMenu(false); // Close menu on logout
+         setShowMobileMenu(false);
       } catch (err) {
-         dispatch(setError(err?.response?.data?.message || "Logout failed"));
-         alert(err?.response?.data?.message || "Logout failed");
-      } finally {
-         dispatch(setLoading(false));
+         toast.error(err?.response?.data?.message || "Logout failed");
       }
    };
 
    return (
-      <nav className="bg-gradient-to-r from-gray-900 to-gray-800 text-white shadow-md sticky top-0 z-50">
-         {/* Top Bar */}
-         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex items-center justify-between h-16">
-               {/* Logo */}
-               <div className="flex-shrink-0 flex items-center">
-                  <Link to="/" className="flex items-center">
-                     <span className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 to-indigo-600">Drive</span>
-                     <span className="ml-1 text-lg font-medium">It</span>
-                  </Link>
-               </div>
+      <>
+         <nav className="sticky top-0 z-50 w-full bg-white/80 dark:bg-slate-900/80 backdrop-blur-lg border-b border-slate-200 dark:border-slate-800">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+               <div className="flex items-center justify-between h-16">
+                  {/* Logo */}
+                  <div className="flex-shrink-0 flex items-center">
+                     <Link to="/" className="flex items-center gap-2 text-2xl font-bold text-slate-900 dark:text-white">
+                        <Car className="h-7 w-7 text-blue-600" />
+                        DriveIt
+                     </Link>
+                  </div>
 
-               {/* Desktop Search */}
-               <div className="hidden md:flex items-center justify-center flex-1 px-8">
-                  <div className="relative w-full max-w-xl">
-                     <input
-                        type="text"
-                        placeholder="Search for cars, brands, or models..."
-                        className={`w-full py-2 pl-10 pr-4 rounded-full bg-gray-700/60 border ${searchFocused ? "border-indigo-400 ring-2 ring-indigo-400/20" : "border-gray-600"} text-white placeholder-gray-400 focus:outline-none transition-all duration-200`}
-                        onFocus={() => setSearchFocused(true)}
-                        onBlur={() => setSearchFocused(false)}
-                     />
-                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <FaSearch className="text-gray-400" />
+                  {/* Central navigation links */}
+                  <div className="hidden md:flex items-center gap-x-6">
+                     <Link to="/brands" className="font-medium text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Brands</Link>
+                     <Link to="/showrooms" className="font-medium text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Showrooms</Link>
+                     <Link to="/vehicles" className="font-medium text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">All Cars</Link>
+                  </div>
+
+                  {/* Right-side action icons */}
+                  <div className="hidden md:flex items-center gap-x-5">
+                     <SearchBar placeholder="Search by brand..." />
+
+                     {/* --- CHANGED: Heart icon is removed and replaced with Booking History icon (only when logged in) --- */}
+                     {isLoggedIn && (
+                        <Link to="/booking-history" className="relative group p-2" title="Booking History">
+                           <History className="h-6 w-6 text-slate-500 dark:text-slate-400 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors" />
+                        </Link>
+                     )}
+
+                     {/* Profile Dropdown */}
+                     <div className="relative" onMouseLeave={() => { if (openedByHover && !openedByClick) setShowProfileMenu(false); }}>
+                        <button
+                           className="flex items-center justify-center h-9 w-9 rounded-full bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 transition-colors"
+                           onClick={() => { setOpenedByClick(prev => !prev); setShowProfileMenu(prev => !prev); setOpenedByHover(false); }}
+                           onMouseEnter={() => { setShowProfileMenu(true); setOpenedByHover(true); }}
+                        >
+                           <User className="h-5 w-5 text-slate-600 dark:text-slate-300" />
+                        </button>
+
+                        {showProfileMenu && (
+                           <div className="absolute right-0 mt-2 w-64 origin-top-right rounded-xl shadow-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:outline-none">
+                              <div className="py-1">
+                                 {isLoggedIn ? (
+                                    <>
+                                       <div className="px-4 py-3 border-b border-slate-200 dark:border-slate-700">
+                                          <p className="text-sm font-semibold text-slate-900 dark:text-white">Signed in as</p>
+                                          <p className="text-sm text-slate-600 dark:text-slate-400 truncate">{user?.email}</p>
+                                       </div>
+                                       <div className="p-1">
+                                          <DropdownLink to="/profile" icon={User} text="My Profile" />
+                                          {/* --- CHANGED: Favorites link replaced with Booking History --- */}
+                                          <DropdownLink to="/booking-history" icon={History} text="My Bookings" />
+                                          <DropdownLink to="/settings" icon={Settings} text="Account Settings" />
+                                       </div>
+                                       <div className="p-1 border-t border-slate-200 dark:border-slate-700">
+                                          <button onClick={handleLogout} disabled={loading} className="w-full text-left flex items-center gap-x-2 px-3 py-2 rounded-md text-sm text-red-600 dark:text-red-400 hover:bg-slate-100 dark:hover:bg-slate-700/50 disabled:opacity-50">
+                                             <LogOut className="w-4 h-4" />
+                                             {loading ? "Logging out..." : "Logout"}
+                                          </button>
+                                       </div>
+                                    </>
+                                 ) : (
+                                    <div className="p-4 space-y-3">
+                                       <Link to="/auth?mode=login" onClick={() => setShowProfileMenu(false)} className="w-full flex items-center justify-center gap-x-2 px-4 py-2 text-white bg-blue-600 hover:bg-blue-700 rounded-md font-medium transition">
+                                          <LogIn className="w-4 h-4" /> Login
+                                       </Link>
+                                       <Link to="/auth?mode=signup" onClick={() => setShowProfileMenu(false)} className="w-full flex items-center justify-center gap-x-2 px-4 py-2 text-blue-600 dark:text-blue-400 border border-slate-300 dark:border-slate-600 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-md font-medium transition">
+                                          <UserPlus className="w-4 h-4" /> Sign Up
+                                       </Link>
+                                    </div>
+                                 )}
+                              </div>
+                           </div>
+                        )}
                      </div>
                   </div>
-               </div>
 
-               {/* Desktop Links */}
-               <div className="hidden md:flex items-center space-x-6">
-                  <Link to="/brands" className="text-gray-300 hover:text-white font-medium">Brands</Link>
-                  <Link to="/showrooms" className="text-gray-300 hover:text-white font-medium">Showrooms</Link>
-                  <Link to="/locations" className="text-gray-300 hover:text-white font-medium">Locations</Link>
-                  <Link to="/favorites" className="relative group">
-                     <FaHeart className="text-xl text-gray-300 group-hover:text-indigo-400 transition-colors" />
-                     <span className="absolute -top-2 -right-2 bg-indigo-500 text-white text-xs font-bold rounded-full h-4 w-4 flex items-center justify-center">2</span>
-                  </Link>
-
-                  {/* Profile Dropdown */}
-                  <div className="relative" onMouseLeave={() => {
-                     if (openedByHover && !openedByClick) setShowProfileMenu(false);
-                  }}>
-                     <button
-                        className="flex items-center justify-center h-8 w-8 rounded-full bg-gray-700 hover:bg-indigo-600 transition-colors"
-                        onClick={() => {
-                           setOpenedByClick(prev => !prev);
-                           setShowProfileMenu(prev => !prev);
-                           setOpenedByHover(false);
-                        }}
-                        onMouseEnter={() => {
-                           setShowProfileMenu(true);
-                           setOpenedByHover(true);
-                        }}
-                     >
-                        <FaUser className="text-sm" />
+                  {/* Mobile hamburger button */}
+                  <div className="md:hidden flex items-center">
+                     <button onClick={() => setShowMobileMenu(!showMobileMenu)} className="p-2 rounded-md text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-800">
+                        {showMobileMenu ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
                      </button>
-
-                     {showProfileMenu && (
-                        <div className="absolute right-0 mt-2 w-56 bg-white text-gray-800 rounded-lg shadow-lg overflow-hidden z-50 border border-gray-200 animate-fadeIn">
-                           {isLoggedIn ? (
-                              <>
-                                 <div className="p-3 border-b border-gray-200 bg-gray-50">
-                                    <p className="font-medium">{user?.name || "User"}</p>
-                                    <p className="text-xs text-gray-500">{user?.email}</p>
-                                 </div>
-                                 <div className="py-1">
-                                    <Link to="/profile" className="flex items-center px-4 py-2 hover:bg-gray-100">
-                                       <span className="w-8">👤</span> View Profile
-                                    </Link>
-                                    <Link to="/settings" className="flex items-center px-4 py-2 hover:bg-gray-100">
-                                       <span className="w-8">⚙️</span> Settings
-                                    </Link>
-                                    <Link to="/favorites" className="flex items-center px-4 py-2 hover:bg-gray-100">
-                                       <span className="w-8">❤️</span> Favorites
-                                    </Link>
-                                 </div>
-                                 <div className="border-t border-gray-200">
-                                    <button
-                                       onClick={handleLogout}
-                                       className="w-full text-left px-4 py-2 text-red-600 hover:bg-gray-100 flex items-center"
-                                       disabled={loading}
-                                    >
-                                       <span className="w-8">🚪</span>
-                                       <span>{loading ? "Logging out..." : "Logout"}</span>
-                                    </button>
-                                 </div>
-                                 {error && <p className="text-sm text-red-500 px-4 py-1">{error}</p>}
-                              </>
-                           ) : (
-                              <>
-                                 <div className="p-3 border-b border-gray-200 bg-gray-50">
-                                    <p className="font-medium">Welcome!</p>
-                                    <p className="text-xs text-gray-500">Access your account</p>
-                                 </div>
-                                 <div className="py-2 px-4 space-y-2">
-                                    <Link
-                                       to="/auth?mode=login"
-                                       className="w-full block text-center px-4 py-2 text-white bg-indigo-600 hover:bg-indigo-700 rounded-md font-medium transition"
-                                    >
-                                       Login
-                                    </Link>
-                                    <Link
-                                       to="/auth?mode=signup"
-                                       className="w-full block text-center px-4 py-2 text-indigo-600 border border-indigo-600 hover:bg-indigo-50 rounded-md font-medium transition"
-                                    >
-                                       Sign Up
-                                    </Link>
-                                 </div>
-                              </>
-                           )}
-                        </div>
-                     )}
                   </div>
                </div>
+            </div>
+         </nav>
 
-               {/* Mobile Hamburger */}
-               <div className="md:hidden flex items-center space-x-4">
-                  <Link to="/favorites" className="relative">
-                     <FaHeart className="text-xl text-gray-300" />
-                     <span className="absolute -top-2 -right-2 bg-indigo-500 text-white text-xs font-bold rounded-full h-4 w-4 flex items-center justify-center">2</span>
-                  </Link>
-                  <button
-                     onClick={() => setShowMobileMenu(!showMobileMenu)}
-                     className="text-gray-300 hover:text-white focus:outline-none"
-                  >
-                     {showMobileMenu ? <FaTimes className="text-xl" /> : <FaBars className="text-xl" />}
-                  </button>
+         {/* Mobile Menu Panel */}
+         {showMobileMenu && (
+            <div className="md:hidden fixed inset-0 top-16 z-40 bg-white dark:bg-slate-900 p-4 space-y-6">
+               <SearchBar />
+               <nav className="flex flex-col space-y-2">
+                  <MobileLink to="/" text="Home" onNavigate={() => setShowMobileMenu(false)} />
+                  <MobileLink to="/brands" text="Brands" onNavigate={() => setShowMobileMenu(false)} />
+                  <MobileLink to="/showrooms" text="Showrooms" onNavigate={() => setShowMobileMenu(false)} />
+                  <MobileLink to="/vehicles" text="All Cars" onNavigate={() => setShowMobileMenu(false)} />
+                  {/* --- CHANGED: Mobile favorites link is removed --- */}
+               </nav>
+               <div className="border-t border-slate-200 dark:border-slate-700 pt-4">
+                  {isLoggedIn ? (
+                     <div>
+                        <p className="px-4 text-sm font-medium text-slate-500 dark:text-slate-400">Welcome, {user?.firstName || "User"}</p>
+                        <div className="mt-2 space-y-2">
+                           <MobileLink to="/profile" text="My Profile" onNavigate={() => setShowMobileMenu(false)} />
+                           {/* --- ADDED: Mobile link to Booking History --- */}
+                           <MobileLink to="/booking-history" text="My Bookings" onNavigate={() => setShowMobileMenu(false)} />
+                           <button onClick={handleLogout} className="w-full text-left px-4 py-2 text-base font-medium text-red-600 dark:text-red-400 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800">Logout</button>
+                        </div>
+                     </div>
+                  ) : (
+                     <div className="space-y-3">
+                        <Link to="/auth?mode=login" onClick={() => setShowMobileMenu(false)} className="w-full block text-center px-4 py-2 text-white bg-blue-600 hover:bg-blue-700 rounded-md font-medium transition">Login</Link>
+                        <Link to="/auth?mode=signup" onClick={() => setShowMobileMenu(false)} className="w-full block text-center px-4 py-2 text-blue-600 dark:text-blue-400 border border-slate-300 dark:border-slate-600 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-md font-medium transition">Sign Up</Link>
+                     </div>
+                  )}
                </div>
             </div>
-         </div>
-      </nav>
+         )}
+      </>
    );
 };
+
+// Helper components
+const DropdownLink = ({ to, icon: Icon, text }) => (
+   <Link to={to} className="flex items-center gap-x-2 px-3 py-2 text-sm text-slate-700 dark:text-slate-300 rounded-md hover:bg-slate-100 dark:hover:bg-slate-700/50">
+      <Icon className="w-4 h-4" />
+      {text}
+   </Link>
+);
+
+const MobileLink = ({ to, text, onNavigate }) => (
+   <Link to={to} onClick={onNavigate} className="block px-4 py-2 text-base font-medium text-slate-700 dark:text-slate-200 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800">
+      {text}
+   </Link>
+);
 
 export default Navbar;

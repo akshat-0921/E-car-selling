@@ -4,7 +4,7 @@ import { User } from "../../models/user.models.js";
 export const userAuth = async (req, res, next) => {
    try {
       const token = req.cookies?.accessToken || req.header("Authorization")?.replace("Bearer ", "")
-      if (token) console.log("Token:", token);
+      // if (token) console.log("Token:", token);
 
       if (!token) { return res.status(401).json({ success: false, msg: 'Token required to access' }) }
 
@@ -14,7 +14,7 @@ export const userAuth = async (req, res, next) => {
 
       req.userId = decodedToken._id
       req.user = await User.findById(req.userId)
-      console.log(req.user)
+      // console.log(req.user)
       next()
    } catch (error) {
       console.log(error)
