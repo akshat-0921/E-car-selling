@@ -14,7 +14,7 @@ export const userAuth = async (req, res, next) => {
 
       req.userId = decodedToken._id
       req.user = await User.findById(req.userId)
-      console.log(req.user)
+      // console.log(req.user)
       next()
    } catch (error) {
       console.log(error)

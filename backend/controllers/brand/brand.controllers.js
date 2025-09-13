@@ -98,7 +98,7 @@ const getVehiclesInBrand = async (req, res) => {
       if (vehicles.length === 0) {
          return res.status(404).json({ success: false, msg: "No Vehicles found for the brand" })
       }
-      return res.status(200).json({ success: true, msg: `Vehicles for the brand ${brand.name} fetched successfully`, vehicles })
+      return res.status(200).json({ success: true, msg: `Vehicles for the brand ${brand.name} fetched successfully`, vehicles, brand })
    } catch (error) {
       console.log(error)
       return res.status(500).json({ success: false, msg: "An error occured while fetching Vehicles in the brand. Please try again" })

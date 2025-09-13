@@ -5,53 +5,53 @@ import { Vehicle } from "../../models/vehicle.models.js"
 import { ShowroomVehicle } from "../../models/showroomVehicle.models.js";
 
 const checkVehicleAvailability = async (req, res) => {
-    try {
-        const userId = req.user._id
-        const { showroomId, vehicleId } = req.params
-        const { lon, lat, radius } = req.body
+   try {
+      const userId = req.user._id
+      const { showroomId, vehicleId } = req.params
+      const { lon, lat, radius } = req.body
 
-        if (!userId) { return res.status(400).json({ success: false, msg: "User Id required" }) }
-        const user = await User.findById(userId)
+      if (!userId) { return res.status(400).json({ success: false, msg: "User Id required" }) }
+      const user = await User.findById(userId)
 
-        const showroomWithVehicle = await ShowroomVehicle.findOne(showroomId, vehicleId)
-        if (!showroomWithVehicle) { return res.status(404).json({ success: false, msg: "Vehicle not found in showroom" }) }
+      const showroomWithVehicle = await ShowroomVehicle.findOne(showroomId, vehicleId)
+      if (!showroomWithVehicle) { return res.status(404).json({ success: false, msg: "Vehicle not found in showroom" }) }
 
-        const showroom = await Showroom.findById(showroomId)
-        if (showroomWithVehicle.count > 0) { return res.status(200).json({ success: true, showroom, status: "Available", msg: "The selected vehicle is available in the showroom" }) }
+      const showroom = await Showroom.findById(showroomId)
+      if (showroomWithVehicle.count > 0) { return res.status(200).json({ success: true, showroom, status: "Available", msg: "The selected vehicle is available in the showroom" }) }
 
-        if (showroomWithVehicle.count === 0) {
-            const vehicleExistsSomewhere = await ShowroomVehicle.find({ vehicleId }, { count: { $gt: 0 } })
-            if (!vehicleExistsSomewhere) { return res.status(404).json({ success: false, msg: "Vehicle is currently Unavailabe" }) }
-        }
+      if (showroomWithVehicle.count === 0) {
+         const vehicleExistsSomewhere = await ShowroomVehicle.find({ vehicleId }, { count: { $gt: 0 } })
+         if (!vehicleExistsSomewhere) { return res.status(404).json({ success: false, msg: "Vehicle is currently Unavailabe" }) }
+      }
 
-        const nearestShowroom = await Showroom.aggregate([
-            {
-                $geoNear: {
-                    near: {
-                        type: "Point",
-                        coordinates: [lon, lat]
-                    },
-                    distanceField: "distance",
-                    spherical: true,
-                    maxDistance: radius || 500000,
-                }
-            },
-            { $limit: 1 }  //nearest
-        ])
+      const nearestShowroom = await Showroom.aggregate([
+         {
+            $geoNear: {
+               near: {
+                  type: "Point",
+                  coordinates: [lon, lat]
+               },
+               distanceField: "distance",
+               spherical: true,
+               maxDistance: radius || 500000,
+            }
+         },
+         { $limit: 1 }  //nearest
+      ])
 
-        if (nearestShowroom.length === 0) {
-            return res.status(404).json({ success: false, msg: "No showroom within range for this vehicle" })
-        }
+      if (nearestShowroom.length === 0) {
+         return res.status(404).json({ success: false, msg: "No showroom within range for this vehicle" })
+      }
 
-        return res.status(200).json({ success: true, showroom: nearestShowroom[0], status: "In transit", msg: "Showroom containing the car found" })
+      return res.status(200).json({ success: true, showroom: nearestShowroom[0], status: "In transit", msg: "Showroom containing the car found" })
 
-    } catch (error) {
-        console.error(error);
-        return res.status(500).json({
-            success: false,
-            msg: 'An error occurred while checking vehicle availability.',
-        });
-    }
+   } catch (error) {
+      console.error(error);
+      return res.status(500).json({
+         success: false,
+         msg: 'An error occurred while checking vehicle availability.',
+      });
+   }
 }
 
 // const addBooking = async (req, res) => {
@@ -85,53 +85,72 @@ const checkVehicleAvailability = async (req, res) => {
 // }
 
 const createBooking = async (req, res) => {
-    try {
-        const userId = req.user._id;
-        const { showroomId, vehicleId } = req.params;
-        const payload = req.body; // Contains bookingType, status, payment info, etc.
+   try {
+      const userId = req.user._id
+      const { showroomId, vehicleId } = req.params
+      const { date, amount, paymentIntentId } = req.body;
 
-        if (!userId || !showroomId || !vehicleId || !payload) {
-            return res.status(400).json({ success: false, msg: "Missing required booking information." });
+        if (!userId || !vehicleId || !date || !amount || !paymentIntentId) {
+            return errorHandler(res, 400, "All fields are required");
         }
 
-        const newBooking = await Booking.create({
-            userId,
-            vehicleId,
-            showroomId,
-            ...payload // Spreads the payload from the frontend directly into the new booking
-        });
+      const paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId);
+      let paymentStatus;
+
+      switch (paymentIntent.status) {
+         case "succeeded":
+            paymentStatus = "completed";
+            break;
+         case "requires_confirmation":
+         case "processing":
+            paymentStatus = "pending";
+            break;
+         case "canceled":
+            paymentStatus = "cancelled";
+            break;
+         default:
+            return errorHandler(res, 400, "Invalid payment status");
+      }
+
+      const booking = await Booking.create({
+         userId,
+         vehicleId,
+         showroomId,
+         date,
+         paymentStatus,
+         amount,
+      });
 
         return res.status(201).json({
             success: true,
-            booking: newBooking,
+            booking,
             message: "Booking created successfully",
         });
-
     } catch (error) {
-        console.error("Error creating booking:", error);
-        return res.status(500).json({ success: false, msg: "An error occurred while creating the booking." });
+        console.error("Error creating booking:", error.message);
+        return errorHandler(res, 500, "Error occurred while creating the booking.");
     }
 };
 
 const getBookingHistory = async (req, res) => {
-    try {
-        const userId = req.user._id;
-        if (!userId) {
-            return res.status(401).json({ success: false, msg: "User not authenticated." });
-        }
+   try {
+      const userId = req.user._id;
+      if (!userId) {
+         return res.status(401).json({ success: false, msg: "User not authenticated." });
+      }
 
-        // Find all bookings for the user and populate details
-        const bookings = await Booking.find({ userId })
-            .populate('vehicleId', 'name image price')
-            .populate('showroomId', 'name city')
-            .sort({ createdAt: -1 });
+      // Find all bookings for the user and populate details
+      const bookings = await Booking.find({ userId })
+         .populate('vehicleId', 'name image price')
+         .populate('showroomId', 'name city')
+         .sort({ createdAt: -1 });
 
-        return res.status(200).json({ success: true, bookings });
+      return res.status(200).json({ success: true, bookings });
 
-    } catch (error) {
-        console.error("Error fetching booking history:", error);
-        return res.status(500).json({ success: false, msg: "Failed to fetch booking history." });
-    }
+   } catch (error) {
+      console.error("Error fetching booking history:", error);
+      return res.status(500).json({ success: false, msg: "Failed to fetch booking history." });
+   }
 };
 
 export { checkVehicleAvailability, createBooking, getBookingHistory }

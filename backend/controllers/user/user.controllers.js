@@ -140,6 +140,7 @@ const loginUser = async (req, res) => {
 
       // Only send required fields — nothing extra
       const userSafe = {
+         id: user._id,
          firstName: user.firstName,
          lastName: user.lastName,
          email: user.email,

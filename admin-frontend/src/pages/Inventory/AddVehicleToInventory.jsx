@@ -20,6 +20,7 @@ const AddVehicleToInventory = () => {
    })
    const navigate = useNavigate()
    const { showroomId } = useParams()
+   const [brand, setBrand] = useState(null)
 
    useEffect(() => {
       loadShowroomData()
@@ -57,6 +58,7 @@ const AddVehicleToInventory = () => {
          const res = await axiosInstance.get(`/brand/get-vehicles/${brandId}`)
          setVehicles(res.data.vehicles || [])
          setFilteredVehicles(res.data.vehicles || [])
+         setBrand(res.data.brand.name)
       } catch (error) {
          toast.error("Failed to load vehicles")
       }
@@ -190,7 +192,7 @@ const AddVehicleToInventory = () => {
                                     <div className="flex-1">
                                        <h3 className="font-semibold text-gray-900">{vehicle.name}</h3>
                                        <p className="text-gray-600 text-sm">{vehicle.model}</p>
-                                       <p className="text-gray-500 text-xs">Brand: {vehicle.brandId?.name || "Unknown"}</p>
+                                       <p className="text-gray-500 text-xs">Brand: {brand || "Unknown"}</p>
                                     </div>
                                     {formData.vehicleId === vehicle._id && (
                                        <div className="w-4 h-4 bg-blue-600 rounded-full flex items-center justify-center">
