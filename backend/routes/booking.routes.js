@@ -3,7 +3,8 @@
 import { Router } from "express";
 import {
     checkVehicleAvailability,
-    getBookingHistory
+    getBookingHistory,
+    createBooking
 } from "../controllers/booking/booking.controllers.js"
 import { userAuth } from "../middlewares/auth/userAuth.middleware.js";
 
@@ -15,5 +16,6 @@ router.route("/check-availability/:showroomId/:vehicleId").post(checkVehicleAvai
 
 router.route("/history").get(getBookingHistory);
 
+router.route("/create/:showroomId/:vehicleId").post(createBooking);
 
 export default router;

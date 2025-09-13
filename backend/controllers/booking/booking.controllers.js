@@ -86,49 +86,30 @@ const checkVehicleAvailability = async (req, res) => {
 
 const createBooking = async (req, res) => {
     try {
-        const userId = req.user._id
-        const { showroomId, vehicleId } = req.params
-        const { date, amount, paymentIntentId } = req.body;
+        const userId = req.user._id;
+        const { showroomId, vehicleId } = req.params;
+        const payload = req.body; // Contains bookingType, status, payment info, etc.
 
-        if (!userId || !vehicleId || !date || !amount || !paymentIntentId) {
-            return errorHandler(res, 400, "All fields are required");
+        if (!userId || !showroomId || !vehicleId || !payload) {
+            return res.status(400).json({ success: false, msg: "Missing required booking information." });
         }
 
-        const paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId);
-        let paymentStatus;
-
-        switch (paymentIntent.status) {
-            case "succeeded":
-                paymentStatus = "completed";
-                break;
-            case "requires_confirmation":
-            case "processing":
-                paymentStatus = "pending";
-                break;
-            case "canceled":
-                paymentStatus = "cancelled";
-                break;
-            default:
-                return errorHandler(res, 400, "Invalid payment status");
-        }
-
-        const booking = await Booking.create({
+        const newBooking = await Booking.create({
             userId,
             vehicleId,
             showroomId,
-            date,
-            paymentStatus,
-            amount,
+            ...payload // Spreads the payload from the frontend directly into the new booking
         });
 
         return res.status(201).json({
             success: true,
-            booking,
+            booking: newBooking,
             message: "Booking created successfully",
         });
+
     } catch (error) {
-        console.error("Error creating booking:", error.message);
-        return errorHandler(res, 500, "Error occurred while creating the booking.");
+        console.error("Error creating booking:", error);
+        return res.status(500).json({ success: false, msg: "An error occurred while creating the booking." });
     }
 };
 
