@@ -13,15 +13,14 @@ It provides both **user-facing** and **admin-facing** features, including vehicl
 - **Vehicle Browsing**: Explore cars by brands, models, and showrooms with filters (price, fuel type, etc.).  
 - **Bookings**:  
   - Test drive booking with availability validation.  
-  - Service booking with history tracking.  
-  - Prevents conflicts via backend checks.  
+  - Service booking with history tracking.
 - **Payments**: Secure Razorpay integration with backend signature verification.    
 - **Profile Management**: View booking history and account details.  
 
 ### 🛠️ Admin Side
 - **Authentication**: Secret key + JWT with refresh tokens.  
 - **Inventory Management**: Add/update/delete vehicles, brands, and showrooms.  
-- **Booking Oversight**: Monitor user bookings in real-time.  
+- **Booking Oversight**: Monitor user bookings.  
 - **Security**: Axios interceptors ensure smooth token refresh cycles.  
 
 ---
