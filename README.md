@@ -1,7 +1,7 @@
 # DriveIt – E-Car Selling & Booking Platform 🚗⚡
 
 ## Overview  
-DriveIt is a full-stack MERN application that enables users to browse, book, and purchase electric cars online.  
+DriveIt is a full-stack MERN application that enables users to browse, book, and purchase cars online.  
 It provides both **user-facing** and **admin-facing** features, including vehicle inventory management, test drive scheduling, payment integration, and booking history.  
 
 ---
@@ -15,9 +15,8 @@ It provides both **user-facing** and **admin-facing** features, including vehicl
   - Test drive booking with availability validation.  
   - Service booking with history tracking.  
   - Prevents conflicts via backend checks.  
-- **Payments**: Secure Razorpay integration with backend signature verification.  
-- **Favorites**: Save vehicles to a personalized list.  
-- **Profile Management**: View booking history, saved favorites, and account details.  
+- **Payments**: Secure Razorpay integration with backend signature verification.    
+- **Profile Management**: View booking history and account details.  
 
 ### 🛠️ Admin Side
 - **Authentication**: Secret key + JWT with refresh tokens.  
